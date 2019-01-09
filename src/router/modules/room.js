@@ -15,19 +15,19 @@ const roomRouter = {
     {
       path: 'room',
       name: 'room',
-      component: () => import('@/views/nested/menu2/index'),
+      component: () => import('@/pages/room/manager/Layout'),
       meta: { title: '机房管理' }
     },
     {
       path: 'deviceType',
       name: 'deviceType',
-      component: () => import('@/views/nested/menu2/index'),
+      component: () => import('@/pages/room/deviceType/Layout'),
       meta: { title: '设备类型' }
     },
     {
       path: 'device',
       name: 'device',
-      component: () => import('@/views/nested/menu2/index'),
+      component: () => import('@/pages/room/device/Layout'),
       meta: { title: '设备管理' }
     }
   ]
