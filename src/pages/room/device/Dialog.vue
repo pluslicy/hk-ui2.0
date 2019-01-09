@@ -4,11 +4,11 @@
     <el-dialog :visible.sync="deviceDialog.visible" :title="deviceDialog.title" :before-close="closeDialog">
       <el-form :model="deviceDialog.form" size="mini">
         <el-form-item :label-width="formLabelWidth" label="设备名称">
-          <el-input v-model="deviceDialog.form.name" autocomplete="off" clearable />>
+          <el-input v-model="deviceDialog.form.name" autocomplete="off" clearable />
           <!-- </el-input> -->
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="设备码">
-          <el-input v-model="deviceDialog.form.name" autocomplete="off" clearable />>
+          <el-input v-model="deviceDialog.form.name" autocomplete="off" clearable />
           <!-- </el-input> -->
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="设备类型">
@@ -19,12 +19,12 @@
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="所属机房">
           <el-select v-model="deviceDialog.form.region" placeholder="请选择机房" clearable>
-            <el-option label="区域一" value="shanghai" />>
+            <el-option label="区域一" value="shanghai" />
             <!-- <el-option label="区域二" value="beijing"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="设备描述">
-          <el-input :rows="2" v-model="textarea" type="textarea" placeholder="" />>
+          <el-input :rows="2" v-model="textarea" type="textarea" placeholder="" />
           <!-- </el-input> -->
         </el-form-item>
       </el-form>

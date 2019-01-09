@@ -31,8 +31,8 @@
         <template slot-scope="{row}">
           <!-- {{row.id}} -->
           <!-- <i class="fa fa-food"></i> -->
-          <i class="el-icon-edit" @click="toUpdateManager(row)" />>
-          <i class="el-icon-delete" @click="deleteManager(row.id)" />>
+          <i class="el-icon-edit" @click="toUpdateManager(row)" />
+          <i class="el-icon-delete" @click="deleteManager(row.id)" />
         </template>
       </el-table-column>
     </el-table>
