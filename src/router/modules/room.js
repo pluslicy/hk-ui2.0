@@ -13,8 +13,8 @@ const roomRouter = {
   },
   children: [
     {
-      path: 'room',
-      name: 'room',
+      path: 'manager',
+      name: 'manager',
       component: () => import('@/pages/room/manager/Layout'),
       meta: { title: '机房管理' }
     },

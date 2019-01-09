@@ -43,7 +43,7 @@
     <!-- 分页 -->
     <device-pagination />
     <!-- 模态框 -->
-    <device-dialog />
+    <device-dialog ref="deviceDialog" />
   </div>
 </template>
 
@@ -101,6 +101,9 @@ export default {
     // 新增
     toAddDevice() {
       // this.deviceDialog.visible = true
+      this.$refs.deviceDialog.showDialog()
+      this.$refs.deviceDialog.deviceDialog.title = '添加设备信息'
+      this.$refs.deviceDialog.deviceDialog.form = {}
     },
     // 批量删除
     batchDeleteDevice() {
@@ -111,6 +114,7 @@ export default {
 </script>
 
 <style scoped>
+  /* 设备管理 */
   .device {
     background-color: #ffffff;
     margin: 1em;
@@ -118,9 +122,11 @@ export default {
     border-radius: 3px;
     /* min-height: 500px; */
   }
+  /* 表单 */
   .device_form {
     float: left;
   }
+  /* 按钮 */
   .device_btns {
     text-align: right;
   }
