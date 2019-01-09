@@ -55,7 +55,7 @@
             <!-- <i class="fa fa-food"></i> -->
             <i class="el-icon-edit" @click="toUpdateManager(row)" />
             <!-- </i> -->
-            <i class="el-icon-delete" @click="deleteManager(row.id)" />>
+            <i class="el-icon-delete" @click="deleteManager(row.id)" />
             <!-- </i> -->
           </template>
         </el-table-column>
