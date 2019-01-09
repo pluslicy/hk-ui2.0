@@ -4,7 +4,8 @@
       <!-- 表格开始 -->
       <el-table
         :data="tableData"
-        style="width: 100%">
+        style="width: 100%"
+        @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
           width="55" />
@@ -17,78 +18,142 @@
           label="姓名"
           width="180" />
         <el-table-column
-          prop="address"
+          prop="number"
           label="账号" />
         <el-table-column
-          prop="address"
+          prop="admin"
           label="管理员" />
         <el-table-column
-          prop="address"
+          prop="tel"
           label="电话" />
         <el-table-column
-          prop="address"
+          prop="status"
           label="状态" />
         <el-table-column
-          prop="address"
-          label="操作" />
-        <template slot-scope="{}">
-          <i class="fa fa-trash" title="删除">1</i>
-          <i class="fa fa-pencil" title="修改">2</i>
-          <i class="fa fa-info" title="查看详细信息" @click="toShowModel">3</i>
-        </template>
+          label="操作">
+          <template slot-scope="{row}">
+            <i class="el-icon-delete" title="删除" @click="delUser(row.id)" />
+            <i class="el-icon-edit" title="修改" @click="toUpdateUser(row)" />
+            <i class="el-icon-tickets" title="查看详细信息" @click="toShowModel" />
+          </template>
+        </el-table-column>
       </el-table>
     </div>
     <!-- 表格结束 -->
     <!-- 详细信息模态框开始 -->
     <div>
-      <user-data-dialog />
+      <user-data-dialog ref="userDataDialog" />
     </div>
-  <!-- 详细信息模态框结束 -->
+    <!-- 详细信息模态框结束 -->
+    <!-- 修改模态框组件开始 -->
+    <div>
+      <user-update-dialog ref="userUpdateDialog" />
+    </div>
+    <!-- 修改模态框组件结束 -->
   </div>
 </template>
 <script>
 import userDataDialog from './DataDialog.vue'
+import userUpdateDialog from './UpdateDialog.vue'
 export default {
   components: {
-    userDataDialog
+    userDataDialog,
+    userUpdateDialog
   },
   data() {
     return {
       tableData: [{
         date: '2016-05-02',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        address: '上海市普陀区金沙江路 1518 弄',
+        id: 1,
+        tel: 111,
+        admin: '李浩',
+        status: '启用',
+        description: '111111111111',
+        number: 1232534
       }, {
         date: '2016-05-04',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄'
+        address: '上海市普陀区金沙江路 1517 弄',
+        id: 2,
+        tel: 222,
+        admin: '李浩',
+        status: '启用',
+        description: '000000000000',
+        number: 1232534
       }, {
         date: '2016-05-01',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄'
+        address: '上海市普陀区金沙江路 1519 弄',
+        id: 3,
+        tel: 333,
+        admin: '李浩',
+        status: '启用',
+        description: '3333333333',
+        number: 1232534
       }, {
         date: '2016-05-03',
         name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄'
-      }]
-      // dialogVisible:'',
-      // // 父组件向子组件传值
-      // props:{
-      //   dialogVisible=true
-      // }
+        address: '上海市普陀区金沙江路 1516 弄',
+        id: 4,
+        tel: 444,
+        admin: '李浩',
+        status: '禁用',
+        description: '55555555555',
+        number: 1232534
+      }],
+      multipleSelection: [],
+      ids: ''
+    }
+  },
+  watch: {
+    multipleSelection: function(now, old) {
+      this.foo()
     }
   },
   methods: {
-    // 展开详细信息的模态框
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+      this.ids = this.multipleSelection.map((item) => {
+        return item.id
+      })
+    },
+    // 详情模态框
     toShowModel() {
-      this.dialogVisible = true
+      this.$refs.userDataDialog.toOpenDialog()
+    },
+    // 修改模态框
+    toUpdateUser(row) {
+      this.$refs.userUpdateDialog.toOpenDialog(row)
+    },
+    // 删除
+    delUser(id) {
+      alert(id)
+    },
+    // 拿到批量删除的ids
+    // 向父组件发送批量删除的ids
+    foo() {
+      alert(1)
+      this.$emit('headCallBack', this.ids)
     }
   }
 }
 </script>
 
 <style scoped>
-  i{
+  i {
     cursor: pointer;
+    margin-right: .5em
+  }
+  .el-icon-delete {
+    color: #F56C6C
+  }
+  .el-icon-edit {
+    color: #E6A23C
+  }
+  .el-icon-tickets {
+    color: #67C23A
   }
 </style>
+

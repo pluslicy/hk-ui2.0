@@ -1,17 +1,22 @@
 <template>
+  <!-- 详情模态框 -->
   <div class="user_data_dialog">
-    <el-dialog
-      :visible.sync="dialogVisible"
-      :before-close="handleClose"
-      title="提示"
-      width="30%">
-      <span>头像:</span><span /><br>
-      <span>地址:</span><span /><br>
-      <span>备注:</span><span />
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
+    <el-dialog :title="messageModel.title" :visible.sync="messageModel.visible">
+      <el-form :model="messageModel.form">
+        <el-form-item :label-width="formLabelWidth" label="头像:">
+          <img src="" alt="">
+        </el-form-item>
+        <el-form-item :label-width="formLabelWidth" label="地址:">
+          <img src="" alt="">
+        </el-form-item>
+        <el-form-item :label-width="formLabelWidth" label="备注:">
+          <img src="" alt="">
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="messageModel.visible = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -19,7 +24,12 @@
 export default {
   data() {
     return {
-      dialogVisible: false
+      // 详情模态框
+      messageModel: {
+        title: '',
+        visible: false
+      },
+      formLabelWidth: '120px'
     }
   },
   methods: {
@@ -29,12 +39,10 @@ export default {
           done()
         })
         .catch(_ => {})
+    },
+    toOpenDialog() {
+      this.messageModel.visible = true
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>
-
