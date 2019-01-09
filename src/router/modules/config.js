@@ -21,7 +21,7 @@ const configRouter = {
     {
       path: 'role',
       name: 'role',
-      component: () => import('@/views/nested/menu2/index'),
+      component: () => import('@/pages/config/role/Layout.vue'),
       meta: { title: '权限管理' }
     }
   ]
