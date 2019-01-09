@@ -31,16 +31,24 @@
         <template slot-scope="{row}">
           <!-- {{row.id}} -->
           <!-- <i class="fa fa-food"></i> -->
-          <i class="el-icon-edit" @click="toUpdateManager(row)" />
-          <i class="el-icon-delete" @click="deleteManager(row.id)" />
+          <i class="el-icon-view" title="详细信息" @click="toView" />
+          <i class="el-icon-edit" title="修改" @click="toUpdateManager(row)" />
+          <i class="el-icon-delete" title="删除" @click="deleteManager(row.id)" />
         </template>
       </el-table-column>
     </el-table>
+    <!-- 模态框 -->
+    <device-dialog ref="deviceDialog" />
   </div>
 </template>
 
 <script>
+import $ from 'jquery'
+import deviceDialog from './Dialog.vue'
 export default {
+  components: {
+    deviceDialog
+  },
   data() {
     return {
       devices: [{
@@ -58,9 +66,20 @@ export default {
     }
   },
   created() {
-    // this.he = $(window).height() - 230
+    this.he = $(window).height() - 230
   },
   methods: {
+    // 查看设备详细信息
+    toView() {
+      this.$refs.deviceDialog.showViewDialog()
+    },
+    // 修改设备信息
+    toUpdateManager(row) {
+      this.$refs.deviceDialog.showDialog()
+      this.$refs.deviceDialog.deviceDialog.title = '修改设备信息'
+      this.$refs.deviceDialog.deviceDialog.form = row
+    },
+    // 多选
     handleSelectionChange(val) {
       this.multipleSelection = val
     }
@@ -69,11 +88,17 @@ export default {
 </script>
 
 <style scoped>
+  /* 设备管理表格中查看图标 */
+  .device_data_table i.el-icon-view {
+    color: #909399;
+  }
+  /* 设备管理表格中修改图标 */
   .device_data_table i.el-icon-edit {
     color: #409EFF;
+    padding: .5em;
   }
+  /* 设备管理表格中删除图标 */
   .device_data_table i.el-icon-delete {
     color: #F56C6C;
-    padding-left: .5em;
   }
 </style>
