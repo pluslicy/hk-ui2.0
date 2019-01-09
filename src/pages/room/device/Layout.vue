@@ -83,9 +83,20 @@ export default {
       input10: ''
     }
   },
+  // 侦听器
+  watch: {
+    options: {
+      handler: function() {
+        alert(1)
+      },
+      deep: true
+    }
+  },
+  // 生命周期钩子
   created() {
 
   },
+  // 方法
   methods: {
     // 新增
     toAddDevice() {

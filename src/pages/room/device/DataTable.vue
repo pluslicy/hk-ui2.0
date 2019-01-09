@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import $ from 'jquery'
 export default {
   data() {
     return {
@@ -58,7 +59,7 @@ export default {
     }
   },
   created() {
-    // this.he = $(window).height() - 230
+    this.he = $(window).height() - 230
   },
   methods: {
     handleSelectionChange(val) {
