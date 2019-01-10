@@ -21,9 +21,7 @@ export default {
     }
   },
   methods: {
-    handleSizeChange(val) {
-      console.log(1)
-    },
+    // 当前页的改变
     handleCurrentChange(val) {
       console.log(1)
     }
@@ -32,6 +30,7 @@ export default {
 </script>
 
 <style scoped>
+  /* 设备管理分页 */
   .device_pagination {
     text-align: right;
   }

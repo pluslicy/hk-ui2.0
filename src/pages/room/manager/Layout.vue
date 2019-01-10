@@ -93,6 +93,7 @@
   </div>
 </template>
 <script>
+import $ from 'jquery'
 export default {
   data() {
     return {
@@ -149,13 +150,15 @@ export default {
     }
   },
   created() {
-    // this.he = $(window).height() - 230
+    // 表格高度
+    this.he = $(window).height() - 230
   },
   methods: {
     // 多选框获取信息
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
+    // 当前页的改变
     handleCurrentChange(val) {
       console.log(1)
     },
@@ -171,14 +174,20 @@ export default {
     toAddManager() {
       this.managerDialog.visible = true
       this.managerDialog.title = '新增机房信息'
+      this.managerDialog.form = {}
     },
     // 修改机房信息
     toUpdateManager(row) {
       this.managerDialog.visible = true
       this.managerDialog.title = '修改机房信息'
+      this.managerDialog.form = row
     },
     // 删除机房
     deleteManager(id) {
+
+    },
+    // 批量删除机房
+    batchDeleteManager() {
 
     }
   }
@@ -186,6 +195,7 @@ export default {
 </script>
 
 <style scoped>
+  /* 机房管理 */
   .manager {
     background-color: #ffffff;
     margin: 1em;
@@ -193,18 +203,23 @@ export default {
     border-radius: 3px;
     /* min-height: 500px; */
   }
+  /* 表单 */
   .manager_form {
     float: left;
   }
+  /* 按钮 */
   .manager_btns {
     text-align: right;
   }
+  /* 分页 */
   .manager_pagination {
     text-align: right;
   }
+  /* 表格中修改图标 */
   .manager_table i.el-icon-edit {
     color: #409EFF;
   }
+  /* 表格中删除图标 */
   .manager_table i.el-icon-delete {
     color: #F56C6C;
     padding-left: .5em;

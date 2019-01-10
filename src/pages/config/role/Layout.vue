@@ -39,6 +39,8 @@
         </el-table-column>
       </el-table>
     </div>
+    <!-- 表格组件的使用 -->
+    <!-- <role-data-table /> -->
     <!-- 表格结束 -->
     <!-- 新增模态框开始 -->
     <div class="toAddRoleDialog">
@@ -82,7 +84,11 @@
   </div>
 </template>
 <script>
+import roleDataTable from './RoleTable.vue'
 export default {
+  components: {
+    roleDataTable
+  },
   data() {
     return {
       tableData: [{
@@ -115,10 +121,10 @@ export default {
       },
       count: 1,
       // 新增模态框
-      // visible:false,
-      // form:{
-      //   name:''
-      // },
+      visible: false,
+      form: {
+        name: ''
+      },
       toAddRoleDialog: {
         title: '',
         form: {},
