@@ -18,7 +18,7 @@ import configRouter from './modules/config'
 // 机房建设
 import roomRouter from './modules/room'
 // 机房管理
-import roomManagerRouter from './modules/roomManager'
+// import roomManagerRouter from './modules/roomManager'
 
 /** note: Submenu only appear when children.length>=1
  *  detail see  https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -371,7 +371,92 @@ export const asyncRouterMap = [
   },
   */
   roomRouter,
-  roomManagerRouter,
+  // roomManagerRouter,
   configRouter,
+  // 机房监控
+  {
+    path: '/monitor',
+    component: Layout,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/pages/monitor/Layout'),
+        name: 'monitor',
+        meta: {
+          title: '机房监控',
+          icon: 'clipboard'
+        }
+      }
+    ]
+  },
+  // 警报管理
+  {
+    path: '/alarm',
+    component: Layout,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/pages/alarm/Layout'),
+        name: 'alarm',
+        meta: {
+          title: '警报管理',
+          icon: 'clipboard'
+        }
+      }
+    ]
+  },
+  // 日志管理
+  {
+    path: '/log',
+    component: Layout,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/pages/log/Layout'),
+        name: 'log',
+        meta: {
+          title: '日志管理',
+          icon: 'clipboard'
+        }
+      }
+    ]
+  },
+  // 审批管理
+  {
+    path: '/check',
+    component: Layout,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/pages/check/Layout'),
+        name: 'check',
+        meta: {
+          title: '审核管理',
+          icon: 'clipboard'
+        }
+      }
+    ]
+  },
+  // 审批管理
+  {
+    path: '/about',
+    component: Layout,
+    redirect: 'noredirect',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/pages/about/Layout'),
+        name: 'about',
+        meta: {
+          title: '关于我们',
+          icon: 'clipboard'
+        }
+      }
+    ]
+  },
   { path: '*', redirect: '/404', hidden: true }
 ]
