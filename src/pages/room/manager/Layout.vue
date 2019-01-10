@@ -27,7 +27,6 @@
       <el-table
         ref="multipleTable"
         :data="managers"
-        :height="he"
         tooltip-effect="dark"
         style="width: 100%"
         size="mini"
