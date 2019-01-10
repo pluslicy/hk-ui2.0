@@ -1,12 +1,12 @@
 <template>
   <div class="Cmodal">
     <!-- 配置项模态框 -->
-    <el-dialog :visible.sync="dialogVisible3" title="" width="100%" fullscreen>
+    <el-dialog :visible.sync="dialogVisible3" :title="title" width="100%" fullscreen>
       <span class="deviceType_title">配置项:</span>
       <el-row>
         <el-button type="primary" plain size="mini" style="float:right;margin:1em;" @click="showAddModal()">新增</el-button>
       </el-row>
-      <el-table :data="configurationType" border style="width: 100%">
+      <el-table :data="configurationType" border style="width: 100%" size="mini">
         <el-table-column align="center" prop="configitem_name" label="名称" />
         <el-table-column align="center" prop="configitem_code" label="配置项码" />
         <el-table-column align="center" prop="configitem_value" label="配置项值" />
@@ -33,7 +33,8 @@ export default {
   data() {
     return {
       dialogVisible3: false,
-      configurationType: []
+      configurationType: [],
+      title: ''
     }
   },
   methods: {

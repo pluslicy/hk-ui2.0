@@ -37,9 +37,7 @@ export default {
   margin: 1em;
   background: #ffffff;
   border-radius: 3px;
-  min-height: 840px;
   padding: 1em;
-  overflow: auto;
 }
 .deviceType .deviceType_title {
   font-size: 18px;

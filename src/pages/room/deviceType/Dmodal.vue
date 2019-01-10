@@ -1,12 +1,12 @@
 <template>
   <div class="Dmodal">
     <!-- 数据项模态框 -->
-    <el-dialog :visible.sync="dialogVisible1" title="" width="100%" fullscreen>
+    <el-dialog :visible.sync="dialogVisible1" :title="title" width="100%" fullscreen>
       <span class="deviceType_title">数据项:</span>
       <el-row>
         <el-button type="primary" plain size="mini" style="float:right;margin:1em;" @click="showAddModal()">新增</el-button>
       </el-row>
-      <el-table :data="dataType" border style="width: 100%">
+      <el-table :data="dataType" border style="width: 100%" size="mini">
         <el-table-column align="center" prop="dataitem_name" label="名称" />
         <el-table-column align="center" prop="dataitem_code" label="数据项码" />
         <el-table-column align="center" prop="dataitem_groupname" label="分组名" />
@@ -34,7 +34,8 @@ export default {
   data() {
     return {
       dialogVisible1: false,
-      dataType: []
+      dataType: [],
+      title: ''
     }
   },
   methods: {

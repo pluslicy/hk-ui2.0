@@ -1,14 +1,14 @@
 <template>
   <div class="deviceTypeTable">
     <!-- 设备类型表格 -->
-    <el-table :data="deviceTypes" style="width: 100%">
-      <el-table-column prop="row_no" label="序号" width="400" align="center" />
-      <el-table-column prop="devicetype_name" label="类型名称" width="400" align="center" />
-      <el-table-column prop="devicetype_desc" label="类型描述" width="600" align="center" />
-      <el-table-column label="操作" align="center">
+    <el-table :data="deviceTypes" :height="he" style="width: 100%" size="mini">
+      <el-table-column prop="row_no" label="序号" width="200" align="center" />
+      <el-table-column prop="devicetype_name" label="类型名称" align="center" />
+      <el-table-column prop="devicetype_desc" label="类型描述" align="center" />
+      <el-table-column label="操作" align="center" width="300">
         <template slot-scope="{row}">
           <el-dropdown :hide-on-click="false" trigger="click" @command="handleCommand">
-            <span class="el-dropdown-link" @click="load(row)">查&nbsp;&nbsp;&nbsp;&nbsp;看<i class="el-icon-arrow-down el-icon--right" /></span>
+            <span class="el-dropdown-link" @click="load(row)">&nbsp;&nbsp;&nbsp;&nbsp;查看<i class="el-icon-arrow-down el-icon--right" /></span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="a">数据项</el-dropdown-item>
               <el-dropdown-item command="b">操作项</el-dropdown-item>
@@ -25,6 +25,7 @@
 </template>
 <script type="text/javascript">
 import axios from '@/http/axios'
+import $ from 'jquery'
 import Dmodal from '@/pages/room/deviceType/Dmodal.vue'
 import Cmodal from '@/pages/room/deviceType/Cmodal.vue'
 import Omodal from '@/pages/room/deviceType/Omodal.vue'
@@ -41,6 +42,7 @@ export default {
   },
   created() {
     this.loadDeviceTypes()
+    this.he = $(window).height() - 150
   },
   methods: {
     handleCommand(command) {
@@ -65,9 +67,12 @@ export default {
         })
     },
     load(row) {
+      this.$refs.Dmodal.title = row.devicetype_name
       this.$refs.Dmodal.dataType = row.dataitems
       this.$refs.Omodal.operationType = row.operitems
+      this.$refs.Omodal.title = row.devicetype_name
       this.$refs.Cmodal.configurationType = row.configitems
+      this.$refs.Cmodal.title = row.devicetype_name
     }
   }
 }

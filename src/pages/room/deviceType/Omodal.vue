@@ -1,12 +1,12 @@
 <template>
   <div class="Omodal">
     <!-- 操作项模态框 -->
-    <el-dialog :visible.sync="dialogVisible2" title="" width="100%" fullscreen>
+    <el-dialog :visible.sync="dialogVisible2" :title="title" width="100%" fullscreen>
       <span class="deviceType_title">操作项:</span>
       <el-row>
         <el-button type="primary" plain size="mini" style="float:right;margin:1em;" @click="showAddModal()">新增</el-button>
       </el-row>
-      <el-table :data="operationType" border style="width: 100%">
+      <el-table :data="operationType" border style="width: 100%" size="mini">
         <el-table-column align="center" prop="operitem_name" label="名称" />
         <el-table-column align="center" prop="operitem_code" label="操作项码" />
         <el-table-column align="center" prop="operitem_type" label="类型" />
@@ -33,7 +33,8 @@ export default {
   data() {
     return {
       dialogVisible2: false,
-      operationType: []
+      operationType: [],
+      title: ''
     }
   },
   methods: {
