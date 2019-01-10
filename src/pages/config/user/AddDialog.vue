@@ -2,7 +2,7 @@
   <!-- 新增权限模态框 -->
   <div class="user_data_dialog1">
     <el-dialog :title="addUserModel.title" :visible.sync="addUserModel.visible" center="" width="35%">
-      <el-form ref="addUserModel.form" :model="addUserModel.form" :rules="rules">
+      <el-form ref="addUserModel.form" :model="addUserModel.form" :rules="rules" label-position="left" label-width="80px">
         <el-form-item :label-width="formLabelWidth" label="账号:" prop="number">
           <el-input v-model="addUserModel.form.number" autocomplete="off" />
         </el-form-item>
@@ -97,6 +97,8 @@ export default {
   methods: {
     // 弹出修改模态框
     toOpenDialog() {
+      this.addUserModel.title = '添加用户'
+      this.addUserModel.form = {}
       this.addUserModel.visible = true
     }
   }

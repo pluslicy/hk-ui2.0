@@ -2,6 +2,8 @@
   <div class="role_data_table">
     <el-table
       :data="tableData"
+      :height="he"
+      size="mini"
       style="width: 100%"
       @selection-change="handleSelectionChange">
       <el-table-column
@@ -19,10 +21,12 @@
         prop="address"
         label="角色权限信息" />
       <el-table-column
-        prop="address"
+        prop="name"
         label="用户名称" />
       <el-table-column
         prop="address"
+        width="100"
+        align="center"
         label="操作">
         <template slot-scope="{row}">
           <i class="el-icon-delete" title="删除" @click="delRole(row.id)" />
@@ -30,10 +34,18 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 修改模态框开始 -->
+    <role-update-dialog ref="roleUpdateDialog" />
+    <!-- 修改模态框结束 -->
   </div>
 </template>
 <script>
+import roleUpdateDialog from './updateRoleDialog.vue'
+import $ from 'jquery'
 export default {
+  components: {
+    roleUpdateDialog
+  },
   data() {
     return {
       tableData: [{
@@ -59,10 +71,17 @@ export default {
       }]
     }
   },
+  created() {
+    // 表格高度
+    this.he = $(window).height() - 194
+  },
   methods: {
     // 多选框
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    toUpdateRoleDialog(row) {
+      this.$refs.roleUpdateDialog.toOpenDialog(row)
     }
   }
 }

@@ -4,11 +4,14 @@
       <!-- 表格开始 -->
       <el-table
         :data="tableData"
+        :height="he"
+        size="mini"
         style="width: 100%"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
-          width="55" />
+          width="55"
+          fixed />
         <el-table-column
           prop="date"
           label="序号"
@@ -30,11 +33,15 @@
           prop="status"
           label="状态" />
         <el-table-column
-          label="操作">
+          label="操作"
+          fixed="right"
+          width="120"
+          align="center">
           <template slot-scope="{row}">
             <i class="el-icon-delete" title="删除" @click="delUser(row.id)" />
             <i class="el-icon-edit" title="修改" @click="toUpdateUser(row)" />
             <i class="el-icon-tickets" title="查看详细信息" @click="toShowModel" />
+            <i class="el-icon-setting" title="修改密码" @click="toShowPasswordModel" />
           </template>
         </el-table-column>
       </el-table>
@@ -50,15 +57,23 @@
       <user-update-dialog ref="userUpdateDialog" />
     </div>
     <!-- 修改模态框组件结束 -->
+    <!-- 修改密码模态框开始 -->
+    <div>
+      <user-password-dialog ref="userPasswordDialog" />
+    </div>
+    <!-- 修改密码模态框结束 -->
   </div>
 </template>
 <script>
+import $ from 'jquery'
 import userDataDialog from './DataDialog.vue'
 import userUpdateDialog from './UpdateDialog.vue'
+import userPasswordDialog from './PasswordDialog.vue'
 export default {
   components: {
     userDataDialog,
-    userUpdateDialog
+    userUpdateDialog,
+    userPasswordDialog
   },
   data() {
     return {
@@ -104,7 +119,7 @@ export default {
         number: 1232534
       }],
       multipleSelection: [],
-      ids: ''
+      ids: []
     }
   },
   watch: {
@@ -112,12 +127,15 @@ export default {
       this.foo()
     }
   },
+  created() {
+    this.he = $(window).height() - 237
+  },
   methods: {
     handleSelectionChange(val) {
       this.multipleSelection = val
-      this.ids = this.multipleSelection.map((item) => {
-        return item.id
-      })
+      // this.ids = this.multipleSelection.map((item) => {
+      //   return item.id
+      // })
     },
     // 详情模态框
     toShowModel() {
@@ -127,6 +145,10 @@ export default {
     toUpdateUser(row) {
       this.$refs.userUpdateDialog.toOpenDialog(row)
     },
+    // 修改密码模态框
+    toShowPasswordModel() {
+      this.$refs.userPasswordDialog.toOpenDialog()
+    },
     // 删除
     delUser(id) {
       alert(id)
@@ -134,8 +156,12 @@ export default {
     // 拿到批量删除的ids
     // 向父组件发送批量删除的ids
     foo() {
-      alert(1)
-      this.$emit('headCallBack', this.ids)
+      // alert(1)
+      // this.$emit('headCallBack', this.ids)
+      this.ids = this.multipleSelection.map((item) => {
+        return item.id
+      })
+      alert(this.ids)
     }
   }
 }

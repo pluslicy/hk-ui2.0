@@ -2,7 +2,7 @@
   <!-- 修改权限模态框 -->
   <div class="user_data_dialog2">
     <el-dialog :title="updateModel.title" :visible.sync="updateModel.visible" width="35%">
-      <el-form ref="ruleForm" :model="updateModel.form" :rules="rules">
+      <el-form ref="ruleForm" :model="updateModel.form" :rules="rules" label-position="left">
         <el-form-item :label-width="formLabelWidth" label="账号:" prop="number">
           <el-input v-model="updateModel.form.number" autocomplete="off" readonly />
         </el-form-item>
@@ -96,6 +96,7 @@ export default {
     // 弹出修改模态框
     toOpenDialog(row) {
       console.log(row)
+      this.updateModel.title = '修改用户'
       this.updateModel.form = row
       this.updateModel.visible = true
     },

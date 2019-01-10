@@ -1,7 +1,7 @@
 <template>
   <!-- 授权模态框 -->
   <div class="user_accredit_dialog">
-    <el-dialog :title="accreditDialog.title" :visible.sync="accreditDialog.visible">
+    <el-dialog :title="accreditDialog.title" :visible.sync="accreditDialog.visible" width="25%" center="">
       <el-form :model="accreditDialog.form">
         <el-checkbox v-model="checked1">机房管理员</el-checkbox>
         <el-checkbox v-model="checked2">普通管理员</el-checkbox>
@@ -29,6 +29,7 @@ export default {
   },
   methods: {
     toOpenDialog() {
+      this.accreditDialog.title = '添加授权'
       this.accreditDialog.visible = true
     }
   }

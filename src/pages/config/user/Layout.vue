@@ -2,32 +2,29 @@
   <div class="user">
     <!-- 下拉框按钮组合开始 -->
     <div class="top">
-      <el-select v-model="value5" clearable placeholder="请选择">
+      <el-select v-model="value5" clearable placeholder="请选择" size="mini">
         <el-option
           v-for="item in options"
           :key="item.value"
           :label="item.label"
           :value="item.value" />
       </el-select>
-      <el-input placeholder="请输入帐号" style="width:200px" />
-      <el-input placeholder="请输入用户姓名" style="width:200px" />
-      <el-button type="primary" plain>查询</el-button>
-      <el-button type="primary" plain @click="toAddUser()">新增</el-button>
-      <el-button type="primary" plain @click="toAccredit()">授权</el-button>
-      <el-button type="primary" plain @click="delUsers()">批量删除</el-button>
+      <el-input placeholder="请输入帐号" style="width:200px" size="mini" />
+      <el-input placeholder="请输入用户姓名" style="width:200px" size="mini" />
+      <el-button type="primary" plain size="mini">查询</el-button>
+      <div class="btns">
+        <el-button size="mini" type="primary" plain @click="toAddUser()">新增</el-button>
+        <el-button size="mini" type="primary" plain @click="toAccredit()">授权</el-button>
+        <el-button size="mini" type="primary" plain @click="delUsers">批量删除</el-button>
+      </div>
+      <!-- <i @headCallBack="showChildMessage" /> -->
     </div>
     <!-- 下拉框按钮组合结束 -->
     <!-- 表格组件调用 -->
     <div>
-      <user-data-table />
+      <user-data-table ref="userDataTable" />
     </div>
     <!-- 表格组件调用结束 -->
-    <!-- 新增模态框开始 -->
-    <user-add-dialog ref="userAddDialog" />
-    <!-- 新增模态框结束 -->
-    <!-- 授权模态框开始 -->
-    <user-accredit-dialog ref="userAccreditDialog" />
-    <!-- 授权模态框结束 -->
     <!-- 分页开始 -->
     <div class="paging">
       <el-pagination
@@ -38,8 +35,14 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />
     </div>
+    <!-- 新增模态框开始 -->
+    <user-add-dialog ref="userAddDialog" />
+    <!-- 新增模态框结束 -->
+    <!-- 授权模态框开始 -->
+    <user-accredit-dialog ref="userAccreditDialog" />
+    <!-- 授权模态框结束 -->
     <!-- 监听子组件事件 -->
-    <child @headCallBack="showChildMessage" />
+    <!-- <child  /> -->
   </div>
 </template>
 <script>
@@ -71,7 +74,7 @@ export default {
         value: '选项5',
         label: '北京烤鸭'
       }],
-      ids: 0,
+      ids: [],
       value5: '',
       // 下拉框结束
       // input输入框
@@ -95,16 +98,6 @@ export default {
     toAccredit() {
       this.$refs.userAccreditDialog.toOpenDialog()
     },
-    // 批量删除
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    delUsers() {
-      const ids = this.multipleSelection.map((item) => {
-        return item.id
-      })
-      alert(ids)
-    },
     // 分页
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`)
@@ -112,11 +105,10 @@ export default {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`)
     },
-    showChildMessage(ids) {
-      this.ids = ids
-      alert(2)
-      console.log(ids)
-      alert(this.ids)
+    // 获取批量删除所有的的id
+    delUsers() {
+      this.ids = this.$refs.userDataTable.ids
+      console.log(this.ids)
     }
   }
 }
@@ -126,12 +118,15 @@ export default {
     margin: 1em;
     background: #ffffff;
     border-radius: 3px;
-    min-height: 400px;
+    /* min-height: 850px; */
     padding: 1em;
+    overflow: hidden;
   }
-
+  .btns{
+    float: right;
+  }
   .top * {
-    margin-right: 2em;
+    /* margin-right: 2em; */
     margin-bottom: 1em
   }
   i {
