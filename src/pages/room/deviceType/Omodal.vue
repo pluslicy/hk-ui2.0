@@ -12,9 +12,9 @@
         <el-table-column align="center" prop="operitem_type" label="类型" />
         <el-table-column align="center" prop="operitem_desc" label="描述" />
         <el-table-column align="center" prop="name" label="操作">
-          <template slot-scope="scope">
-            <i class="fa fa-edit" style="color:#448db8" title="编辑" />
-            <i class="fa fa-trash-o" style="color:#f56c6c" title="删除" />
+          <template slot-scope="{row}">
+            <i class="fa fa-edit" style="color:#448db8" title="编辑" @click="toUpdateOperation(row)" />
+            <i class="fa fa-trash-o" style="color:#f56c6c" title="删除" @click="deleteOperationType(row.operitem_id)" />
           </template>
         </el-table-column>
       </el-table>
@@ -25,7 +25,7 @@
 </template>
 <script type="text/javascript">
 import OaddModal from '@/pages/room/deviceType/OaddModal.vue'
-// import axios from '@/http/axios'
+import axios from '@/http/axios'
 export default {
   components: {
     OaddModal
@@ -34,12 +34,38 @@ export default {
     return {
       dialogVisible2: false,
       operationType: [],
-      title: ''
+      title: '',
+      currentDevicetypeId: ''
     }
   },
   methods: {
     showAddModal() {
+      this.$refs.OaddModal.currentDevicetypeId1 = this.currentDevicetypeId
       this.$refs.OaddModal.dialogFormVisible2 = true
+    },
+    deleteOperationType(oId) {
+      const obj = { operitem_ids: [oId + ''] }
+      axios.post('/api_devicetype/delete_operitems/', obj)
+        .then(() => {
+          this.update()
+          this.$notify({
+            title: '删除成功',
+            message: '这是一条成功的提示消息',
+            type: 'success'
+          })
+        }).catch(() => {
+          this.$notify.error({
+            title: '删除失败',
+            message: '这是一条错误的提示消息'
+          })
+        })
+    },
+    update() {
+      this.$parent.loadDeviceTypes()
+    },
+    toUpdateOperation(row) {
+      this.$refs.OaddModal.dialogFormVisible2 = true
+      this.$refs.OaddModal.operitemForm = row
     }
   }
 }

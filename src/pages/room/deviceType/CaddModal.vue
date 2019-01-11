@@ -5,7 +5,6 @@
       <el-form ref="configitemForm" :model="configitemForm" :rules="configitemRules" label-width="120px" class="demo-ruleForm">
         <el-form-item label="配置项名称" prop="configitem_name">
           <el-input v-model="configitemForm.configitem_name" />
-          {{ configitemForm }}
         </el-form-item>
         <el-form-item label="配置项码" prop="configitem_code">
           <el-input v-model="configitemForm.configitem_code" />
@@ -22,18 +21,24 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="close">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible3 = false">确 定</el-button>
+        <el-button type="primary" @click="add()">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script type="text/javascript">
-// import axios from '@/http/axios'
+import axios from '@/http/axios'
 export default {
   data() {
     return {
+      currentDevicetypeId1: '',
       dialogFormVisible3: false,
       configitemForm: {
+        configitem_name: '',
+        configitem_code: '',
+        configitem_value: '',
+        priority: '',
+        configitem_desc: ''
       },
       configitemRules: {
         configitem_name: [
@@ -55,11 +60,49 @@ export default {
       }
     }
   },
+  computed: {
+    priorityHandler() {
+      return this.configitemForm.priority
+    }
+  },
+  watch: {
+    priorityHandler(newValue, oldValue) {
+      this.configitemForm.priority = Number(this.configitemForm.priority)
+    }
+  },
   methods: {
     close() {
       this.dialogFormVisible3 = false
       this.configitemForm = {}
+    },
+    add() {
+      this.dialogFormVisible3 = false
+      const item = {
+        configitem_code: this.configitemForm.configitem_code,
+        configitem_name: this.configitemForm.configitem_name,
+        configitem_value: this.configitemForm.configitem_value,
+        configitem_desc: this.configitemForm.configitem_desc,
+        priority: this.configitemForm.priority,
+        devicetype: this.currentDevicetypeId1
+      }
+      const obj = { configitems: [item] }
+      axios.post('/api_devicetype/create_configitems/', obj)
+        .then(() => {
+          this.$parent.update()
+          this.$notify({
+            title: '创建成功',
+            message: '这是一条成功的提示消息',
+            type: 'success'
+          })
+        }).catch(() => {
+          this.$notify.error({
+            title: '创建失败',
+            message: '这是一条错误的提示消息'
+          })
+        })
+      this.configitemForm = {}
     }
   }
 }
+
 </script>
