@@ -3,14 +3,14 @@
   <div class="manager">
     <!-- 表单 -->
     <div class="manager_form">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline" size="mini">
+      <el-form :inline="true" class="demo-form-inline" size="mini">
         <el-form-item label="">
-          <el-select v-model="value4" clearable placeholder="选择机房">
+          <el-select v-model="params.room_id" clearable placeholder="选择机房">
             <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value" />
+              v-for="room in roomNames"
+              :key="room.room_id"
+              :label="room.room_name"
+              :value="room.room_id" />
               <!-- </el-option> -->
           </el-select>
         </el-form-item>
@@ -21,41 +21,69 @@
       <el-button type="primary" plain size="mini" @click="toAddManager">新增</el-button>
       <el-button type="primary" plain size="mini" @click="batchDeleteManager">批量删除</el-button>
     </div>
+    <!-- 机房列表 -->
+    <!-- <div class="room_list">
+      <el-row :gutter="20">
+        <el-col v-for="room in rooms" :key="room.room_id" :span="6">
+          <div class="room">
+            <el-row>
+              <el-col :span="8">
+                <img src="room.room_plane_imgpath" alt="..." class="room_img">
+              </el-col>
+              <el-col :span="16">
+                <div>
+                  <div class="room_name">{{ room.room_name }}</div>
+                  <div class="device_count">{{ room.device_count }}</div>
+                </div>
+                <div class="room_desc">{{ room.room_desc }}</div>
+                <div class="room_btns">
+                  <i class="el-icon-edit" title="修改" @click="toUpdateManager(row)" />
+                  <i class="el-icon-delete" title="删除" @click="deleteManager(row.room_id)" />
+                </div>
+              </el-col>
+            </el-row>
+          </div>
+        </el-col>
+      </el-row>
+    </div> -->
     <!-- 数据表格 -->
     <!-- <manager-data-table /> -->
     <div class="manager_table">
       <el-table
+        v-loading="loading"
         ref="multipleTable"
-        :data="managers"
+        :data="rooms"
+        :height="he"
         tooltip-effect="dark"
         style="width: 100%"
         size="mini"
         @selection-change="handleSelectionChange">
         <el-table-column
           type="selection"
+          prop="room_id"
+          align="center"
           width="55" />
-        <!-- </el-table-column> -->
         <el-table-column
-          prop="date"
-          label="日期" />
-        <!-- </el-table-column> -->
+          prop="room_name"
+          label="名称"
+          align="center"
+          width="200" />
         <el-table-column
-          prop="name"
-          label="姓名" />
-        <!-- </el-table-column> -->
+          prop="device_count"
+          label="设备数量"
+          align="center"
+          width="200" />
         <el-table-column
-          prop="address"
-          label="地址" />
-        <!-- </el-table-column> -->
+          prop="room_desc"
+          label="机房描述"
+          align="center" />
         <el-table-column
-          width="80"
-          label="操作">
+          width="100"
+          label="操作"
+          align="center">
           <template slot-scope="{row}">
-            <!-- <i class="fa fa-food"></i> -->
-            <i class="el-icon-edit" @click="toUpdateManager(row)" />
-            <!-- </i> -->
-            <i class="el-icon-delete" @click="deleteManager(row.id)" />
-            <!-- </i> -->
+            <i class="el-icon-edit" title="修改" @click="toUpdateManager(row)" />
+            <i class="el-icon-delete" title="删除" @click="deleteManager(row.room_id)" />
           </template>
         </el-table-column>
       </el-table>
@@ -64,8 +92,8 @@
     <!-- <manager-pagination /> -->
     <div class="manager_pagination">
       <el-pagination
-        :page-size="100"
-        :total="1000"
+        :total="total"
+        :page-size="20"
         layout="total, prev, pager, next"
         @current-change="handleCurrentChange" />
         <!-- </el-pagination> -->
@@ -74,13 +102,14 @@
     <!-- <manager-dialog /> -->
     <div class="manager_dialog">
       <el-dialog :visible.sync="managerDialog.visible" :title="managerDialog.title" :before-close="closeDialog" width="30%">
-        <el-form :model="managerDialog.form" size="mini">
-          <el-form-item :label-width="formLabelWidth" label="机房名称">
-            <el-input v-model="managerDialog.form.name" autocomplete="off" clearable />
+        <!-- {{ managerDialog.form }} -->
+        <el-form ref="ruleForm" :rules="rules" :model="managerDialog.form" size="mini">
+          <el-form-item :label-width="formLabelWidth" prop="room_name" label="机房名称">
+            <el-input v-model="managerDialog.form.room_name" autocomplete="off" clearable />
             <!-- </el-input> -->
           </el-form-item>
-          <el-form-item :label-width="formLabelWidth" label="机房描述">
-            <el-input :rows="2" v-model="textarea" type="textarea" placeholder="" />
+          <el-form-item :label-width="formLabelWidth" prop="room_desc" label="机房描述">
+            <el-input :rows="2" v-model="managerDialog.form.room_desc" type="textarea" placeholder="" />
             <!-- </el-input> -->
           </el-form-item>
         </el-form>
@@ -93,82 +122,99 @@
   </div>
 </template>
 <script>
+import axios from '@/http/axios'
 import $ from 'jquery'
 export default {
   data() {
     return {
-      formInline: {
-        user: '',
-        region: ''
+      // 加载
+      loading: false,
+      // 所有机房
+      rooms: [],
+      // 机房名称
+      roomNames: [],
+      // 机房总数
+      total: 1,
+      // 监听数据
+      params: {
+        room_id: undefined,
+        page: 1
       },
-      options: [{
-        value: '1',
-        label: '我的机房'
-      }, {
-        value: '2',
-        label: '我的机房2'
-      }, {
-        value: '3',
-        label: '我的机房3'
-      }, {
-        value: '4',
-        label: '我的机房4'
-      }, {
-        value: '5',
-        label: '我的机房5'
-      }],
-      value4: '',
-      managers: [{
-        id: 1,
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        id: 2,
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
+      // 验证规则
+      rules: {
+        room_name: [
+          { required: true, message: '请输入活动名称', trigger: 'blur' },
+          { min: 3, max: 6, message: '长度在 3 到 6 个字符', trigger: 'blur' }
+        ],
+        room_desc: [
+          { required: true, message: '请填写活动形式', trigger: 'blur' }
+        ]
+      },
+      // 每个机房数据
       multipleSelection: [],
-      currentPage1: 5,
+      // 模态框
       managerDialog: {
         title: '',
         visible: false,
-        form: {
-          name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        }
+        form: {}
       },
-      textarea: '',
+      // 表单label宽度
       formLabelWidth: '100px'
+    }
+  },
+  watch: {
+    params: {
+      handler: function() {
+        this.findAllRoom()
+      },
+      deep: true
+    },
+    'params.room_id': function() {
+      this.params.page = 1
     }
   },
   created() {
     // 表格高度
     this.he = $(window).height() - 230
+    // 加载所有机房信息
+    this.findAllRoom()
+    // 加载所有机房名称
+    this.findAllRoomName()
   },
   methods: {
-    // 多选框获取信息
-    handleSelectionChange(val) {
-      this.multipleSelection = val
-    },
-    // 当前页的改变
-    handleCurrentChange(val) {
-      console.log(1)
-    },
-    // 关闭模态框
-    closeDialog() {
-      this.managerDialog.visible = false
-    },
     // 保存或修改机房信息
     saveOrUpdateManager() {
-      this.closeDialog()
+      this.$refs.ruleForm.validate((valid) => {
+        if (valid) {
+          if (this.managerDialog.form.room_id) {
+            // 保存修改
+            axios.post('/api_room/update_room/', this.managerDialog.form)
+              .then(() => {
+                this.$notify({
+                  title: '成功',
+                  message: '保存成功',
+                  type: 'success'
+                })
+                this.findAllRoom()
+                this.findAllRoomName()
+                this.closeDialog()
+              })
+          } else {
+            // 保存新增
+            axios.post('/api_room/create_room/', this.managerDialog.form)
+              .then(() => {
+                this.$notify({
+                  title: '成功',
+                  message: '保存成功',
+                  type: 'success'
+                })
+                this.findAllRoom()
+                this.findAllRoomName()
+                this.closeDialog()
+              })
+          }
+        }
+      })
     },
     // 新增机房信息
     toAddManager() {
@@ -184,11 +230,96 @@ export default {
     },
     // 删除机房
     deleteManager(id) {
-
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          axios.post('/api_room/delete_room/', {
+            room_ids: [id]
+          })
+            .then(() => {
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success'
+              })
+              this.findAllRoom()
+              this.findAllRoomName()
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        })
     },
     // 批量删除机房
     batchDeleteManager() {
-
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          const ids = this.multipleSelection.map(item => item.room_id)
+          axios.post('/api_room/delete_room/', {
+            room_ids: ids
+          })
+            .then(() => {
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success'
+              })
+              this.findAllRoom()
+              this.findAllRoomName()
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        })
+    },
+    // 多选框获取信息
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    // 当前页的改变
+    handleCurrentChange(page) {
+      console.log(page)
+      this.params.page = page
+    },
+    // 关闭模态框
+    closeDialog() {
+      this.managerDialog.visible = false
+    },
+    // 获取所有机房信息
+    findAllRoom() {
+      this.loading = true
+      axios.get('/api_room/list_room/', {
+        params: this.params
+      })
+        .then(({ data }) => {
+          console.log(data)
+          this.rooms = data.results
+          this.total = data.count
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    // 获取所有机房名称
+    findAllRoomName() {
+      axios.get('/api_room/list_all_room/')
+        .then(({ data }) => {
+          console.log(data)
+          this.roomNames = data
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   }
 }
@@ -210,6 +341,42 @@ export default {
   /* 按钮 */
   .manager_btns {
     text-align: right;
+    margin-bottom: 20px;
+  }
+  .room_list .room {
+    /* border: 1px solid #ededed; */
+    background: #f0f2f5;
+    margin: 10px;
+    padding: 10px;
+  }
+  .room_list .room_img {
+    height: 100px;
+    width: 100px;
+    /* border: 1px solid #ccc; */
+  }
+  .room_list .room_name{
+    /* font-size: 14px; */
+    float: left;
+    line-height: 3em;
+  }
+  .room_list .device_count{
+    text-align: right;
+    line-height: 3em;
+  }
+  .room_list .room_desc {
+    height: 50px;
+  }
+  .room_list .room_btns {
+    text-align: right
+  }
+  /* 表格中修改图标 */
+  .room_list i.el-icon-edit {
+    color: #409EFF;
+  }
+  /* 表格中删除图标 */
+  .room_list i.el-icon-delete {
+    color: #F56C6C;
+    padding-left: .5em;
   }
   /* 分页 */
   .manager_pagination {

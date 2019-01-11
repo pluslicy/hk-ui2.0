@@ -2,6 +2,7 @@
   <!-- 设备管理数据 -->
   <div class="device_data_table">
     <el-table
+      v-loading="loading"
       ref="multipleTable"
       :data="devices"
       :height="he"
@@ -10,24 +11,36 @@
       size="mini"
       @selection-change="handleSelectionChange">
       <el-table-column
+        prop="device_id"
+        fixed="left"
         type="selection"
+        align="center"
         width="55" />
       <!-- </el-table-column> -->
       <el-table-column
-        prop="date"
-        label="日期" />
+        prop="device_name"
+        label="名称"
+        align="center" />
       <!-- </el-table-column> -->
       <el-table-column
-        prop="name"
-        label="姓名" />
+        prop="device_code"
+        label="设备码"
+        align="center" />
       <!-- </el-table-column> -->
       <el-table-column
-        prop="address"
-        label="地址" />
+        prop="devicetype.devicetype_name"
+        label="类型"
+        align="center" />
       <!-- </el-table-column> -->
       <el-table-column
-        width="80"
-        label="操作">
+        prop="room.room_name"
+        label="所属机房"
+        align="center" />
+      <!-- </el-table-column> -->
+      <el-table-column
+        width="100"
+        label="操作"
+        align="center">
         <template slot-scope="{row}">
           <!-- {{row.id}} -->
           <!-- <i class="fa fa-food"></i> -->
@@ -43,6 +56,7 @@
 </template>
 
 <script>
+import axios from '@/http/axios'
 import $ from 'jquery'
 import deviceDialog from './Dialog.vue'
 export default {
@@ -51,22 +65,16 @@ export default {
   },
   data() {
     return {
-      devices: [{
-        id: 1,
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }, {
-        id: 2,
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }],
+      // 加载
+      loading: false,
+      // 所有设备
+      devices: [],
       multipleSelection: []
     }
   },
   created() {
     this.he = $(window).height() - 230
+    this.findAllDevice()
   },
   methods: {
     // 查看设备详细信息
@@ -82,6 +90,21 @@ export default {
     // 多选
     handleSelectionChange(val) {
       this.multipleSelection = val
+    },
+    // 获取所有的设备
+    findAllDevice() {
+      this.loading = true
+      axios.get('/api_device/list_device/')
+        .then(({ data }) => {
+          console.log(data)
+          this.devices = data.results
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+        .finally(() => {
+          this.loading = false
+        })
     }
   }
 }
