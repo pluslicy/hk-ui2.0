@@ -13,7 +13,7 @@
         <el-table-column align="center" prop="configitem_desc" label="描述" />
         <el-table-column align="center" label="操作">
           <template slot-scope="{row}">
-            <i class="fa fa-edit" style="color:#448db8" title="编辑" />
+            <i class="fa fa-edit" style="color:#448db8" title="编辑" @click="toUpdateConfiguration(row)" />
             <i class="fa fa-trash-o" style="color:#f56c6c" title="删除" @click="deleteConfigurationType(row.configitem_id)" />
           </template>
         </el-table-column>
@@ -34,30 +34,38 @@ export default {
     return {
       dialogVisible3: false,
       configurationType: [],
-      title: ''
+      title: '',
+      currentDevicetypeId: ''
     }
   },
   methods: {
     showAddModal() {
+      this.$refs.CaddModal.currentDevicetypeId1 = this.currentDevicetypeId
       this.$refs.CaddModal.dialogFormVisible3 = true
     },
     deleteConfigurationType(oId) {
       const obj = { configitem_ids: [oId + ''] }
-      // console.log('222222222222222222', obj)
       axios.post('/api_devicetype/delete_configitems/', obj)
         .then(() => {
+          this.update()
           this.$notify({
             title: '删除成功',
             message: '这是一条成功的提示消息',
             type: 'success'
           })
         }).catch(() => {
-          // console.log('1111111111111111111111111111',oId)
           this.$notify.error({
             title: '删除失败',
             message: '这是一条错误的提示消息'
           })
         })
+    },
+    update() {
+      this.$parent.loadDeviceTypes()
+    },
+    toUpdateConfiguration(row) {
+      this.$refs.CaddModal.dialogFormVisible3 = true
+      this.$refs.CaddModal.configitemForm = row
     }
   }
 }

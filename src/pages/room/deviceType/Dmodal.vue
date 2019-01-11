@@ -11,11 +11,11 @@
         <el-table-column align="center" prop="dataitem_code" label="数据项码" />
         <el-table-column align="center" prop="dataitem_groupname" label="分组名" />
         <el-table-column align="center" prop="dataitem_desc" label="描述" />
-        <el-table-column align="center" prop="dataitem_unit" label="单位" />
+        <el-table-column align="center" prop="row" label="单位" />
         <el-table-column align="center" label="操作">
-          <template slot-scope="scope">
-            <i class="fa fa-edit" style="color:#448db8" title="编辑" @click="showAddModal()" />
-            <i class="fa fa-trash-o" style="color:#f56c6c" title="删除" />
+          <template slot-scope="{row}">
+            <i class="fa fa-edit" style="color:#448db8" title="编辑" @click="toUpdateData(row)" />
+            <i class="fa fa-trash-o" style="color:#f56c6c" title="删除" @click="deleteDataType(row.dataitem_id)" />
           </template>
         </el-table-column>
       </el-table>
@@ -25,7 +25,7 @@
   </div>
 </template>
 <script type="text/javascript">
-// import axios from '@/http/axios'
+import axios from '@/http/axios'
 import DaddModal from '@/pages/room/deviceType/DaddModal.vue'
 export default {
   components: {
@@ -35,12 +35,38 @@ export default {
     return {
       dialogVisible1: false,
       dataType: [],
-      title: ''
+      title: '',
+      currentDevicetypeId: ''
     }
   },
   methods: {
     showAddModal() {
+      this.$refs.DaddModal.currentDevicetypeId1 = this.currentDevicetypeId
       this.$refs.DaddModal.dialogFormVisible1 = true
+    },
+    deleteDataType(oId) {
+      const obj = { dataitem_ids: [oId + ''] }
+      axios.post('/api_devicetype/delete_dataitems/', obj)
+        .then(() => {
+          this.update()
+          this.$notify({
+            title: '删除成功',
+            message: '这是一条成功的提示消息',
+            type: 'success'
+          })
+        }).catch(() => {
+          this.$notify.error({
+            title: '删除失败',
+            message: '这是一条错误的提示消息'
+          })
+        })
+    },
+    update() {
+      this.$parent.loadDeviceTypes()
+    },
+    toUpdateData(row) {
+      this.$refs.DaddModal.dialogFormVisible1 = true
+      this.$refs.DaddModal.dataitemForm = row
     }
   }
 }
