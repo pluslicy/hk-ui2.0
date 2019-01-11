@@ -2,76 +2,143 @@
   <div class="DaddModal">
     <!-- 数据项新增模态框 -->
     <el-dialog :visible.sync="dialogFormVisible1" title="新增数据项类型">
-      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="120px" class="demo-ruleForm">
-        <el-form-item label="数据项名称" prop="name">
-          <el-input v-model="ruleForm.name" />
+      <el-form ref="dataitemForm" :model="dataitemForm" :rules="dataitemRules" label-width="120px" class="demo-ruleForm">
+        <el-form-item label="数据项名称" prop="dataitem_name">
+          <el-input v-model="dataitemForm.dataitem_name" />
         </el-form-item>
-        <el-form-item label="数据项码" prop="name">
-          <el-input v-model="ruleForm.name" />
+        <el-form-item label="数据项码" prop="dataitem_code">
+          <el-input v-model="dataitemForm.dataitem_code" />
         </el-form-item>
-        <el-form-item label="数据项单位" prop="name">
-          <el-input v-model="ruleForm.name" />
+        <el-form-item label="数据项单位" prop="dataitem_unit">
+          <el-input v-model="dataitemForm.dataitem_unit" />
         </el-form-item>
-        <el-form-item label="数据项分组名" prop="name">
-          <el-input v-model="ruleForm.name" />
+        <el-form-item label="数据项分组名" prop="dataitem_groupname">
+          <el-input v-model="dataitemForm.dataitem_groupname" />
         </el-form-item>
-        <el-form-item label="数据项优先级" prop="name">
-          <el-input v-model="ruleForm.name" />
+        <el-form-item label="数据项优先级" prop="priority">
+          <el-input v-model="dataitemForm.priority" />
         </el-form-item>
-        <el-form-item label="数据项描述" prop="desc">
-          <el-input v-model="ruleForm.desc" type="textarea" />
+        <el-form-item label="数据项描述" prop="dataitem_desc">
+          <el-input v-model="dataitemForm.dataitem_desc" type="textarea" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible1 = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible1 = false">确 定</el-button>
+        <el-button @click="close()">取 消</el-button>
+        <el-button type="primary" @click="add()">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script type="text/javascript">
-// import axios from '@/http/axios'
+import axios from '@/http/axios'
 export default {
   data() {
     return {
+      currentDevicetypeId1: '',
       dialogFormVisible1: false,
-      ruleForm: {
-        name: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+      dataitemForm: {
+        dataitem_name: '',
+        dataitem_code: '',
+        dataitem_unit: '',
+        dataitem_groupname: '',
+        priority: '',
+        dataitem_desc: ''
       },
-      rules: {
-        name: [
-          { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+      dataitemRules: {
+        dataitem_name: [
+          { required: true, message: '请输入数据项名称', trigger: 'blur' }
         ],
-        region: [
-          { required: true, message: '请选择活动区域', trigger: 'change' }
+        dataitem_code: [
+          { required: true, message: '请输入数据项码', trigger: 'blur' }
         ],
-        date1: [
-          { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
+        dataitem_unit: [
+          { required: true, message: '请输入数据项单位', trigger: 'blur' }
         ],
-        date2: [
-          { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
+        dataitem_groupname: [
+          { required: true, message: '请输入数据项分组名', trigger: 'blur' }
         ],
-        type: [
-          { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
+        priority: [
+          { required: true, message: '优先级不能为空', trigger: 'blur' },
+          { type: 'number', message: '优先级必须为数字值', trigger: 'blur' }
         ],
-        resource: [
-          { required: true, message: '请选择活动资源', trigger: 'change' }
-        ],
-        desc: [
-          { required: true, message: '请填写活动形式', trigger: 'blur' }
+        dataitem_desc: [
+          { required: true, message: '请输入数据项描述', trigger: 'blur' }
         ]
       }
     }
   },
+  computed: {
+    priorityHandler() {
+      return this.dataitemForm.priority
+    }
+  },
+  watch: {
+    priorityHandler(newValue, oldValue) {
+      this.dataitemForm.priority = Number(this.dataitemForm.priority)
+    }
+  },
   methods: {
+    close() {
+      this.dialogFormVisible1 = false
+      this.dataitemForm = {}
+    },
+    add() {
+      this.dialogFormVisible1 = false
+      // if (this.dataitemForm.dataitem_id) {
+      //   var item = {
+      //     dataitem_code: this.dataitemForm.dataitem_code,
+      //     dataitem_name: this.dataitemForm.dataitem_name,
+      //     dataitem_groupname: this.dataitemForm.dataitem_groupname,
+      //     dataitem_unit: this.dataitemForm.dataitem_unit,
+      //     dataitem_desc: this.dataitemForm.dataitem_desc,
+      //     priority: this.dataitemForm.priority,
+      //     dataitem_id: this.dataitemForm.dataitem_id
+      //   }
+      //   const obj = { dataitems: [item] }
+      //   axios.post('/api_devicetype/update_dataitems/', obj)
+      //     .then(() => {
+      //       this.$parent.update()
+      //       this.$notify({
+      //         title: '创建成功',
+      //         message: '这是一条成功的提示消息',
+      //         type: 'success'
+      //       })
+      //     }).catch(() => {
+      //       this.$notify.error({
+      //         title: '创建失败',
+      //         message: '这是一条错误的提示消息'
+      //       })
+      //     })
+      //   this.dataitemForm = {}
+      // } else {
+      var item = {
+        dataitem_code: this.dataitemForm.dataitem_code,
+        dataitem_name: this.dataitemForm.dataitem_name,
+        dataitem_groupname: this.dataitemForm.dataitem_groupname,
+        dataitem_unit: this.dataitemForm.dataitem_unit,
+        dataitem_desc: this.dataitemForm.dataitem_desc,
+        priority: this.dataitemForm.priority,
+        devicetype: this.currentDevicetypeId1
+      }
+      const obj = { dataitems: [item] }
+      axios.post('/api_devicetype/create_dataitems/', obj)
+        .then(() => {
+          this.$parent.update()
+          this.$notify({
+            title: '创建成功',
+            message: '这是一条成功的提示消息',
+            type: 'success'
+          })
+        }).catch(() => {
+          this.$notify.error({
+            title: '创建失败',
+            message: '这是一条错误的提示消息'
+          })
+        })
+      this.dataitemForm = {}
+      // }
+    }
   }
 }
+
 </script>

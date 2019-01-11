@@ -18,6 +18,9 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="bottom" style="text-align:right;">
+      <el-pagination :page-size="pageSize" :current-page.sync="currentPage" layout="prev, pager, next, jumper, total" @current-change="handleCurrentChange" />
+    </div>
     <Dmodal ref="Dmodal" />
     <Omodal ref="Omodal" />
     <Cmodal ref="Cmodal" />
@@ -25,6 +28,7 @@
 </template>
 <script type="text/javascript">
 import axios from '@/http/axios'
+import conf from '@/http/config.js'
 import $ from 'jquery'
 import Dmodal from '@/pages/room/deviceType/Dmodal.vue'
 import Cmodal from '@/pages/room/deviceType/Cmodal.vue'
@@ -37,7 +41,9 @@ export default {
   },
   data() {
     return {
-      deviceTypes: []
+      deviceTypes: [],
+      pageSize: conf.pageSize,
+      currentPage: 1
     }
   },
   created() {
@@ -45,6 +51,19 @@ export default {
     this.he = $(window).height() - 150
   },
   methods: {
+    // 分页查找设备类型
+    handleCurrentChange(val) {
+      const obj = {
+        params: {
+          page: val
+        }
+      }
+      this.findChildDeviceType(obj).then(() => {
+        // 查找成功
+      }).catch(() => {
+        this.$notify({ type: 'info', message: '查找失败!' })
+      })
+    },
     handleCommand(command) {
       if (command === 'a') {
         this.$refs.Dmodal.dialogVisible1 = true
@@ -55,9 +74,9 @@ export default {
       }
     },
     // 加载所有设备类型
-    loadDeviceTypes() {
-      axios.get('/api_devicetype/list_detail_devicetypes/')
-        .then(({ data }) => {
+    loadDeviceTypes(obj) {
+      if (obj) {
+        axios.get('/api_devicetype/list_detail_devicetypes/', obj).then(({ data }) => {
           this.deviceTypes = data.results
         }).catch(() => {
           this.$notify.error({
@@ -65,15 +84,31 @@ export default {
             message: '这是一条错误的提示消息'
           })
         })
+      } else {
+        axios.get('/api_devicetype/list_detail_devicetypes/')
+          .then(({ data }) => {
+            this.deviceTypes = data.results
+          }).catch(() => {
+            this.$notify.error({
+              title: '网络超时',
+              message: '这是一条错误的提示消息'
+            })
+          })
+      }
     },
+    // 传递值给配置,数据,操作项
     load(row) {
       this.$refs.Dmodal.title = row.devicetype_name
       this.$refs.Dmodal.dataType = row.dataitems
+      this.$refs.Dmodal.currentDevicetypeId = row.devicetype_id
       this.$refs.Omodal.operationType = row.operitems
       this.$refs.Omodal.title = row.devicetype_name
+      this.$refs.Omodal.currentDevicetypeId = row.devicetype_id
       this.$refs.Cmodal.configurationType = row.configitems
       this.$refs.Cmodal.title = row.devicetype_name
+      this.$refs.Cmodal.currentDevicetypeId = row.devicetype_id
     }
   }
 }
+
 </script>
