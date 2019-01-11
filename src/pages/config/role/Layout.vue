@@ -7,7 +7,7 @@
     </div>
     <!-- 按钮组结束 -->
     <!-- 表格组件的使用 -->
-    <role-data-table />
+    <role-data-table ref="roleDataTable" />
     <!-- 表格结束 -->
     <!-- 新增模态框开始 -->
     <div class="toAddRoleDialog">
@@ -19,7 +19,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="toAddRoleDialog.visible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+          <el-button type="primary" @click="saveAddRole()">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -28,7 +28,7 @@
 </template>
 <script>
 import roleDataTable from './RoleTable.vue'
-
+import axios from '@/http/axios'
 export default {
   components: {
     roleDataTable
@@ -37,10 +37,7 @@ export default {
     return {
       // dialogVisible1:false,
       // dialogVisible3:false,
-      visible: false,
-      form: {
-        name: ''
-      },
+      // ids: [],
       toAddRoleDialog: {
         title: '',
         form: {},
@@ -82,14 +79,29 @@ export default {
     },
     // 批量删除
     delRoles() {
-      const ids = this.multipleSelection.map((item) => {
-        return item.id
-      })
-      alert(ids)
+      this.$refs.roleDataTable.delRoles1()
     },
     // 删除
     delRole(id) {
       alert(id)
+    },
+    // 新增的保存
+    saveAddRole() {
+      const obj1 = { 'name': this.toAddRoleDialog.form.name }
+      axios.post('/api_group/create_group', obj1).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '这是一条成功的提示消息',
+          type: 'success'
+        })
+        this.toAddRoleDialog.visible = false
+        this.$refs.roleDataTable.findAllRoles()
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '保存失败'
+        })
+      })
     }
   }
 }

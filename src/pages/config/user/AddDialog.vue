@@ -2,50 +2,51 @@
   <!-- 新增权限模态框 -->
   <div class="user_data_dialog1">
     <el-dialog :title="addUserModel.title" :visible.sync="addUserModel.visible" center="" width="35%">
-      <el-form ref="addUserModel.form" :model="addUserModel.form" :rules="rules" label-position="left" label-width="80px">
-        <el-form-item :label-width="formLabelWidth" label="账号:" prop="number">
-          <el-input v-model="addUserModel.form.number" autocomplete="off" />
+      <el-form ref="addUserModel.form" :model="addUserModel.form" :rules="rules" label-position="left" label-width="80px"> {{ addUserModel.form }}
+        <el-form-item :label-width="formLabelWidth" label="账号:" prop="username">
+          <el-input v-model="addUserModel.form.username" autocomplete="off" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="密码:" prop="password1">
-          <el-input v-model="addUserModel.form.password1" autocomplete="off" />
+        <el-form-item :label-width="formLabelWidth" label="密码:" prop="password">
+          <el-input v-model="addUserModel.form.password" autocomplete="off" />
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="确认密码:" prop="password2">
           <el-input v-model="addUserModel.form.password2" autocomplete="off" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="用户姓名:" prop="name">
-          <el-input v-model="addUserModel.form.name" autocomplete="off" />
+        <el-form-item :label-width="formLabelWidth" label="用户姓名:" prop="last_name">
+          <el-input v-model="addUserModel.form.last_name" autocomplete="off" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="联系电话:" prop="tel">
-          <el-input v-model="addUserModel.form.tel" autocomplete="off" />
+        <el-form-item :label-width="formLabelWidth" label="联系电话:" prop="user_tel">
+          <el-input v-model="addUserModel.form.user_tel" autocomplete="off" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="地址:" prop="address">
-          <el-input v-model="addUserModel.form.address" autocomplete="off" />
+        <el-form-item :label-width="formLabelWidth" label="地址:" prop="user_address">
+          <el-input v-model="addUserModel.form.user_address" autocomplete="off" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="用户描述:" prop="description">
-          <el-input v-model="addUserModel.form.description" type="textarea" />
+        <el-form-item :label-width="formLabelWidth" label="用户描述:" prop="user_note">
+          <el-input v-model="addUserModel.form.user_note" type="textarea" />
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="管理员:">
           <el-switch
-            v-model="value1"
+            v-model="addUserModel.form.is_superuser"
             active-color="#13ce66"
             inactive-color="#ff4949" />
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="启用:">
           <el-switch
-            v-model="value2"
+            v-model="addUserModel.form.is_active"
             active-color="#13ce66"
             inactive-color="#ff4949" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="addUserModel.visible = false">取 消</el-button>
-        <el-button type="primary" @click="addUserModel.visible = false">确 定</el-button>
+        <el-button type="primary" @click="saveAddUser()">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import axios from '@/http/axios'
 export default {
   data() {
     return {
@@ -100,6 +101,23 @@ export default {
       this.addUserModel.title = '添加用户'
       this.addUserModel.form = {}
       this.addUserModel.visible = true
+    },
+    // 新增用户确定
+    saveAddUser() {
+      console.log(this.addUserModel.form)
+      axios.post('api_user/create_user/', this.addUserModel.form).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '新增成功',
+          type: 'success'
+        })
+        this.addUserModel.visible = false
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '新增失败'
+        })
+      })
     }
   }
 }

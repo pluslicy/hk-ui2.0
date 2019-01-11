@@ -15,7 +15,7 @@
       <div class="btns">
         <el-button size="mini" type="primary" plain @click="toAddUser()">新增</el-button>
         <el-button size="mini" type="primary" plain @click="toAccredit()">授权</el-button>
-        <el-button size="mini" type="primary" plain @click="delUsers">批量删除</el-button>
+        <el-button size="mini" type="primary" plain @click="delUsers()">批量删除</el-button>
       </div>
       <!-- <i @headCallBack="showChildMessage" /> -->
     </div>
@@ -107,8 +107,9 @@ export default {
     },
     // 获取批量删除所有的的id
     delUsers() {
-      this.ids = this.$refs.userDataTable.ids
-      console.log(this.ids)
+      // this.ids = this.$refs.userDataTable.ids
+      // console.log(this.ids)
+      this.$refs.userDataTable.delUsers1()
     }
   }
 }

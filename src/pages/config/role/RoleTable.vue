@@ -1,35 +1,35 @@
 <template>
   <div class="role_data_table">
     <el-table
-      :data="tableData"
+      :data="roles"
       :height="he"
       size="mini"
       style="width: 100%"
       @selection-change="handleSelectionChange">
       <el-table-column
         type="selection"
-        width="55" />
-      <el-table-column
+        width="60" />
+      <!-- <el-table-column
         prop="date"
         label="序号"
-        width="180" />
+        width="180" /> -->
       <el-table-column
-        prop="name"
+        prop="group_name"
         label="角色名称"
-        width="180" />
+        width="220" />
       <el-table-column
-        prop="address"
+        prop="permission_names"
         label="角色权限信息" />
       <el-table-column
-        prop="name"
-        label="用户名称" />
+        prop="last_names"
+        label="用户名称"
+        width="220" />
       <el-table-column
-        prop="address"
         width="100"
         align="center"
         label="操作">
         <template slot-scope="{row}">
-          <i class="el-icon-delete" title="删除" @click="delRole(row.id)" />
+          <i class="el-icon-delete" title="删除" @click="delRole(row)" />
           <i class="el-icon-edit" title="修改" @click="toUpdateRoleDialog(row)" />
         </template>
       </el-table-column>
@@ -40,6 +40,7 @@
   </div>
 </template>
 <script>
+import axios from '@/http/axios'
 import roleUpdateDialog from './updateRoleDialog.vue'
 import $ from 'jquery'
 export default {
@@ -48,34 +49,81 @@ export default {
   },
   data() {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        id: 1
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄',
-        id: 2
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄',
-        id: 3
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄',
-        id: 4
-      }]
+      roles: [],
+      multipleSelection: [],
+      ids: []
     }
   },
+  // watch: {
+  //   multipleSelection: function(now, old) {
+  //     this.foo()
+  //   }
+  // },
   created() {
     // 表格高度
     this.he = $(window).height() - 194
+    this.findAllRoles()
   },
   methods: {
+    // 加载表格数据
+    findAllRoles() {
+      axios.get('/api_permission/get_permission_list').then(({ data: result }) => {
+        console.log('...', result.data)
+        this.roles = result.data
+      }).catch(() => {
+
+      })
+    },
+    // 删除
+    delRole(row) {
+      console.log(row.group_id)
+      // alert(id)
+      axios.post('/api_group/delete_group', { ids: [row.group_id] }).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success'
+        })
+        this.findAllRoles()
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '删除失败'
+        })
+      })
+    },
+    // 批量删除
+    delRoles1() {
+      this.ids = this.multipleSelection.map((item) => {
+        return item.group_id + ''
+      })
+      // alert(this.ids)
+      // this.ids = this.$refs.roleDataTable.ids
+      // console.log(this.ids)
+      const obj1 = {
+        'ids': this.ids
+      }
+      console.log(obj1)
+      axios.post('/api_group/delete_group', obj1).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success'
+        })
+        this.findAllRoles()
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '删除失败'
+        })
+      })
+    },
+    // foo() {
+    //   this.ids = this.multipleSelection.map((item) => {
+    //     return item.group_id + ''
+    //   })
+    //   alert(this.ids)
+    // },
     // 多选框
     handleSelectionChange(val) {
       this.multipleSelection = val

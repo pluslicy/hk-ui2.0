@@ -3,7 +3,7 @@
     <div class="user_data_table">
       <!-- 表格开始 -->
       <el-table
-        :data="tableData"
+        :data="users1"
         :height="he"
         size="mini"
         style="width: 100%"
@@ -13,24 +13,24 @@
           width="55"
           fixed />
         <el-table-column
-          prop="date"
+          prop="row_no"
           label="序号"
           width="180" />
         <el-table-column
-          prop="name"
+          prop="last_name"
           label="姓名"
           width="180" />
         <el-table-column
-          prop="number"
+          prop="username"
           label="账号" />
         <el-table-column
-          prop="admin"
+          prop="is_superuser"
           label="管理员" />
         <el-table-column
-          prop="tel"
+          prop="user_tel"
           label="电话" />
         <el-table-column
-          prop="status"
+          prop="is_active"
           label="状态" />
         <el-table-column
           label="操作"
@@ -38,10 +38,10 @@
           width="120"
           align="center">
           <template slot-scope="{row}">
-            <i class="el-icon-delete" title="删除" @click="delUser(row.id)" />
+            <i class="el-icon-delete" title="删除" @click="delUser(row)" />
             <i class="el-icon-edit" title="修改" @click="toUpdateUser(row)" />
-            <i class="el-icon-tickets" title="查看详细信息" @click="toShowModel" />
-            <i class="el-icon-setting" title="修改密码" @click="toShowPasswordModel" />
+            <i class="el-icon-tickets" title="查看详细信息" @click="toShowModel(row)" />
+            <i class="el-icon-setting" title="修改密码" @click="toShowPasswordModel(row)" />
           </template>
         </el-table-column>
       </el-table>
@@ -65,6 +65,7 @@
   </div>
 </template>
 <script>
+import axios from '@/http/axios'
 import $ from 'jquery'
 import userDataDialog from './DataDialog.vue'
 import userUpdateDialog from './UpdateDialog.vue'
@@ -77,60 +78,50 @@ export default {
   },
   data() {
     return {
-      tableData: [{
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄',
-        id: 1,
-        tel: 111,
-        admin: '李浩',
-        status: '启用',
-        description: '111111111111',
-        number: 1232534
-      }, {
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1517 弄',
-        id: 2,
-        tel: 222,
-        admin: '李浩',
-        status: '启用',
-        description: '000000000000',
-        number: 1232534
-      }, {
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1519 弄',
-        id: 3,
-        tel: 333,
-        admin: '李浩',
-        status: '启用',
-        description: '3333333333',
-        number: 1232534
-      }, {
-        date: '2016-05-03',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1516 弄',
-        id: 4,
-        tel: 444,
-        admin: '李浩',
-        status: '禁用',
-        description: '55555555555',
-        number: 1232534
-      }],
+      users: [],
+      users1: [],
       multipleSelection: [],
       ids: []
     }
   },
-  watch: {
-    multipleSelection: function(now, old) {
-      this.foo()
-    }
-  },
+  // watch: {
+  //   multipleSelection: function(now, old) {
+  //     this.foo()
+  //   }
+  // },
   created() {
     this.he = $(window).height() - 237
+    this.findAllUsers()
   },
   methods: {
+    // 加载表格内容
+    findAllUsers() {
+      axios.get('/api_user/user_list/').then(({ data: result }) => {
+        // console.log('=======================', result)
+        this.users = result.results
+        this.transform()
+      }).catch(() => {
+
+      })
+    },
+    // 转换获取到的用户信息
+    transform() {
+      console.log(this.users)
+      this.users.map((item) => {
+        if (item.is_active === true) {
+          item.is_active = '启用'
+        } else {
+          item.is_active = '禁用'
+        }
+        if (item.is_superuser === true) {
+          item.is_superuser = '是'
+        } else {
+          item.is_superuser = '否'
+        }
+      })
+      this.users1 = this.users
+      // console.log('---', this.users1)
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val
       // this.ids = this.multipleSelection.map((item) => {
@@ -138,31 +129,70 @@ export default {
       // })
     },
     // 详情模态框
-    toShowModel() {
-      this.$refs.userDataDialog.toOpenDialog()
+    toShowModel(row) {
+      this.$refs.userDataDialog.toOpenDialog(row)
     },
     // 修改模态框
     toUpdateUser(row) {
       this.$refs.userUpdateDialog.toOpenDialog(row)
     },
     // 修改密码模态框
-    toShowPasswordModel() {
-      this.$refs.userPasswordDialog.toOpenDialog()
+    toShowPasswordModel(row) {
+      this.$refs.userPasswordDialog.toOpenDialog(row)
     },
     // 删除
-    delUser(id) {
-      alert(id)
+    delUser(row) {
+      alert(row.id)
+      axios.post('/api_user/delete_user/', { 'user_ids': [row.id] }).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '这是一条成功的提示消息',
+          type: 'success'
+        })
+        this.findAllRoles()
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '删除失败'
+        })
+      })
     },
-    // 拿到批量删除的ids
-    // 向父组件发送批量删除的ids
-    foo() {
-      // alert(1)
-      // this.$emit('headCallBack', this.ids)
+    // 批量删除
+    delUsers1() {
       this.ids = this.multipleSelection.map((item) => {
-        return item.id
+        return item.id + ''
       })
       alert(this.ids)
+      // this.ids = this.$refs.roleDataTable.ids
+      // console.log(this.ids)
+      const obj1 = {
+        'user_ids': this.ids
+      }
+      // console.log('?????????', obj1)
+      axios.post('/api_user/delete_user/', obj1).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '删除成功',
+          type: 'success'
+        })
+        this.findAllRoles()
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '删除失败'
+        })
+      })
     }
+    // // 拿到批量删除的ids
+    // // 向父组件发送批量删除的ids
+    // foo() {
+    //   // alert(1)
+    //   // this.$emit('headCallBack', this.ids)
+    //   this.ids = this.multipleSelection.map((item) => {
+    //     return item.id
+    //   })
+    //   alert(this.ids)
+    // }
   }
 }
 </script>
