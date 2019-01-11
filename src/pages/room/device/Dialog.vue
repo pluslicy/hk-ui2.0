@@ -53,7 +53,7 @@
         <el-col :span="14">
           <ul>
             <li>
-              设备码：<span>124324</span>
+              设备码：<span>111</span>
             </li>
             <li>
               设备类型：<span>124324</span>
@@ -97,7 +97,7 @@ export default {
       deviceViewDialog: {
         title: '查看图片',
         visible: false,
-        form: {}
+        devices: []
       },
       textarea: '',
       formLabelWidth: '100px'

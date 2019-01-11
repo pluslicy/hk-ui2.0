@@ -22,8 +22,9 @@ export default {
   },
   methods: {
     // 当前页的改变
-    handleCurrentChange(val) {
-      console.log(1)
+    handleCurrentChange(page) {
+      // console.log(1)
+      this
     }
   }
 }
