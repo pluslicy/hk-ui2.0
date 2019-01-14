@@ -299,7 +299,7 @@ export default {
         params: this.params
       })
         .then(({ data }) => {
-          console.log(data)
+          // console.log(data)
           this.rooms = data.results
           this.total = data.count
         })
@@ -314,7 +314,7 @@ export default {
     findAllRoomName() {
       axios.get('/api_room/list_all_room/')
         .then(({ data }) => {
-          console.log(data)
+          // console.log(data)
           this.roomNames = data
         })
         .catch((error) => {

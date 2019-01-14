@@ -5,7 +5,7 @@
     <div class="device_form">
       <el-form :inline="true" class="demo-form-inline" size="mini">
         <el-form-item label="">
-          <el-select v-model="value4" clearable placeholder="请选择机房">
+          <el-select v-model="params.room_name" clearable placeholder="请选择机房">
             <el-option
               v-for="room in rooms"
               :key="room.room_id"
@@ -15,18 +15,18 @@
           </el-select>
         </el-form-item>
         <el-form-item label="">
-          <el-select v-model="value3" clearable placeholder="请选择类型">
+          <el-select v-model="params.devicetype_name" clearable placeholder="请选择类型">
             <el-option
               v-for="deviceType in deviceTypes"
               :key="deviceType.devicetype_id"
               :label="deviceType.devicetype_name"
-              :value="deviceType.devicetype_id" />
+              :value="deviceType.devicetype_name" />
               <!-- </el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item>
           <el-input
-            v-model="deviceNames.device_"
+            v-model="params.device_name"
             placeholder="请输入名称"
             clearable />
             <!-- </el-input> -->
@@ -39,23 +39,31 @@
       <el-button type="primary" plain size="mini" @click="batchDeleteDevice">批量删除</el-button>
     </div>
     <!-- 数据表格 -->
-    <device-data-table />
+    <device-data-table ref="deviceDataTable" :params="params" :devicetypes="deviceTypes" :rooms="rooms" />
     <!-- 分页 -->
-    <device-pagination />
+    <!-- <device-pagination /> -->
+    <div class="device_pagination">
+      <el-pagination
+        :page-size="20"
+        :total="total"
+        layout="total, prev, pager, next"
+        @current-change="handleCurrentChange" />
+        <!-- </el-pagination> -->
+    </div>
     <!-- 模态框 -->
-    <device-dialog ref="deviceDialog" />
+    <device-dialog ref="deviceDialog" :devicetypes="deviceTypes" :rooms="rooms" />
   </div>
 </template>
 
 <script>
 import axios from '@/http/axios'
 import deviceDataTable from './DataTable.vue'
-import devicePagination from './Pagination.vue'
+// import devicePagination from './Pagination.vue'
 import deviceDialog from './Dialog.vue'
 export default {
   components: {
     deviceDataTable,
-    devicePagination,
+    // devicePagination,
     deviceDialog
   },
   data() {
@@ -64,25 +72,51 @@ export default {
       rooms: [],
       // 所有设备类型
       deviceTypes: [],
-      deviceNames: []
+      // 所有设备名称
+      deviceNames: [],
+      // 设备总数
+      total: 5,
+      // 监听数据
+      params: {
+        page: 1,
+        room_name: undefined,
+        devicetype_name: undefined,
+        device_name: undefined
+      }
     }
   },
   // 侦听器
   watch: {
-    // rooms: {
-    //   handler: function() {
-    //     alert(1)
-    //   },
-    //   deep: true
-    // }
+    params: {
+      handler: function() {
+        // alert(1)
+        this.$refs.deviceDataTable.findAllDevice()
+      },
+      deep: true
+    },
+    'params.room_name': function() {
+      this.params.page = 1
+    },
+    'params.devicetype_name': function() {
+      this.params.page = 1
+    },
+    'params.device_name': function() {
+      this.params.page = 1
+    }
   },
   // 生命周期钩子
   created() {
     this.findAllroom()
-    this.findAllDeviceType()
+    // this.findAllDeviceType()
+    // this.total = this.$refs.deviceDataTable.count
+    // console.log(this.total)
   },
   // 方法
   methods: {
+    // 当前页的改变
+    handleCurrentChange(page) {
+      this.params.page = page
+    },
     // 新增
     toAddDevice() {
       // this.deviceDialog.visible = true
@@ -92,13 +126,34 @@ export default {
     },
     // 批量删除
     batchDeleteDevice() {
-
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          const ids = this.$refs.deviceDataTable.multipleSelection.map(item => item.device_id)
+          axios.post('/api_device/delete_device/', {
+            device_ids: ids
+          })
+            .then(() => {
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success'
+              })
+              this.$refs.deviceDataTable.findAllDevice()
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        })
     },
     // 获取所有机房
     findAllroom() {
       axios.get('/api_room/list_all_room/')
         .then(({ data }) => {
-          console.log(data)
+          // console.log(data)
           this.rooms = data
         })
         .catch((error) => {
@@ -109,7 +164,7 @@ export default {
     findAllDeviceType() {
       axios.get('/api_devicetype/list_all_devicetypes/')
         .then(({ data }) => {
-          console.log(data)
+          // console.log(data)
           this.deviceTypes = data
         })
         .catch((error) => {
@@ -120,7 +175,7 @@ export default {
     findAllDeviceName() {
       axios.get('/api_device/list_device_name/')
         .then(({ data }) => {
-          console.log(data)
+          // console.log(data)
           this.deviceNames = data
         })
         .catch((error) => {
@@ -146,6 +201,10 @@ export default {
   }
   /* 按钮 */
   .device_btns {
+    text-align: right;
+  }
+   /* 设备管理分页 */
+  .device_pagination {
     text-align: right;
   }
 </style>
