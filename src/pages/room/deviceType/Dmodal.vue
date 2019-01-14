@@ -48,6 +48,7 @@ export default {
       const obj = { dataitem_ids: [oId + ''] }
       axios.post('/api_devicetype/delete_dataitems/', obj)
         .then(() => {
+          // this.updateData()
           this.update()
           this.$notify({
             title: '删除成功',
@@ -68,6 +69,17 @@ export default {
       this.$refs.DaddModal.dialogFormVisible1 = true
       this.$refs.DaddModal.dataitemForm = row
     }
+    // 刷新数据项
+    // updateData() {
+    //   axios.post('/api_devicetype/Shujuxiang/').then(({ data }) => {
+    //       this.dataType = data.results
+    //     }).catch(() => {
+    //       this.$notify.error({
+    //         title: '网络超时',
+    //         message: '这是一条错误的提示消息'
+    //       })
+    //     })
+    // }
   }
 }
 </script>

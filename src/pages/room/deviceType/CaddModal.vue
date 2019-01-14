@@ -33,6 +33,7 @@ export default {
     return {
       currentDevicetypeId1: '',
       dialogFormVisible3: false,
+      // 配置项
       configitemForm: {
         configitem_name: '',
         configitem_code: '',
@@ -66,6 +67,7 @@ export default {
     }
   },
   watch: {
+    // 监听configitemForm中的priority
     priorityHandler(newValue, oldValue) {
       this.configitemForm.priority = Number(this.configitemForm.priority)
     }
@@ -77,30 +79,56 @@ export default {
     },
     add() {
       this.dialogFormVisible3 = false
-      const item = {
-        configitem_code: this.configitemForm.configitem_code,
-        configitem_name: this.configitemForm.configitem_name,
-        configitem_value: this.configitemForm.configitem_value,
-        configitem_desc: this.configitemForm.configitem_desc,
-        priority: this.configitemForm.priority,
-        devicetype: this.currentDevicetypeId1
+      if (this.configitemForm.configitem_id) {
+        var items = {
+          configitem_id: this.configitemForm.configitem_id,
+          configitem_code: this.configitemForm.configitem_code,
+          configitem_name: this.configitemForm.configitem_name,
+          configitem_value: this.configitemForm.configitem_value,
+          configitem_desc: this.configitemForm.configitem_desc,
+          priority: this.configitemForm.priority
+        }
+        axios.post('/api_devicetype/update_configitems/', items)
+          .then(() => {
+            this.$parent.update()
+            this.$notify({
+              title: '创建成功',
+              message: '这是一条成功的提示消息',
+              type: 'success'
+            })
+          }).catch(() => {
+            this.$notify.error({
+              title: '创建失败',
+              message: '这是一条错误的提示消息'
+            })
+          })
+        this.configitemForm = {}
+      } else {
+        var item = {
+          configitem_code: this.configitemForm.configitem_code,
+          configitem_name: this.configitemForm.configitem_name,
+          configitem_value: this.configitemForm.configitem_value,
+          configitem_desc: this.configitemForm.configitem_desc,
+          priority: this.configitemForm.priority,
+          devicetype: this.currentDevicetypeId1
+        }
+        const obj = { configitems: [item] }
+        axios.post('/api_devicetype/create_configitems/', obj)
+          .then(() => {
+            this.$parent.update()
+            this.$notify({
+              title: '创建成功',
+              message: '这是一条成功的提示消息',
+              type: 'success'
+            })
+          }).catch(() => {
+            this.$notify.error({
+              title: '创建失败',
+              message: '这是一条错误的提示消息'
+            })
+          })
+        this.configitemForm = {}
       }
-      const obj = { configitems: [item] }
-      axios.post('/api_devicetype/create_configitems/', obj)
-        .then(() => {
-          this.$parent.update()
-          this.$notify({
-            title: '创建成功',
-            message: '这是一条成功的提示消息',
-            type: 'success'
-          })
-        }).catch(() => {
-          this.$notify.error({
-            title: '创建失败',
-            message: '这是一条错误的提示消息'
-          })
-        })
-      this.configitemForm = {}
     }
   }
 }
