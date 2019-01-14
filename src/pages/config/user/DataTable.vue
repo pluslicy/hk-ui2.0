@@ -62,6 +62,11 @@
       <user-password-dialog ref="userPasswordDialog" />
     </div>
     <!-- 修改密码模态框结束 -->
+    <!-- 授权模态框开始 -->
+    <div>
+      <user-accredit-dialog ref="userAccreditDialog" />
+    </div>
+    <!-- 授权模态框结束 -->
   </div>
 </template>
 <script>
@@ -70,18 +75,21 @@ import $ from 'jquery'
 import userDataDialog from './DataDialog.vue'
 import userUpdateDialog from './UpdateDialog.vue'
 import userPasswordDialog from './PasswordDialog.vue'
+import userAccreditDialog from './AccreditDialog.vue'
 export default {
   components: {
     userDataDialog,
     userUpdateDialog,
-    userPasswordDialog
+    userPasswordDialog,
+    userAccreditDialog
   },
   data() {
     return {
       users: [],
       users1: [],
       multipleSelection: [],
-      ids: []
+      ids: [],
+      idss: []
     }
   },
   // watch: {
@@ -124,9 +132,9 @@ export default {
     },
     handleSelectionChange(val) {
       this.multipleSelection = val
-      // this.ids = this.multipleSelection.map((item) => {
-      //   return item.id
-      // })
+      this.idss = this.multipleSelection.map((item) => {
+        return item.id
+      })
     },
     // 详情模态框
     toShowModel(row) {
@@ -182,6 +190,20 @@ export default {
           message: '删除失败'
         })
       })
+    },
+    // 将要授权的ids给授权模态框
+    getIds() {
+      // console.log(this.idss)
+      const id1 = this.idss
+      // alert(id1)
+      if (id1.length !== 0) {
+        this.$refs.userAccreditDialog.getGroupsOfUser(id1)
+      } else {
+        this.$notify.error({
+          title: '错误',
+          message: '请选择需要授权的用户'
+        })
+      }
     }
     // // 拿到批量删除的ids
     // // 向父组件发送批量删除的ids

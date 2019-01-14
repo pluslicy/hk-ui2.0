@@ -61,36 +61,36 @@ export default {
       value2: true,
       // 新增模态框表单验证
       ruleForm: {
-        number: '',
-        password1: '',
+        username: '',
+        password: '',
         password2: '',
-        name: '',
-        tel: '',
-        address: '',
-        description: ''
+        last_name: '',
+        user_tel: '',
+        user_address: '',
+        user_note: ''
       },
       rules: {
-        number: [
+        username: [
           { required: true, message: '账号仅限数字字母下划线', trigger: 'blur' }
           // { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
         ],
-        password1: [
+        password: [
           { required: true, message: '请输入密码', trigger: 'change' }
         ],
         password2: [
           { required: true, message: '请确认密码', trigger: 'change' }
         ],
-        name: [
+        last_name: [
           { required: true, message: '请输入用户名', trigger: 'change' }
         ],
-        tel: [
+        user_tel: [
           { required: true, message: '请输入电话', trigger: 'change' }
         ],
-        address: [
+        user_address: [
           { required: true, message: '请输入地址', trigger: 'change' }
         ],
-        description: [
-          { required: true, message: '请输入描述', trigger: 'blur' }
+        user_note: [
+          { required: true, message: '请输入描述', trigger: 'change' }
         ]
       }
     }
@@ -99,12 +99,35 @@ export default {
     // 弹出修改模态框
     toOpenDialog() {
       this.addUserModel.title = '添加用户'
-      this.addUserModel.form = {}
+      this.addUserModel.form = {
+        is_superuser: false,
+        is_active: false
+      }
       this.addUserModel.visible = true
     },
     // 新增用户确定
     saveAddUser() {
       console.log(this.addUserModel.form)
+      // if ((this.addUserModel.form.username !== '') && (this.addUserModel.form.password !== '') && (this.addUserModel.form.password2 !== '') && (this.addUserModel.form.last_name !== '') && (this.addUserModel.form.user_tel !== '') && (this.addUserModel.form.user_address !== '') && (this.addUserModel.form.user_note !== '')) {
+      //   axios.post('api_user/create_user/', this.addUserModel.form).then(() => {
+      //     this.$notify({
+      //       title: '成功',
+      //       message: '新增成功',
+      //       type: 'success'
+      //     })
+      //     this.addUserModel.visible = false
+      //   }).catch(() => {
+      //     this.$notify.error({
+      //       title: '错误',
+      //       message: '请填写所有的信息'
+      //     })
+      //   })
+      // } else {
+      //   // this.$notify.error({
+      //   //   title: '错误',
+      //   //   message: '请填写全部的信息111'
+      //   // })
+      // }
       axios.post('api_user/create_user/', this.addUserModel.form).then(() => {
         this.$notify({
           title: '成功',
@@ -115,7 +138,7 @@ export default {
       }).catch(() => {
         this.$notify.error({
           title: '错误',
-          message: '新增失败'
+          message: '请填写所有的信息'
         })
       })
     }

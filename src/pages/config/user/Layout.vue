@@ -14,7 +14,7 @@
       <el-button type="primary" plain size="mini">查询</el-button>
       <div class="btns">
         <el-button size="mini" type="primary" plain @click="toAddUser()">新增</el-button>
-        <el-button size="mini" type="primary" plain @click="toAccredit()">授权</el-button>
+        <el-button size="mini" type="primary" plain @click="toAccredit()">角色管理</el-button>
         <el-button size="mini" type="primary" plain @click="delUsers()">批量删除</el-button>
       </div>
       <!-- <i @headCallBack="showChildMessage" /> -->
@@ -60,19 +60,10 @@ export default {
       // 下拉框开始
       options: [{
         value: '选项1',
-        label: '黄金糕'
+        label: '启用'
       }, {
         value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      }, {
-        value: '选项5',
-        label: '北京烤鸭'
+        label: '禁用'
       }],
       ids: [],
       value5: '',
@@ -94,9 +85,10 @@ export default {
     toAddUser() {
       this.$refs.userAddDialog.toOpenDialog()
     },
-    // 打开授权模态框
+    // 打开角色管理模态框
     toAccredit() {
-      this.$refs.userAccreditDialog.toOpenDialog()
+      this.$refs.userDataTable.getIds()
+      // this.$refs.userAccreditDialog.toOpenDialog()
     },
     // 分页
     handleSizeChange(val) {

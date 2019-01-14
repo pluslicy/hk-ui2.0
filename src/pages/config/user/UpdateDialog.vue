@@ -2,58 +2,56 @@
   <!-- 修改权限模态框 -->
   <div class="user_data_dialog2">
     <el-dialog :title="updateModel.title" :visible.sync="updateModel.visible" width="35%">
-      <el-form ref="ruleForm" :model="updateModel.form" :rules="rules" label-position="left">
-        <el-form-item :label-width="formLabelWidth" label="账号:" prop="number">
-          <el-input v-model="updateModel.form.number" autocomplete="off" readonly />
+      <el-form ref="ruleForm" :model="updateModel.form" :rules="rules" label-position="left">{{ updateModel.form }}
+        <el-form-item :label-width="formLabelWidth" label="账号:" prop="username">
+          <el-input v-model="updateModel.form.username" autocomplete="off" readonly />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="用户姓名:" prop="name">
-          <el-input v-model="updateModel.form.name" autocomplete="off" />
+        <el-form-item :label-width="formLabelWidth" label="用户姓名:" prop="last_name">
+          <el-input v-model="updateModel.form.last_name" autocomplete="off" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="联系电话:" prop="tel">
-          <el-input v-model="updateModel.form.tel" autocomplete="off" />
+        <el-form-item :label-width="formLabelWidth" label="联系电话:" prop="user_tel">
+          <el-input v-model="updateModel.form.user_tel" autocomplete="off" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="地址:" prop="address">
-          <el-input v-model="updateModel.form.address" autocomplete="off" />
+        <el-form-item :label-width="formLabelWidth" label="地址:" prop="user_address">
+          <el-input v-model="updateModel.form.user_address" autocomplete="off" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="用户描述:" prop="description">
-          <el-input v-model="updateModel.form.description" type="textarea" />
+        <el-form-item :label-width="formLabelWidth" label="用户描述:" prop="user_note">
+          <el-input v-model="updateModel.form.user_note" type="textarea" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="管理员:" prop="description">
-          <el-input v-model="updateModel.form.description" type="textarea" />
-        </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="启用:" prop="description">
+        <el-form-item :label-width="formLabelWidth" label="管理员:" prop="is_superuser">
           <el-switch
-            v-model="value3"
+            v-model="updateModel.form.is_superuser"
             active-color="#13ce66"
             inactive-color="#ff4949" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="用户描述:" prop="description">
+        <el-form-item :label-width="formLabelWidth" label="启用:" prop="is_active">
           <el-switch
-            v-model="value4"
+            v-model="updateModel.form.is_active"
             active-color="#13ce66"
             inactive-color="#ff4949" />
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth" label="更换头像:" prop="description">
+        <!-- <el-form-item :label-width="formLabelWidth" label="更换头像:" prop="description">
           <el-upload
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
+            :action="updateModel.form.user_note.user_avatarpath">
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/">
-            <!-- <img v-if=" " :src="imageUrl" class="avatar"> -->
-            <!-- <i v-else class="el-icon-plus avatar-uploader-icon"></i> -->
+            <img v-if="updateModel.form.user_note.user_avatarpath" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />>
           </el-upload>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="updateModel.visible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button @click="toCloseDialog">取 消</el-button>
+        <el-button type="primary" @click="saveUser()">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import axios from '@/http/axios'
 export default {
   data() {
     return {
@@ -96,9 +94,51 @@ export default {
     // 弹出修改模态框
     toOpenDialog(row) {
       console.log(row)
+      if (row.is_superuser === '是') {
+        row.is_superuser = true
+      } else {
+        row.is_superuser = false
+      }
+      if (row.is_active === '启用') {
+        row.is_active = true
+      } else {
+        row.is_active = false
+      }
+      console.log(row)
+      this.users1 = this.users
       this.updateModel.title = '修改用户'
       this.updateModel.form = row
       this.updateModel.visible = true
+    },
+    // 关闭模态框
+    toCloseDialog() {
+      //  if (row.is_superuser === true) {
+      //   row.is_superuser = '是'
+      // } else {
+      //   row.is_superuser = '否'
+      // }
+      // if (row.is_active === true) {
+      //   row.is_active = '启用'
+      // } else {
+      //   row.is_active = '禁用'
+      // }
+      this.updateModel.visible = false
+    },
+    // 保存
+    saveUser() {
+      console.log(this.updateModel.form)
+      axios.post('/api_user/update_user/', this.updateModel.form).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '这是一条成功的提示消息',
+          type: 'success'
+        })
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '这是一条错误的提示消息'
+        })
+      })
     },
     // 上传头像
     handleAvatarSuccess(res, file) {
