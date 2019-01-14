@@ -81,30 +81,56 @@ export default {
     },
     add() {
       this.dialogFormVisible2 = false
-      const item = {
-        operitem_code: this.operitemForm.operitem_code,
-        operitem_type: this.operitemForm.operitem_type,
-        operitem_name: this.operitemForm.operitem_name,
-        operitem_desc: this.operitemForm.operitem_desc,
-        priority: this.operitemForm.priority,
-        devicetype: this.currentDevicetypeId1
+      if (this.operitemForm.operitem_id) {
+        var items = {
+          operitem_id: this.operitemForm.operitem_id,
+          operitem_code: this.operitemForm.operitem_code,
+          operitem_type: this.operitemForm.operitem_type,
+          operitem_name: this.operitemForm.operitem_name,
+          operitem_desc: this.operitemForm.operitem_desc,
+          priority: this.operitemForm.priority
+        }
+        axios.post('/api_devicetype/update_operitems/', items)
+          .then(() => {
+            this.$parent.update()
+            this.$notify({
+              title: '创建成功',
+              message: '这是一条成功的提示消息',
+              type: 'success'
+            })
+          }).catch(() => {
+            this.$notify.error({
+              title: '创建失败',
+              message: '这是一条错误的提示消息'
+            })
+          })
+        this.operitemForm = {}
+      } else {
+        var item = {
+          operitem_code: this.operitemForm.operitem_code,
+          operitem_type: this.operitemForm.operitem_type,
+          operitem_name: this.operitemForm.operitem_name,
+          operitem_desc: this.operitemForm.operitem_desc,
+          priority: this.operitemForm.priority,
+          devicetype: this.currentDevicetypeId1
+        }
+        const obj = { operitems: [item] }
+        axios.post('/api_devicetype/create_operitems/', obj)
+          .then(() => {
+            this.$parent.update()
+            this.$notify({
+              title: '创建成功',
+              message: '这是一条成功的提示消息',
+              type: 'success'
+            })
+          }).catch(() => {
+            this.$notify.error({
+              title: '创建失败',
+              message: '这是一条错误的提示消息'
+            })
+          })
+        this.operitemForm = {}
       }
-      const obj = { operitems: [item] }
-      axios.post('/api_devicetype/create_operitems/', obj)
-        .then(() => {
-          this.$parent.update()
-          this.$notify({
-            title: '创建成功',
-            message: '这是一条成功的提示消息',
-            type: 'success'
-          })
-        }).catch(() => {
-          this.$notify.error({
-            title: '创建失败',
-            message: '这是一条错误的提示消息'
-          })
-        })
-      this.operitemForm = {}
     }
   }
 }

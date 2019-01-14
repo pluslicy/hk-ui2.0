@@ -39,7 +39,8 @@ export default {
   font-size: 12px;
 }
 .deviceType i{
-  margin: 10px;
+  /* margin: 10px; */
+  cursor:pointer
 }
 
 </style>

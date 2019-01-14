@@ -42,26 +42,44 @@
         label="操作"
         align="center">
         <template slot-scope="{row}">
-          <!-- {{row.id}} -->
+          <!-- {{row}} -->
           <!-- <i class="fa fa-food"></i> -->
-          <i class="el-icon-view" title="详细信息" @click="toView" />
-          <i class="el-icon-edit" title="修改" @click="toUpdateManager(row)" />
-          <i class="el-icon-delete" title="删除" @click="deleteManager(row.id)" />
+          <i class="el-icon-view" title="详细信息" @click="toView(row)" />
+          <i class="el-icon-edit" title="修改" @click="toUpdateDevice(row)" />
+          <i class="el-icon-delete" title="删除" @click="deleteDevice(row.device_id)" />
         </template>
       </el-table-column>
     </el-table>
     <!-- 模态框 -->
-    <device-dialog ref="deviceDialog" />
+    <device-dialog ref="deviceDialog" :devices="devices" />
   </div>
 </template>
 
 <script>
 import axios from '@/http/axios'
+import _ from 'lodash'
 import $ from 'jquery'
 import deviceDialog from './Dialog.vue'
 export default {
   components: {
     deviceDialog
+  },
+  // props: ['params', 'devicetypes', 'rooms'],
+  props: {
+    params: {
+      type: Object,
+      default: {}
+    },
+    devicetypes: {
+      type: Array,
+      default: function() {
+        return []
+      }
+    },
+    rooms: {
+      type: Array,
+      default: []
+    }
   },
   data() {
     return {
@@ -69,7 +87,10 @@ export default {
       loading: false,
       // 所有设备
       devices: [],
-      multipleSelection: []
+      // 每个设备的信息
+      multipleSelection: [],
+      // 设备总数
+      count: 1
     }
   },
   created() {
@@ -77,15 +98,58 @@ export default {
     this.findAllDevice()
   },
   methods: {
+    // 删除设备
+    deleteDevice(id) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          axios.post('/api_device/delete_device/', {
+            device_ids: [id]
+          })
+            .then(() => {
+              this.$notify({
+                title: '成功',
+                message: '删除成功',
+                type: 'success'
+              })
+              this.findAllDevice()
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        })
+    },
     // 查看设备详细信息
-    toView() {
+    toView(row) {
       this.$refs.deviceDialog.showViewDialog()
+      this.$refs.deviceDialog.deviceViewDialog.devices = row
+      this.$refs.deviceDialog.deviceViewDialog.title = row.device_name
     },
     // 修改设备信息
-    toUpdateManager(row) {
+    toUpdateDevice(row) {
       this.$refs.deviceDialog.showDialog()
       this.$refs.deviceDialog.deviceDialog.title = '修改设备信息'
+      // let device = _.clone(row)
+
       this.$refs.deviceDialog.deviceDialog.form = row
+
+      // // 过滤设备类型id
+      // const devicetypeArr = this.devicetypes.filter((item) => {
+      //   return item.devicetype_name === row.devicetype.devicetype_name
+      // })
+      // if (devicetypeArr.length > 0) {
+      //   this.$refs.deviceDialog.deviceDialog.form.devicetype = devicetypeArr[0].devicetype_id
+      // }
+      // // 过滤设备类型id
+      // const roomArr = this.rooms.filter((item) => {
+      //   return item.room_name === row.room.room_name
+      // })
+      // if (roomArr.length > 0) {
+      //   this.$refs.deviceDialog.deviceDialog.form.room = roomArr[0].room_id
+      // }
     },
     // 多选
     handleSelectionChange(val) {
@@ -94,10 +158,14 @@ export default {
     // 获取所有的设备
     findAllDevice() {
       this.loading = true
-      axios.get('/api_device/list_device/')
+      axios.get('/api_device/list_device/', {
+        params: this.params
+      })
         .then(({ data }) => {
-          console.log(data)
+          // console.log(data)
           this.devices = data.results
+          // this.count = data.count
+          this.$parent.total = data.count
         })
         .catch((error) => {
           console.log(error)

@@ -84,59 +84,60 @@ export default {
     },
     add() {
       this.dialogFormVisible1 = false
-      // if (this.dataitemForm.dataitem_id) {
-      //   var item = {
-      //     dataitem_code: this.dataitemForm.dataitem_code,
-      //     dataitem_name: this.dataitemForm.dataitem_name,
-      //     dataitem_groupname: this.dataitemForm.dataitem_groupname,
-      //     dataitem_unit: this.dataitemForm.dataitem_unit,
-      //     dataitem_desc: this.dataitemForm.dataitem_desc,
-      //     priority: this.dataitemForm.priority,
-      //     dataitem_id: this.dataitemForm.dataitem_id
-      //   }
-      //   const obj = { dataitems: [item] }
-      //   axios.post('/api_devicetype/update_dataitems/', obj)
-      //     .then(() => {
-      //       this.$parent.update()
-      //       this.$notify({
-      //         title: '创建成功',
-      //         message: '这是一条成功的提示消息',
-      //         type: 'success'
-      //       })
-      //     }).catch(() => {
-      //       this.$notify.error({
-      //         title: '创建失败',
-      //         message: '这是一条错误的提示消息'
-      //       })
-      //     })
-      //   this.dataitemForm = {}
-      // } else {
-      var item = {
-        dataitem_code: this.dataitemForm.dataitem_code,
-        dataitem_name: this.dataitemForm.dataitem_name,
-        dataitem_groupname: this.dataitemForm.dataitem_groupname,
-        dataitem_unit: this.dataitemForm.dataitem_unit,
-        dataitem_desc: this.dataitemForm.dataitem_desc,
-        priority: this.dataitemForm.priority,
-        devicetype: this.currentDevicetypeId1
+      if (this.dataitemForm.dataitem_id) {
+        console.log(this.dataitemForm.dataitem_id)
+        var items = {
+          dataitem_id: this.dataitemForm.dataitem_id,
+          dataitem_code: this.dataitemForm.dataitem_code,
+          dataitem_name: this.dataitemForm.dataitem_name,
+          dataitem_groupname: this.dataitemForm.dataitem_groupname,
+          dataitem_unit: this.dataitemForm.dataitem_unit,
+          dataitem_desc: this.dataitemForm.dataitem_desc,
+          priority: this.dataitemForm.priority
+        }
+        // const obj = { dataitems: [item] }
+        axios.post('/api_devicetype/update_dataitems/', items)
+          .then(() => {
+            this.$parent.update()
+            this.$notify({
+              title: '创建成功',
+              message: '这是一条成功的提示消息',
+              type: 'success'
+            })
+          }).catch(() => {
+            this.$notify.error({
+              title: '创建失败',
+              message: '这是一条错误的提示消息'
+            })
+          })
+        this.dataitemForm = {}
+      } else {
+        var item = {
+          dataitem_code: this.dataitemForm.dataitem_code,
+          dataitem_name: this.dataitemForm.dataitem_name,
+          dataitem_groupname: this.dataitemForm.dataitem_groupname,
+          dataitem_unit: this.dataitemForm.dataitem_unit,
+          dataitem_desc: this.dataitemForm.dataitem_desc,
+          priority: this.dataitemForm.priority,
+          devicetype: this.currentDevicetypeId1
+        }
+        const obj = { dataitems: [item] }
+        axios.post('/api_devicetype/create_dataitems/', obj)
+          .then(() => {
+            this.$parent.update()
+            this.$notify({
+              title: '创建成功',
+              message: '这是一条成功的提示消息',
+              type: 'success'
+            })
+          }).catch(() => {
+            this.$notify.error({
+              title: '创建失败',
+              message: '这是一条错误的提示消息'
+            })
+          })
+        this.dataitemForm = {}
       }
-      const obj = { dataitems: [item] }
-      axios.post('/api_devicetype/create_dataitems/', obj)
-        .then(() => {
-          this.$parent.update()
-          this.$notify({
-            title: '创建成功',
-            message: '这是一条成功的提示消息',
-            type: 'success'
-          })
-        }).catch(() => {
-          this.$notify.error({
-            title: '创建失败',
-            message: '这是一条错误的提示消息'
-          })
-        })
-      this.dataitemForm = {}
-      // }
     }
   }
 }
