@@ -103,8 +103,8 @@ export default {
   },
   methods: {
     // 加载表格内容
-    findAllUsers() {
-      axios.get('/api_user/user_list/').then(({ data: result }) => {
+    findAllUsers(params) {
+      axios.get('/api_user/user_list/', { params }).then(({ data: result }) => {
         // console.log('=======================', result)
         this.users = result.results
         this.transform()

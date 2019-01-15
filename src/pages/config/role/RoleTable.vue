@@ -23,7 +23,7 @@
       <el-table-column
         prop="last_names"
         label="用户名称"
-        width="220" />
+        width="450" />
       <el-table-column
         width="100"
         align="center"

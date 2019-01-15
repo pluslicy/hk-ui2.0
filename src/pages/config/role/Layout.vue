@@ -11,14 +11,14 @@
     <!-- 表格结束 -->
     <!-- 新增模态框开始 -->
     <div class="toAddRoleDialog">
-      <el-dialog :title="toAddRoleDialog.title" :visible.sync="toAddRoleDialog.visible" width="30%" center="">
+      <el-dialog :title="toAddRoleDialog.title" :visible.sync="toAddRoleDialog.visible" width="25%" center="">
         <el-form ref="ruleForm" :model="toAddRoleDialog.form" :rules="rules" label-width="60px" label-position="left">
           <el-form-item label="角色:" prop="name">
             <el-input v-model="toAddRoleDialog.form.name" autocomplete="off" />
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="toAddRoleDialog.visible = false">取 消</el-button>
+          <el-button @click="toCloseDialog">取 消</el-button>
           <el-button type="primary" @click="saveAddRole()">确 定</el-button>
         </div>
       </el-dialog>
@@ -48,7 +48,7 @@ export default {
       },
       rules: {
         name: [
-          { required: true, message: '请输入姓名', trigger: 'blur' }
+          { required: true, message: '请输入角色名称', trigger: 'blur' }
         ]
       },
       result: true,
@@ -91,7 +91,7 @@ export default {
       axios.post('/api_group/create_group', obj1).then(() => {
         this.$notify({
           title: '成功',
-          message: '这是一条成功的提示消息',
+          message: '新增用户成功',
           type: 'success'
         })
         this.toAddRoleDialog.visible = false
@@ -99,7 +99,7 @@ export default {
       }).catch(() => {
         this.$notify.error({
           title: '错误',
-          message: '保存失败'
+          message: '请输入角色名称'
         })
       })
     }
