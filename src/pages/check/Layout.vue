@@ -30,13 +30,13 @@
         </el-col>
         <el-col :span="2" :offset="1">
           <el-form-item>
-            <el-button type="primary" size="mini">查询</el-button>
+            <el-button type="primary" size="mini" plain @click="filtrate()">查询</el-button>
           </el-form-item>
         </el-col>
         <el-col :span="2" :offset="2">
           <el-row type="flex" justify="end">
             <el-form-item>
-              <el-button type="primary" size="mini" style="float: right;width: 6em;" @click="addRequst()">添加申请</el-button>
+              <el-button type="primary" size="mini" style="float: right;width: 6em;" plain @click="addRequst()">添加申请</el-button>
             </el-form-item>
           </el-row>
         </el-col>
@@ -53,8 +53,8 @@
       <el-table-column prop="approval_status" label="审批状态" align="center" />
       <el-table-column prop="approval_id" label="操作" align="center" width="80">
         <template slot-scope="{row}">
-          <i class="fa fa-edit" style="color:#448db8" title="审批" @click="checkRequst(row)" />
-          <i class="el-icon-delete" style="color:#f56c6c" title="删除" />
+          <i v-if="row.result" class="fa fa-edit" style="color:#448db8" title="审批" @click="checkRequst(row)" />
+          <i v-if="row.result" class="el-icon-delete" style="color:#f56c6c" title="删除" @click="deleteRequst(row.approval_id)" />
         </template>
       </el-table-column>
     </el-table>
@@ -104,6 +104,37 @@ export default {
     this.he = $(window).height() - 200
   },
   methods: {
+    // 时间序列化
+    timestampToTime(timestamp) {
+      const date = new Date(timestamp)// 时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      const Y = date.getFullYear() + '-'
+      const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+      const D = date.getDate() + ' '
+      const h = date.getHours() + ':'
+      const m = date.getMinutes() + ':'
+      const s = date.getSeconds()
+      return Y + M + D + h + m + s
+    },
+    // 筛选符合条件的
+    filtrate() {
+      var filtrate = {}
+      if (this.form.check_name !== '') {
+        filtrate.last_name = this.form.check_name
+      }
+      if (this.form.check_id !== '') {
+        filtrate.approval_type = this.form.check_id
+      }
+      if (this.form.status_id !== '') {
+        filtrate.approval_status = this.form.status_id
+      }
+      if (this.form.time && this.form.time.length !== 0) {
+        var startDate = this.timestampToTime(this.form.time[0])
+        var endDate = this.timestampToTime(this.form.time[1])
+        filtrate.start_time = startDate
+        filtrate.end_time = endDate
+      }
+      this.loadCheck_list(filtrate)
+    },
     // 加载审批类型
     loadCheck_types() {
       axios.get('/api_approval/get_approval_type/')
@@ -129,9 +160,17 @@ export default {
         })
     },
     // 加载申请列表
-    loadCheck_list() {
-      axios.get('/api_approval/get_approval_list/')
+    loadCheck_list(obj) {
+      axios.get('/api_approval/get_approval_list/', { params: obj })
         .then(({ data }) => {
+          data.result.forEach(function(obj, index) {
+            // 没有审核的才可以尽心删除 才能出现删除的按钮
+            if (obj.status_id === 0) {
+              obj.result = true
+            } else {
+              obj.result = false
+            }
+          })
           this.check_list = data.result
         }).catch(() => {
           this.$notify.error({
@@ -148,6 +187,28 @@ export default {
     checkRequst(data) {
       this.$refs.checkModal.visible1 = true
       this.$refs.checkModal.user_check = [data]
+    },
+    deleteRequst(oId) {
+      console.log(oId)
+      const obj = {
+        approval_id: [oId]
+      }
+      axios.post('/api_approval/delete_approval/', obj)
+        .then(() => {
+          this.loadCheck_types()
+          this.loadCheck_states()
+          this.loadCheck_list()
+          this.$notify({
+            title: '删除成功',
+            message: '这是一条成功的提示消息',
+            type: 'success'
+          })
+        }).catch(() => {
+          this.$notify.error({
+            title: '删除失败',
+            message: '这是一条错误的提示消息'
+          })
+        })
     }
   }
 }

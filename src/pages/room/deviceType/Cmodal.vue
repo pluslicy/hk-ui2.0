@@ -18,7 +18,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <span slot="footer" class="dialog-footer"><el-button @click="dialogVisible3 = false">取 消</el-button></span>
+      <span slot="footer" class="dialog-footer"><el-button plain @click="dialogVisible3 = false">取 消</el-button></span>
     </el-dialog>
     <CaddModal ref="CaddModal" />
   </div>
@@ -48,6 +48,7 @@ export default {
       axios.post('/api_devicetype/delete_configitems/', obj)
         .then(() => {
           this.update()
+          this.updateData()
           this.$notify({
             title: '删除成功',
             message: '这是一条成功的提示消息',
@@ -62,6 +63,22 @@ export default {
     },
     update() {
       this.$parent.loadDeviceTypes()
+    },
+    updateData() {
+      // let num = this.currentDevicetypeId + ''
+      axios.post('/api_devicetype/Peizhixiang/', this.currentDevicetypeId).then(({ data }) => {
+        this.configurationType = data.list
+        this.$notify({
+          title: '刷新成功',
+          message: '这是一条成功的提示消息',
+          type: 'success'
+        })
+      }).catch(() => {
+        this.$notify.error({
+          title: '网络超时',
+          message: '这是一条错误的提示消息'
+        })
+      })
     },
     toUpdateConfiguration(row) {
       this.$refs.CaddModal.dialogFormVisible3 = true

@@ -12,8 +12,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="close()">取 消</el-button>
-        <el-button type="primary" @click="saveRequst()">确 定</el-button>
+        <el-button plain @click="close()">取 消</el-button>
+        <el-button type="primary" plain @click="saveRequst()">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -39,6 +39,7 @@ export default {
   methods: {
     close() {
       this.dialogFormVisible = false
+      this.checkForm = {}
     },
     // 保存申请
     saveRequst() {
@@ -49,6 +50,7 @@ export default {
       }
       axios.post('/api_approval/create_approval/', obj)
         .then(() => {
+          this.checkForm = {}
           this.$parent.loadCheck_types()
           this.$parent.loadCheck_states()
           this.$parent.loadCheck_list()

@@ -181,17 +181,6 @@ export default {
         .catch((error) => {
           console.log(error)
         })
-    },
-    // 获取所有设备类型
-    findAllDeviceType() {
-      axios.get('/api_devicetype/list_all_devicetypes/')
-        .then(({ data }) => {
-          // console.log(data)
-          this.devicetypes = data
-        })
-        .catch((error) => {
-          console.log(error)
-        })
     }
   }
 }

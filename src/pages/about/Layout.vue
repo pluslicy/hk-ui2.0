@@ -1,24 +1,24 @@
 <template>
   <div class="about">
     关于我们
-    <el-button @click='handleClick'>open</el-button>
-    <about-dialog :dialogVisible="dialogVisible"/>
+    <el-button @click="handleClick">open</el-button>
+    <about-dialog :dialog-visible="dialogVisible"/>
   </div>
 </template>
 <script>
-import AboutDialog from './AboutDialog'
+// import AboutDialog from './AboutDialog'
 export default {
-  data(){
+  components: {
+    // aboutDialog: AboutDialog
+  },
+  data() {
     return {
-      dialogVisible:false
+      dialogVisible: false
     }
   },
-  components:{
-    aboutDialog:AboutDialog
-  },
-  methods:{
-    handleClick(){
-      this.dialogVisible = true;
+  methods: {
+    handleClick() {
+      this.dialogVisible = true
     }
   }
 }

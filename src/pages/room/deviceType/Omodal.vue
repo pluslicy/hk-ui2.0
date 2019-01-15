@@ -18,7 +18,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <span slot="footer" class="dialog-footer"><el-button @click="dialogVisible2 = false">取 消</el-button></span>
+      <span slot="footer" class="dialog-footer"><el-button plain @click="dialogVisible2 = false">取 消</el-button></span>
     </el-dialog>
     <OaddModal ref="OaddModal" />
   </div>
@@ -48,6 +48,7 @@ export default {
       axios.post('/api_devicetype/delete_operitems/', obj)
         .then(() => {
           this.update()
+          this.updateData()
           this.$notify({
             title: '删除成功',
             message: '这是一条成功的提示消息',
@@ -66,6 +67,22 @@ export default {
     toUpdateOperation(row) {
       this.$refs.OaddModal.dialogFormVisible2 = true
       this.$refs.OaddModal.operitemForm = row
+    },
+    updateData() {
+      // let num = this.currentDevicetypeId + ''
+      axios.post('/api_devicetype/Caozuoxiang/', this.currentDevicetypeId).then(({ data }) => {
+        this.operationType = data.list
+        this.$notify({
+          title: '刷新成功',
+          message: '这是一条成功的提示消息',
+          type: 'success'
+        })
+      }).catch(() => {
+        this.$notify.error({
+          title: '网络超时',
+          message: '这是一条错误的提示消息'
+        })
+      })
     }
   }
 }

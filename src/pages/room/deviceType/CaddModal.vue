@@ -20,8 +20,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="close">取 消</el-button>
-        <el-button type="primary" @click="add()">确 定</el-button>
+        <el-button plain @click="close">取 消</el-button>
+        <el-button type="primary" plain @click="add()">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -90,6 +90,7 @@ export default {
         }
         axios.post('/api_devicetype/update_configitems/', items)
           .then(() => {
+            this.$parent.updateData()
             this.$parent.update()
             this.$notify({
               title: '创建成功',
@@ -115,6 +116,7 @@ export default {
         const obj = { configitems: [item] }
         axios.post('/api_devicetype/create_configitems/', obj)
           .then(() => {
+            this.$parent.updateData()
             this.$parent.update()
             this.$notify({
               title: '创建成功',
