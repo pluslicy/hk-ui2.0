@@ -17,10 +17,10 @@
         <el-form-item label="">
           <el-select v-model="params.devicetype_name" clearable placeholder="请选择类型">
             <el-option
-              v-for="deviceType in deviceTypes"
-              :key="deviceType.devicetype_id"
-              :label="deviceType.devicetype_name"
-              :value="deviceType.devicetype_name" />
+              v-for="devicetype in devicetypes"
+              :key="devicetype.devicetype_id"
+              :label="devicetype.devicetype_name"
+              :value="devicetype.devicetype_name" />
               <!-- </el-option> -->
           </el-select>
         </el-form-item>
@@ -39,7 +39,7 @@
       <el-button type="primary" plain size="mini" @click="batchDeleteDevice">批量删除</el-button>
     </div>
     <!-- 数据表格 -->
-    <device-data-table ref="deviceDataTable" :params="params" :devicetypes="deviceTypes" :rooms="rooms" />
+    <device-data-table ref="deviceDataTable" :params="params" :devicetypes="devicetypes" :rooms="rooms" />
     <!-- 分页 -->
     <!-- <device-pagination /> -->
     <div class="device_pagination">
@@ -51,7 +51,7 @@
         <!-- </el-pagination> -->
     </div>
     <!-- 模态框 -->
-    <device-dialog ref="deviceDialog" :devicetypes="deviceTypes" :rooms="rooms" />
+    <device-dialog ref="deviceDialog" :rooms="rooms" />
   </div>
 </template>
 
@@ -71,7 +71,7 @@ export default {
       // 所有机房
       rooms: [],
       // 所有设备类型
-      deviceTypes: [],
+      devicetypes: [],
       // 所有设备名称
       deviceNames: [],
       // 设备总数
@@ -107,7 +107,7 @@ export default {
   // 生命周期钩子
   created() {
     this.findAllroom()
-    // this.findAllDeviceType()
+    this.findAllDeviceType()
     // this.total = this.$refs.deviceDataTable.count
     // console.log(this.total)
   },

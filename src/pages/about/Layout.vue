@@ -22,11 +22,12 @@
   </div>
 </template>
 <script>
-import AboutDialog from './AboutDialog'
+// import AboutDialog from './AboutDialog'
 import $ from 'jquery'
+// import AboutDialog from './AboutDialog'
 export default {
   components: {
-    aboutDialog: AboutDialog
+    // aboutDialog: AboutDialog
   },
   data() {
     return {
