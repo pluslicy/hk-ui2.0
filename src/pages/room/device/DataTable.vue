@@ -88,9 +88,7 @@ export default {
       // 所有设备
       devices: [],
       // 每个设备的信息
-      multipleSelection: [],
-      // 设备总数
-      count: 1
+      multipleSelection: []
     }
   },
   created() {
@@ -132,24 +130,32 @@ export default {
     toUpdateDevice(row) {
       this.$refs.deviceDialog.showDialog()
       this.$refs.deviceDialog.deviceDialog.title = '修改设备信息'
-      // let device = _.clone(row)
+      let device = _.clone(row)
 
-      this.$refs.deviceDialog.deviceDialog.form = row
+      // this.$refs.deviceDialog.deviceDialog.form = row
 
-      // // 过滤设备类型id
-      // const devicetypeArr = this.devicetypes.filter((item) => {
-      //   return item.devicetype_name === row.devicetype.devicetype_name
-      // })
-      // if (devicetypeArr.length > 0) {
-      //   this.$refs.deviceDialog.deviceDialog.form.devicetype = devicetypeArr[0].devicetype_id
-      // }
-      // // 过滤设备类型id
-      // const roomArr = this.rooms.filter((item) => {
-      //   return item.room_name === row.room.room_name
-      // })
-      // if (roomArr.length > 0) {
-      //   this.$refs.deviceDialog.deviceDialog.form.room = roomArr[0].room_id
-      // }
+      // 过滤设备类型id
+      const devicetypeArr = this.devicetypes.filter((item) => {
+        return item.devicetype_name === row.devicetype.devicetype_name
+      })
+      console.log(devicetypeArr)
+      if (devicetypeArr.length > 0) {
+        device.devicetype = devicetypeArr[0].devicetype_id
+      }
+      this.$refs.deviceDialog.deviceDialog.disabled = true
+      // 过滤设备类型id
+      const roomArr = this.rooms.filter((item) => {
+        return item.room_name === row.room.room_name
+      })
+      if (roomArr.length > 0) {
+        device.room = roomArr[0].room_id
+      }
+      this.$refs.deviceDialog.deviceDialog.form.device_id = device.device_id
+      this.$refs.deviceDialog.deviceDialog.form.device_name = device.device_name
+      this.$refs.deviceDialog.deviceDialog.form.device_code = device.device_code
+      this.$refs.deviceDialog.deviceDialog.form.device_desc = device.device_desc
+      this.$refs.deviceDialog.deviceDialog.form.room = device.room
+      this.$refs.deviceDialog.deviceDialog.form.devicetype = device.devicetype
     },
     // 多选
     handleSelectionChange(val) {
