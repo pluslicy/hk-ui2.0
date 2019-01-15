@@ -130,7 +130,7 @@ export default {
     toUpdateDevice(row) {
       this.$refs.deviceDialog.showDialog()
       this.$refs.deviceDialog.deviceDialog.title = '修改设备信息'
-      let device = _.clone(row)
+      const device = _.clone(row)
 
       // this.$refs.deviceDialog.deviceDialog.form = row
 

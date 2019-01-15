@@ -97,7 +97,7 @@ export default {
   data() {
     return {
       devicetypes: [],
-      rooms:[],
+      rooms: [],
       // 修改模态框
       deviceDialog: {
         title: '',
