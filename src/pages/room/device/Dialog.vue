@@ -84,15 +84,17 @@ import axios from '@/http/axios'
 export default {
   props: {
     // rooms: Array,
-    devices: Array
+    // devices: Array
     // rooms: {
     //   type: Array,
     //   default: []
     // },
-    // devices: {
-    //   type: Array,
-    //   default: []
-    // }
+    devices: {
+      type: Array,
+      default: function() {
+        return []
+      }
+    }
   },
   data() {
     return {

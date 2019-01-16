@@ -36,20 +36,41 @@ export default {
       this.passwordDialog.form.id = row.id
     },
     savePassword() {
-      console.log(this.passwordDialog.form)
-      axios.post('/api_user/update_user/', this.passwordDialog.form).then(() => {
-        this.$notify({
-          title: '成功',
-          message: '修改密码成功',
-          type: 'success'
+      // console.log(this.passwordDialog.form)
+      // axios.post('/api_user/update_user/', this.passwordDialog.form).then(() => {
+      //   this.$notify({
+      //     title: '成功',
+      //     message: '修改密码成功',
+      //     type: 'success'
+      //   })
+      //   this.passwordDialog.visible = false
+      // }).catch(() => {
+      //   this.$notify.error({
+      //     title: '错误',
+      //     message: '这是一条错误的提示消息'
+      //   })
+      // })
+      if (this.passwordDialog.form.password === this.passwordDialog.form.password1) {
+        console.log(this.passwordDialog.form)
+        axios.post('/api_user/update_user/', this.passwordDialog.form).then(() => {
+          this.$notify({
+            title: '成功',
+            message: '修改密码成功',
+            type: 'success'
+          })
+          this.passwordDialog.visible = false
+        }).catch(() => {
+          this.$notify.error({
+            title: '错误',
+            message: '这是一条错误的提示消息'
+          })
         })
-        this.passwordDialog.visible = false
-      }).catch(() => {
+      } else {
         this.$notify.error({
           title: '错误',
-          message: '这是一条错误的提示消息'
+          message: '两次输入的密码不一致'
         })
-      })
+      }
     }
   }
 }

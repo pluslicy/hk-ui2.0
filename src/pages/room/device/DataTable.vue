@@ -68,7 +68,9 @@ export default {
   props: {
     params: {
       type: Object,
-      default: {}
+      default: function() {
+        return []
+      }
     },
     devicetypes: {
       type: Array,
@@ -78,7 +80,9 @@ export default {
     },
     rooms: {
       type: Array,
-      default: []
+      default: function() {
+        return []
+      }
     }
   },
   data() {
