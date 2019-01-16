@@ -3,6 +3,7 @@
     <div class="user_data_table">
       <!-- 表格开始 -->
       <el-table
+        v-loading="loading"
         :data="users1"
         :height="he"
         size="mini"
@@ -89,7 +90,8 @@ export default {
       users1: [],
       multipleSelection: [],
       ids: [],
-      idss: []
+      idss: [],
+      loading: true
     }
   },
   // watch: {
@@ -108,8 +110,12 @@ export default {
         // console.log('=======================', result)
         this.users = result.results
         this.transform()
+        this.loading = false
       }).catch(() => {
-
+        this.$notify.error({
+          title: '网络错误',
+          message: '加载失败'
+        })
       })
     },
     // 转换获取到的用户信息
@@ -150,44 +156,66 @@ export default {
     },
     // 删除
     delUser(row) {
-      alert(row.id)
-      axios.post('/api_user/delete_user/', { 'user_ids': [row.id] }).then(() => {
-        this.$notify({
-          title: '成功',
-          message: '这是一条成功的提示消息',
-          type: 'success'
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // alert(row.id)
+        axios.post('/api_user/delete_user/', { 'user_ids': [row.id] }).then(() => {
+          this.$notify({
+            title: '成功',
+            message: '这是一条成功的提示消息',
+            type: 'success'
+          })
+          this.findAllRoles()
+        }).catch(() => {
+          this.$notify.error({
+            title: '错误',
+            message: '删除失败'
+          })
         })
-        this.findAllRoles()
       }).catch(() => {
-        this.$notify.error({
-          title: '错误',
-          message: '删除失败'
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         })
       })
     },
     // 批量删除
     delUsers1() {
-      this.ids = this.multipleSelection.map((item) => {
-        return item.id + ''
-      })
-      alert(this.ids)
-      // this.ids = this.$refs.roleDataTable.ids
-      // console.log(this.ids)
-      const obj1 = {
-        'user_ids': this.ids
-      }
-      // console.log('?????????', obj1)
-      axios.post('/api_user/delete_user/', obj1).then(() => {
-        this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success'
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.ids = this.multipleSelection.map((item) => {
+          return item.id + ''
         })
-        this.findAllRoles()
+        alert(this.ids)
+        // this.ids = this.$refs.roleDataTable.ids
+        // console.log(this.ids)
+        const obj1 = {
+          'user_ids': this.ids
+        }
+        // console.log('?????????', obj1)
+        axios.post('/api_user/delete_user/', obj1).then(() => {
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success'
+          })
+          this.findAllRoles()
+        }).catch(() => {
+          this.$notify.error({
+            title: '错误',
+            message: '删除失败'
+          })
+        })
       }).catch(() => {
-        this.$notify.error({
-          title: '错误',
-          message: '删除失败'
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         })
       })
     },

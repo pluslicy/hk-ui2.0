@@ -1,6 +1,7 @@
 <template>
   <div class="role_data_table">
     <el-table
+      v-loading="loading"
       :data="roles"
       :height="he"
       size="mini"
@@ -51,7 +52,8 @@ export default {
     return {
       roles: [],
       multipleSelection: [],
-      ids: []
+      ids: [],
+      loading: true
     }
   },
   // watch: {
@@ -70,51 +72,74 @@ export default {
       axios.get('/api_permission/get_permission_list').then(({ data: result }) => {
         console.log('...', result.data)
         this.roles = result.data
+        this.loading = false
       }).catch(() => {
-
+        this.$notify.error({
+          title: '网络错误',
+          message: '加载失败'
+        })
       })
     },
     // 删除
     delRole(row) {
-      console.log(row.group_id)
-      // alert(id)
-      axios.post('/api_group/delete_group', { ids: [row.group_id] }).then(() => {
-        this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success'
+      this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        console.log(row.group_id)
+        // alert(id)
+        axios.post('/api_group/delete_group', { ids: [row.group_id] }).then(() => {
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success'
+          })
+          this.findAllRoles()
+        }).catch(() => {
+          this.$notify.error({
+            title: '错误',
+            message: '删除失败'
+          })
         })
-        this.findAllRoles()
       }).catch(() => {
-        this.$notify.error({
-          title: '错误',
-          message: '删除失败'
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         })
       })
     },
     // 批量删除
     delRoles1() {
-      this.ids = this.multipleSelection.map((item) => {
-        return item.group_id + ''
-      })
-      // alert(this.ids)
-      // this.ids = this.$refs.roleDataTable.ids
-      // console.log(this.ids)
-      const obj1 = {
-        'ids': this.ids
-      }
-      console.log(obj1)
-      axios.post('/api_group/delete_group', obj1).then(() => {
-        this.$notify({
-          title: '成功',
-          message: '删除成功',
-          type: 'success'
+      this.$confirm('此操作将永久删除该角色, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.ids = this.multipleSelection.map((item) => {
+          return item.group_id + ''
         })
-        this.findAllRoles()
+        const obj1 = {
+          'ids': this.ids
+        }
+        console.log(obj1)
+        axios.post('/api_group/delete_group', obj1).then(() => {
+          this.$notify({
+            title: '成功',
+            message: '删除成功',
+            type: 'success'
+          })
+          this.findAllRoles()
+        }).catch(() => {
+          this.$notify.error({
+            title: '错误',
+            message: '删除失败'
+          })
+        })
       }).catch(() => {
-        this.$notify.error({
-          title: '错误',
-          message: '删除失败'
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
         })
       })
     },
