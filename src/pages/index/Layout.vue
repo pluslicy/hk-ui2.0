@@ -15,11 +15,11 @@
             <el-row>
               <el-col :span="12">
                 <div>平均温度</div>
-                <div style="border-top:2px solid #fff;">{{ item.temp }}</div>
+                <div style="border-top:2px solid #fff;">{{ currentRoomBaseData.temp }}</div>
               </el-col>
               <el-col :span="12">
                 <div>平均湿度</div>
-                <div style="border-top:2px solid #fff;">{{ item.hum }}</div>
+                <div style="border-top:2px solid #fff;">{{ currentRoomBaseData.hum }}</div>
               </el-col>
             </el-row>
           </div>
@@ -31,7 +31,7 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-col v-for="data in item.other_data" :key="data.name" :span="8">
+              <el-col v-for="data in currentRoomBaseData.other_data" :key="data.name" :span="8">
                 <div>{{ data.name }}</div>
                 <div style="border-top:2px solid #fff;">{{ data.data }}</div>
               </el-col>
@@ -39,7 +39,7 @@
           </div>
           <!-- 温湿度图表 -->
           <div class="hum_chars">
-            <div :id="'humiture'+index" style="width:100%;height:350px;"/>
+            <div :id="'humiture'+index" style="height:300px;"/>
           </div>
         </el-carousel-item>
       </el-carousel>
@@ -72,6 +72,12 @@ export default {
     return {
       // 机房基本数据
       roomBaseData: [],
+      // 温湿度详细数据
+      humitureData: {},
+      // 当前机房基本数据
+      currentRoomBaseData: {},
+      // 当前温湿度数据
+      currentHumitureData: {},
       // 审批统计
       checkData: [],
       // 数量统计
@@ -102,6 +108,14 @@ export default {
     // 幻灯片切换
     changeRoom(newIndex, oldIndex) {
       // console.log(newIndex, oldIndex)
+      this.currentRoomBaseData = this.roomBaseData[newIndex]
+      // console.log(this.currentRoomBaseData)
+      setTimeout(() => {
+        this.findAllHumitureDataById(this.currentRoomBaseData.room_id, newIndex)
+      }, 100)
+
+      // this.currentHumitureData = this.humitureData
+      // console.log(this.currentHumitureData)
     },
     // 获取报警统计的数据
     findAllAlarmData() {
@@ -150,12 +164,18 @@ export default {
         })
     },
     // 获取详细温湿度数据
-    findAllHumitureData(id) {
+    findAllHumitureDataById(id, index) {
+      const vm = this
       axios.get('/api_room_monitor/getSimpleIndexData/', {
-        params: id
+        params: { room_id: id }
       })
         .then(({ data }) => {
-          // console.log(data)
+          // console.log(data,'----')
+          this.currentHumitureData = data
+          setTimeout(() => {
+            vm.drawHumiture(index)
+            // alert(1)
+          }, 200)
         })
     },
     // 获取每个机房基本数据
@@ -280,25 +300,52 @@ export default {
       })
     },
     // 绘制温湿度图表
-    drawHumiture() {
-      var myChart = echarts.init(document.getElementById('humiture'))
+    drawHumiture(index) {
+      const vm = this
+      // 获取温湿度时间，并将时间转化为时分秒格式
+      const timeData = vm.currentHumitureData.thData[0].data.map((item) => {
+        return item[0].split('T')[1]
+      })
+      console.log(timeData)
+      var myChart = echarts.init(document.getElementById('humiture' + index))
       myChart.setOption({
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          right: 40,
+          top: 20,
+          data: [vm.currentHumitureData.thData[0].name, vm.currentHumitureData.thData[1].name]
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
         xAxis: {
           type: 'category',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          boundaryGap: false,
+          data: timeData.reverse()
         },
-        yAxis: {
+        yAxis: [{
+          name: '℃ / %',
           type: 'value'
-        },
-        series: [{
-          data: [820, 932, 901, 934, 1290, 1330, 1320],
-          type: 'line',
-          smooth: true
-        }, {
-          data: [840, 922, 921, 954, 1260, 1630, 1320],
-          type: 'line',
-          smooth: true
-        }]
+        }],
+        series: [
+          {
+            name: vm.currentHumitureData.thData[0].name,
+            type: 'line',
+            smooth: true,
+            data: vm.currentHumitureData.thData[0].data.map((item) => { return item[1] })
+          },
+          {
+            name: vm.currentHumitureData.thData[1].name,
+            type: 'line',
+            smooth: true,
+            data: vm.currentHumitureData.thData[1].data.map((item) => { return item[1] })
+          }
+        ]
       })
     }
   }
@@ -319,6 +366,7 @@ export default {
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 2px 2px 2px 0 #ccc;
+  position: relative;
 }
 .carousel .room_name {
   text-align: center;
@@ -338,6 +386,12 @@ export default {
   line-height: 2.5em;
   border-radius: 5px;
   background:#f0f2f5;
+}
+.carousel .hum_chars {
+  width: 60%;
+  position: absolute;
+  top: 0px;
+  right: -20px;
 }
 .statistics {
   box-shadow: 2px 2px 2px 0 #ccc;
