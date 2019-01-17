@@ -7,6 +7,11 @@
     <div class="right-menu">
       <template v-if="device!=='mobile'">
         <error-log class="errLog-container right-menu-item"/>
+        <!-- 监控模式 -->
+        <div style="display: inline-block;cursor: pointer;fill: #5a5e66;width: 20px;height: 20px;vertical-align: 10px; font-size:22px;margin:0 3px">
+          <router-link to="/video" ><i class="fa fa-video-camera"></i></router-link>
+        </div>
+
 
         <el-tooltip :content="$t('navbar.screenfull')" effect="dark" placement="bottom">
           <screenfull class="screenfull right-menu-item"/>
@@ -22,6 +27,7 @@
           <theme-picker class="theme-switch right-menu-item"/>
         </el-tooltip>
       </template>
+
 
       <el-dropdown class="avatar-container right-menu-item" trigger="click">
         <div class="avatar-wrapper">
