@@ -51,7 +51,7 @@
       </el-table-column>
     </el-table>
     <!-- 模态框 -->
-    <device-dialog ref="deviceDialog" :devices="devices" />
+    <device-dialog ref="deviceDialog" :devices="devices" :find_all_device="findAllDevice" />
   </div>
 </template>
 
@@ -68,7 +68,9 @@ export default {
   props: {
     params: {
       type: Object,
-      default: {}
+      default: function() {
+        return {}
+      }
     },
     devicetypes: {
       type: Array,
@@ -78,7 +80,9 @@ export default {
     },
     rooms: {
       type: Array,
-      default: []
+      default: function() {
+        return []
+      }
     }
   },
   data() {

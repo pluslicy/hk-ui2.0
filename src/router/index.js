@@ -72,14 +72,25 @@ export const constantRouterMap = [
     hidden: true
   },
   {
+    // path: '',
+    // component: Layout,
+    // redirect: 'dashboard',
+    // children: [
+    //   {
+    //     path: 'dashboard',
+    //     component: () => import('@/views/dashboard/index'),
+    //     name: 'Dashboard',
+    //     meta: { title: '环控系统', icon: 'dashboard', noCache: true }
+    //   }
+    // ]
     path: '',
     component: Layout,
-    redirect: 'dashboard',
+    redirect: 'index',
     children: [
       {
-        path: 'dashboard',
-        component: () => import('@/views/dashboard/index'),
-        name: 'Dashboard',
+        path: 'index',
+        component: () => import('@/pages/index/layout'),
+        name: 'Index',
         meta: { title: '环控系统', icon: 'dashboard', noCache: true }
       }
     ]

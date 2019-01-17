@@ -1,0 +1,359 @@
+<template>
+  <div class="index">
+    <div class="carousel">
+      <el-carousel height="300px" @change="changeRoom">
+        <el-carousel-item v-for="(item,index) in roomBaseData" :key="item.room_id">
+          <!-- 机房名称 -->
+          <div class="room_name">{{ item.room_name }}</div>
+          <!-- 环境数据 温湿度 -->
+          <div class="room_hum">
+            <el-row>
+              <el-col :span="24">
+                <div style="background:#409EFF;color:#fff;border-radius:5px;">环境数据</div>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col :span="12">
+                <div>平均温度</div>
+                <div style="border-top:2px solid #fff;">{{ item.temp }}</div>
+              </el-col>
+              <el-col :span="12">
+                <div>平均湿度</div>
+                <div style="border-top:2px solid #fff;">{{ item.hum }}</div>
+              </el-col>
+            </el-row>
+          </div>
+          <!-- 设备状态统计 -->
+          <div class="room_device_state">
+            <el-row>
+              <el-col :span="24">
+                <div style="background:#409EFF;color:#fff;border-radius:5px;">设备状态统计</div>
+              </el-col>
+            </el-row>
+            <el-row>
+              <el-col v-for="data in item.other_data" :key="data.name" :span="8">
+                <div>{{ data.name }}</div>
+                <div style="border-top:2px solid #fff;">{{ data.data }}</div>
+              </el-col>
+            </el-row>
+          </div>
+          <!-- 温湿度图表 -->
+          <div class="hum_chars">
+            <div :id="'humiture'+index" style="width:100%;height:350px;"/>
+          </div>
+        </el-carousel-item>
+      </el-carousel>
+    </div>
+    <!-- 统计 -->
+    <div class="statistics">
+      <el-row :gutter="20">
+        <el-col :span="8">
+          <div class="statistics_title">审批统计</div>
+          <div id="check" :style="height" />
+        </el-col>
+        <el-col :span="8">
+          <div class="statistics_title">数量统计</div>
+          <div id="number" :style="height" />
+        </el-col>
+        <el-col :span="8">
+          <div class="statistics_title">报警统计</div>
+          <div id="alarm" :style="height" />
+        </el-col>
+      </el-row>
+    </div>
+  </div>
+</template>
+<script>
+import axios from '@/http/axios'
+import $ from 'jquery'
+import echarts from 'echarts'
+export default {
+  data() {
+    return {
+      // 机房基本数据
+      roomBaseData: [],
+      // 审批统计
+      checkData: [],
+      // 数量统计
+      numberData: {},
+      // 报警统计
+      alarmData: []
+    }
+  },
+  created() {
+    // 图表高度
+    this.height = 'height:' + ($(window).height() - 560) + 'px'
+    // 加载所有机房基本数据
+    this.findAllIndexData()
+    // 加载审批统计
+    this.findAllCheckData()
+    // 加载数量统计
+    this.findAllNumberData()
+    // 加载报警统计
+    this.findAllAlarmData()
+  },
+  mounted() {
+    // this.drawHumiture()
+    // this.drawCheck()
+    // this.drawNumber()
+    // this.drawAlarm()
+  },
+  methods: {
+    // 幻灯片切换
+    changeRoom(newIndex, oldIndex) {
+      // console.log(newIndex, oldIndex)
+    },
+    // 获取报警统计的数据
+    findAllAlarmData() {
+      axios.get('/api_room_monitor/get_alarm_count/')
+        .then(({ data }) => {
+          // console.log(data)
+          const result = data.map((item) => {
+            return {
+              value: item[1],
+              name: item[0]
+            }
+          })
+          // console.log(result)
+          this.alarmData = result
+          setTimeout(() => {
+            this.drawAlarm()
+          }, 10)
+        })
+    },
+    // 获取数量统计的数据
+    findAllNumberData() {
+      axios.get('/api_room_monitor/get_number_count/')
+        .then(({ data }) => {
+          // console.log(data)
+          this.numberData = data
+          setTimeout(() => {
+            this.drawNumber()
+          }, 10)
+        })
+    },
+    // 获取审批统计的数据
+    findAllCheckData() {
+      axios.get('/api_room_monitor/get_approval_count/')
+        .then(({ data }) => {
+          const result = data.map((item) => {
+            return {
+              value: item[1],
+              name: item[0]
+            }
+          })
+          // console.log(result)
+          this.checkData = result
+          setTimeout(() => {
+            this.drawCheck()
+          }, 10)
+        })
+    },
+    // 获取详细温湿度数据
+    findAllHumitureData(id) {
+      axios.get('/api_room_monitor/getSimpleIndexData/', {
+        params: id
+      })
+        .then(({ data }) => {
+          // console.log(data)
+        })
+    },
+    // 获取每个机房基本数据
+    findAllIndexData() {
+      axios.get('/api_room_monitor/get_index_base_data/')
+        .then(({ data }) => {
+          // console.log(data)
+          this.roomBaseData = data
+        })
+    },
+    // 绘制报警统计
+    drawAlarm() {
+      const vm = this
+      var myChart = echarts.init(document.getElementById('alarm'))
+      myChart.setOption({
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        color: ['#91c7ae', '#3398db', '#d48265'],
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+          data: [vm.alarmData[0].name, vm.alarmData[1].name, vm.alarmData[2].name]
+        },
+        series: [{
+          name: '报警数据',
+          type: 'pie',
+          radius: '55%',
+          center: ['50%', '60%'],
+          data: vm.alarmData,
+          itemStyle: {
+            emphasis: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }]
+      })
+    },
+    // 绘制数量统计
+    drawNumber() {
+      const vm = this
+      var myChart = echarts.init(document.getElementById('number'))
+      myChart.setOption({
+        color: ['#3398DB'],
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: 'category',
+            // data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            data: vm.numberData.name,
+            axisTick: {
+              alignWithLabel: true
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: 'value'
+          }
+        ],
+        series: [
+          {
+            name: '数量统计',
+            type: 'bar',
+            barWidth: '60%',
+            // data: [10, 52, 200, 334, 390, 330, 220]
+            data: vm.numberData.value
+          }
+        ]
+      })
+    },
+    // 绘制审批统计
+    drawCheck() {
+      var vm = this
+      // let checkdata = vm.checkData
+      // console.log(checkdata,'---')
+      var myChart = echarts.init(document.getElementById('check'))
+      myChart.setOption({
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        color: ['#91c7ae', '#3398db', '#d48265'],
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+          data: [vm.checkData[0].name, vm.checkData[1].name, vm.checkData[2].name]
+        },
+        series: [{
+          name: '审批统计',
+          type: 'pie',
+          radius: '55%',
+          center: ['50%', '60%'],
+          // data: [
+          //   { value:335, name:'直接访问' },
+          //   { value:234, name:'联盟广告' },
+          //   { value:135, name:'视频广告' }
+          // ],
+          data: vm.checkData,
+          itemStyle: {
+            emphasis: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: 'rgba(0, 0, 0, 0.5)'
+            }
+          }
+        }]
+      })
+    },
+    // 绘制温湿度图表
+    drawHumiture() {
+      var myChart = echarts.init(document.getElementById('humiture'))
+      myChart.setOption({
+        xAxis: {
+          type: 'category',
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [{
+          data: [820, 932, 901, 934, 1290, 1330, 1320],
+          type: 'line',
+          smooth: true
+        }, {
+          data: [840, 922, 921, 954, 1260, 1630, 1320],
+          type: 'line',
+          smooth: true
+        }]
+      })
+    }
+  }
+}
+</script>
+
+<style scoped>
+.index {
+  margin: 1em;
+  padding: 1em;
+  background: #ffffff;
+  border-radius: 3px;
+  /* overflow: auto; */
+  /* overflow: hidden; */
+}
+.carousel {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 2px 2px 2px 0 #ccc;
+}
+.carousel .room_name {
+  text-align: center;
+  color: #409EFF;
+}
+.carousel .room_hum {
+  width: 40%;
+  text-align: center;
+  line-height: 2.5em;
+  border-radius: 5px;
+  margin-bottom: 30px;
+  background:#f0f2f5;
+}
+.carousel .room_device_state {
+  width: 40%;
+  text-align: center;
+  line-height: 2.5em;
+  border-radius: 5px;
+  background:#f0f2f5;
+}
+.statistics {
+  box-shadow: 2px 2px 2px 0 #ccc;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 20px;
+  padding: 15px;
+}
+.statistics .statistics_title {
+  text-align: center;
+}
+.statistics .el-col {
+  border-right: 1px solid #ccc;
+}
+.statistics .el-col:last-child {
+  border-right: none;
+}
+</style>
+
