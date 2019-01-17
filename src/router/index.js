@@ -57,6 +57,11 @@ export const constantRouterMap = [
     hidden: true
   },
   {
+    path: '/video',
+    component: () => import('@/pages/video/Layout'),
+    hidden: true
+  },
+  {
     path: '/auth-redirect',
     component: () => import('@/views/login/authredirect'),
     hidden: true

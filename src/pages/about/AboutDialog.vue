@@ -27,6 +27,20 @@
 //   props:['dialogVisible'],
 //   methods:{
 //     handleClose(){
+// export default {
+//   data(){
+//     return {
+//       msg:'hello world'
+//     }
+//   },
+//   mounted(){
+//     setTimeout(()=>{
+//       this.msg = "你好世界"
+//     },2000)
+//   },
+//   props:['dialogVisible'],
+//   methods:{
+//     handleClose(){
 
 //     }
 //   }

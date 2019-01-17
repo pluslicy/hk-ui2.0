@@ -126,36 +126,82 @@ export default {
     },
     // 保存
     saveUser() {
-      console.log(this.updateModel.form)
-      axios.post('/api_user/update_user/', this.updateModel.form).then(() => {
-        this.$notify({
-          title: '成功',
-          message: '这是一条成功的提示消息',
-          type: 'success'
+      // console.log(this.updateModel.form)
+      // axios.post('/api_user/update_user/', this.updateModel.form).then(() => {
+      //   this.$notify({
+      //     title: '成功',
+      //     message: '这是一条成功的提示消息',
+      //     type: 'success'
+      //   })
+      // }).catch(() => {
+      //   this.$notify.error({
+      //     title: '错误',
+      //     message: '这是一条错误的提示消息'
+      //   })
+      // })
+      const a = /^([\u4e00-\u9fa5]){2,4}$/
+      if (a.test(this.updateModel.form.last_name)) {
+        // const b = /^(([0\+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/
+        // if(b.test(this.updateModel.user_tel)) {
+        //   console.log(this.updateModel.form)
+        //   axios.post('/api_user/update_user/', this.updateModel.form).then(() => {
+        //     this.$notify({
+        //       title: '成功',
+        //       message: '这是一条成功的提示消息',
+        //       type: 'success'
+        //     })
+        //     this.toCloseDialog()
+        //     this.$parent.findAllUsers()
+        //   }).catch(() => {
+        //     this.$notify.error({
+        //       title: '错误',
+        //       message: '这是一条错误的提示消息'
+        //     })
+        //   })
+        // } else {
+        //   this.$notify.error({
+        //     title: '错误',
+        //     message: '地址输入错误，请输入例如13812341234，021-12345678，1234567',
+        //   });
+        // }
+        console.log(this.updateModel.form)
+        axios.post('/api_user/update_user/', this.updateModel.form).then(() => {
+          this.$notify({
+            title: '成功',
+            message: '修改成功',
+            type: 'success'
+          })
+          this.toCloseDialog()
+          this.$parent.findAllUsers()
+        }).catch(() => {
+          this.$notify.error({
+            title: '错误',
+            message: '修改失败'
+          })
         })
-      }).catch(() => {
+      } else {
         this.$notify.error({
-          title: '错误',
-          message: '这是一条错误的提示消息'
+          type: 'warning',
+          message: '错误，姓名仅限2-4位中文'
         })
-      })
-    },
-    // 上传头像
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
       }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isJPG && isLt2M
     }
+    // 上传头像
+    // handleAvatarSuccess(res, file) {
+    //   this.imageUrl = URL.createObjectURL(file.raw)
+    // },
+    // beforeAvatarUpload(file) {
+    //   const isJPG = file.type === 'image/jpeg'
+    //   const isLt2M = file.size / 1024 / 1024 < 2
+
+    //   if (!isJPG) {
+    //     this.$message.error('上传头像图片只能是 JPG 格式!')
+    //   }
+    //   if (!isLt2M) {
+    //     this.$message.error('上传头像图片大小不能超过 2MB!')
+    //   }
+    //   return isJPG && isLt2M
+    // }
   }
 }
 </script>

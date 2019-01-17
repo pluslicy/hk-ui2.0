@@ -19,7 +19,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <span slot="footer" class="dialog-footer"><el-button @click="dialogVisible1 = false">取 消</el-button></span>
+      <span slot="footer" class="dialog-footer"><el-button plain @click="dialogVisible1 = false">取 消</el-button></span>
     </el-dialog>
     <DaddModal ref="DaddModal" />
   </div>
@@ -48,7 +48,7 @@ export default {
       const obj = { dataitem_ids: [oId + ''] }
       axios.post('/api_devicetype/delete_dataitems/', obj)
         .then(() => {
-          // this.updateData()
+          this.updateData()
           this.update()
           this.$notify({
             title: '删除成功',
@@ -68,18 +68,24 @@ export default {
     toUpdateData(row) {
       this.$refs.DaddModal.dialogFormVisible1 = true
       this.$refs.DaddModal.dataitemForm = row
-    }
+    },
     // 刷新数据项
-    // updateData() {
-    //   axios.post('/api_devicetype/Shujuxiang/').then(({ data }) => {
-    //       this.dataType = data.results
-    //     }).catch(() => {
-    //       this.$notify.error({
-    //         title: '网络超时',
-    //         message: '这是一条错误的提示消息'
-    //       })
-    //     })
-    // }
+    updateData() {
+      // let num = this.currentDevicetypeId + ''
+      axios.post('/api_devicetype/Shujuxiang/', this.currentDevicetypeId).then(({ data }) => {
+        this.dataType = data.list
+        this.$notify({
+          title: '刷新成功',
+          message: '这是一条成功的提示消息',
+          type: 'success'
+        })
+      }).catch(() => {
+        this.$notify.error({
+          title: '网络超时',
+          message: '这是一条错误的提示消息'
+        })
+      })
+    }
   }
 }
 </script>

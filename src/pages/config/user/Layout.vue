@@ -2,16 +2,16 @@
   <div class="user">
     <!-- 下拉框按钮组合开始 -->
     <div class="top">
-      <el-select v-model="value5" clearable placeholder="请选择" size="mini">
+      <el-select v-model="params.user__is_active" clearable placeholder="请选择" size="mini">
         <el-option
           v-for="item in options"
           :key="item.value"
           :label="item.label"
           :value="item.value" />
       </el-select>
-      <el-input placeholder="请输入帐号" style="width:200px" size="mini" />
-      <el-input placeholder="请输入用户姓名" style="width:200px" size="mini" />
-      <el-button type="primary" plain size="mini">查询</el-button>
+      <el-input v-model="params.user__username" placeholder="请输入帐号" style="width:200px" size="mini" />
+      <el-input v-model="params.user__last_name" placeholder="请输入用户姓名" style="width:200px" size="mini" />
+      <el-button type="primary" plain size="mini" @click="findUsers">查询</el-button>
       <div class="btns">
         <el-button size="mini" type="primary" plain @click="toAddUser()">新增</el-button>
         <el-button size="mini" type="primary" plain @click="toAccredit()">角色管理</el-button>
@@ -28,9 +28,10 @@
     <!-- 分页开始 -->
     <div class="paging">
       <el-pagination
-        :total="1000"
+        v-model="params.page"
+        :total="count"
         :current-page.sync="currentPage1"
-        :page-size="100"
+        :page-size="20"
         layout="total, prev, pager, next"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />
@@ -46,6 +47,7 @@
   </div>
 </template>
 <script>
+import axios from '@/http/axios'
 import userDataTable from './DataTable.vue'
 import userAddDialog from './AddDialog.vue'
 import userAccreditDialog from './AccreditDialog.vue'
@@ -74,11 +76,25 @@ export default {
       // 多选框
       multipleSelection: [],
       // 分页
-      currentPage1: 5,
-      currentPage2: 5,
-      currentPage3: 5,
-      currentPage4: 4
+      currentPage1: 1,
+      // currentPage2: 5,
+      // currentPage3: 5,
+      // currentPage4: 4
+      params: {
+        page: 1
+      },
+      count: 0
     }
+  },
+  watch: {
+    params: function() {
+      console.log(this.params)
+      this.$refs.userDataTable.findAllUsers(this.params)
+    },
+    deep: true
+  },
+  created() {
+    this.findAllUsers()
   },
   methods: {
     // 新增用户
@@ -92,17 +108,42 @@ export default {
     },
     // 分页
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`)
+      console.log('val', val)
+      this.params.page = val
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`)
+      console.log('val', val)
+      this.params.page = val
+      this.$refs.userDataTable.findAllUsers(this.params)
     },
     // 获取批量删除所有的的id
     delUsers() {
       // this.ids = this.$refs.userDataTable.ids
       // console.log(this.ids)
       this.$refs.userDataTable.delUsers1()
+    },
+    // 加载表格内容
+    findAllUsers() {
+      axios.get('/api_user/user_list/').then(({ data: result }) => {
+        // console.log('=======================', result)
+        // this.users = result.results
+        console.log('this.user', result)
+        this.count = result.count
+        console.log('this.count=====', this.count)
+        // this.transform()
+      }).catch(() => {
+
+      })
+    },
+    // 查询按钮
+    findUsers() {
+      console.log('this.params', this.params)
+      this.$refs.userDataTable.findAllUsers(this.params)
     }
+    // 新增之后更新
+    // update() {
+    //   this.$refs.userDataTable.findAllUsers(this.params)
+    // }
   }
 }
 </script>
