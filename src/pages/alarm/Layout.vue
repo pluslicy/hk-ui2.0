@@ -39,6 +39,7 @@
         <el-button size="mini" type="primary" plain @click="checkChart">查看统计</el-button>
       </el-col>
     </el-row>
+    <div id="both" />
     <!-- 表格 -->
     <el-table :data="alerm_Manager" :height="he" style="width: 100%" align="center" @row-click="rowClick" @selection-change="handleSelectionChange">
       <el-table-column type="selection" />
@@ -111,6 +112,7 @@
           label="报警内容"
           align="center" />
       </el-table>
+      <div id="both" />
       <el-table
         :data="row"
         style="width: 100%"
@@ -162,6 +164,7 @@
           label="报警内容"
           align="center" />
       </el-table>
+      <div id="both" />
       <el-input
         :rows="4"
         v-model="dealTextarea"
@@ -209,6 +212,7 @@
           label="报警内容"
           align="center" />
       </el-table>
+      <div id="both" />
       <el-input
         :rows="4"
         v-model="batchTextarea"
@@ -238,6 +242,7 @@
           label="处理记录"
           align="center" />
       </el-table>
+      <div id="both" />
       <el-input
         :rows="4"
         v-model="checkTextarea"
@@ -279,8 +284,9 @@
   border-radius: 3px;
   padding: 1em;
 }
-el-table {
-  margin-top: 10px;
+#both {
+  height: 20px;
+  width: 100%;
 }
 </style>
 <script type="text/javascript">
@@ -475,7 +481,6 @@ export default {
     // 获取当天时间段
     times() {
       const times = new Date()
-      const now = times.getTime()
       const todayStart = times.getFullYear() + '-' + (times.getMonth() + 1) + '-' + times.getDate() + 'T' + '0:0:0' + 'Z'
       const todayEnd = times.getFullYear() + '-' + (times.getMonth() + 1) + '-' + times.getDate() + 'T' + '23:59:59' + 'Z'
       return ([todayStart, todayEnd])
@@ -496,7 +501,7 @@ export default {
           message: '正在下载...',
           type: 'success'
         })
-      }).catch((error) => {
+      }).catch(() => {
         this.$notify.info({
           title: '消息',
           message: '已取消'
@@ -562,14 +567,14 @@ export default {
         })
       })
     },
-  	// 处理提交
-  	submitDeal() {
-  		this.dealModal = false
-  		const data = {
+    // 处理提交
+    submitDeal() {
+      this.dealModal = false
+      const data = {
         alarm_id: [this.rows.alarm_id],
         process_text: this.dealTextarea
-  		}
-  		axios.post('/api_alarm/process_alarm/', data).then(() => {
+      }
+      axios.post('/api_alarm/process_alarm/', data).then(() => {
         this.loadAlerm_Manager()
         this.loadAlarm_statuss()
         this.loadAlarm_levels()
@@ -584,39 +589,37 @@ export default {
           message: '这是一条错误的提示消息'
         })
       })
-  	},
-  	// 提交审核
-  	submitCheck() {
-  	  this.checkModal = false
-  	  const obj = {
+    },
+    // 提交审核
+    submitCheck() {
+      this.checkModal = false
+      const obj = {
         alarm_id: this.rows.alarm_id,
         audit_text: this.checkTextarea
-  	  }
-  	  axios.post('/api_alarm/audit_alarm/', obj)
-  	    .then(() => {
-          this.loadAlerm_Manager()
-          this.loadAlarm_statuss()
-          this.loadAlarm_levels()
-          this.$notify({
-            title: '审核成功',
-            message: '这是一条成功的提示消息',
-            type: 'success'
-          })
-        }).catch(() => {
-          this.$notify.error({
-            title: '网络超时',
-            message: '这是一条错误的提示消息'
-          })
+      }
+      axios.post('/api_alarm/audit_alarm/', obj).then(() => {
+        this.loadAlerm_Manager()
+        this.loadAlarm_statuss()
+        this.loadAlarm_levels()
+        this.$notify({
+          title: '审核成功',
+          message: '这是一条成功的提示消息',
+          type: 'success'
         })
-  	},
-  	// 拿到一行的数据
-  	rowClick(s) {
-  		this.rows = s
-  		this.row = Array.of(s)
-  		console.log('rows', this.rows)
-  	},
-  	// 当多选框改变时
-  	handleSelectionChange(val) {
+      }).catch(() => {
+        this.$notify.error({
+          title: '网络超时',
+          message: '这是一条错误的提示消息'
+        })
+      })
+    },
+    // 拿到一行的数据
+    rowClick(s) {
+      this.rows = s
+      this.row = Array.of(s)
+    },
+    // 当多选框改变时
+    handleSelectionChange(val) {
       this.multipleSelection = val
       console.log(this.multipleSelection)
     },
