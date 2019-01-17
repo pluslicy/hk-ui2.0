@@ -51,7 +51,7 @@
       </el-table-column>
     </el-table>
     <!-- 模态框 -->
-    <device-dialog ref="deviceDialog" :devices="devices" />
+    <device-dialog ref="deviceDialog" :devices="devices" :find_all_device="findAllDevice" />
   </div>
 </template>
 
@@ -69,7 +69,7 @@ export default {
     params: {
       type: Object,
       default: function() {
-        return []
+        return {}
       }
     },
     devicetypes: {

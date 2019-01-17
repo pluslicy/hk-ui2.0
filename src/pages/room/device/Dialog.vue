@@ -94,6 +94,10 @@ export default {
       default: function() {
         return []
       }
+    },
+    find_all_device: {
+      type: Function,
+      default: null
     }
   },
   data() {
@@ -140,7 +144,7 @@ export default {
     }
   },
   mounted() {
-    this.findAllDeviceType()
+    this.find_all_deviceType()
     this.findAllroom()
   },
   methods: {
@@ -171,17 +175,18 @@ export default {
                   type: 'success'
                 })
                 this.closeDialog()
-                this.findAllDevice()
+                this.find_all_device()
+                // this.$emit('find_all_device')
                 // this.$parent.findAllroom()
-                // this.$parent.findAllDeviceType()
-                // this.$parent.findAllDeviceName()
+                // this.$parent.find_all_deviceType()
+                // this.$parent.find_all_deviceName()
               })
           }
         }
       })
     },
     // 获取所有设备类型
-    findAllDeviceType() {
+    find_all_deviceType() {
       axios.get('/api_devicetype/list_all_devicetypes/')
         .then(({ data }) => {
           this.devicetypes = data
@@ -236,4 +241,3 @@ export default {
     border: 1px dashed #ccc;
   }
 </style>
-

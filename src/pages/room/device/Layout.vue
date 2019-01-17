@@ -165,7 +165,7 @@ export default {
       axios.get('/api_devicetype/list_all_devicetypes/')
         .then(({ data }) => {
           // console.log(data)
-          this.deviceTypes = data
+          this.devicetypes = data
         })
         .catch((error) => {
           console.log(error)
