@@ -22,7 +22,9 @@ export default {
     }
   },
   mounted(){
-    this.msg = "你好世界"
+    setTimeout(()=>{
+      this.msg = "你好世界"
+    },2000)
   },
   props:['dialogVisible'],
   methods:{
