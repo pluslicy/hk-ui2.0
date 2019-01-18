@@ -113,6 +113,7 @@ export default {
     }
   },
   created() {
+    // 加载所有的日志类型
     this.findAllLogType()
   },
   methods: {
@@ -152,6 +153,13 @@ export default {
         .then(({ data }) => {
           // console.log(data)
           this.logTypes = data.logtype
+        })
+        .catch(() => {
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     }
   }

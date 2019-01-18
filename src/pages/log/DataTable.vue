@@ -65,6 +65,11 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
         .finally(() => {
           this.loading = false
