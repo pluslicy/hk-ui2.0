@@ -38,7 +38,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addUserModel.visible = false">取 消</el-button>
+        <el-button @click="toCloseDialog()">取 消</el-button>
         <el-button type="primary" @click="saveAddUser()">确 定</el-button>
       </div>
     </el-dialog>
@@ -125,6 +125,13 @@ export default {
         is_active: false
       }
       this.addUserModel.visible = true
+    },
+    // 关闭模态框
+    toCloseDialog() {
+      this.addUserModel.visible = false
+      // this.$nextTick(() => {
+      //   this.$refs['addUserModel.formruleForm'].resetFields()
+      // })
     },
     // 新增用户确定
     saveAddUser() {

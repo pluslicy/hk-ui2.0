@@ -13,20 +13,20 @@
       <div class="right">
         <div class="badgeDiv">
           <span>报警</span>
-          <router-link to="/"><span style="background-color:red;padding:.3em">{{ alarmCount }}</span></router-link>
+          <router-link to="/alarm/index"><span style="background-color:red;padding:.3em">{{ alarmCount }}</span></router-link>
           &nbsp;&nbsp;|
         </div>
         <div class="badgeDiv">
           <span>待审批</span>
-          <router-link to="/"><span style="background-color:red;padding:.3em">{{ examineCount1 }}</span></router-link>
+          <router-link to="/check/index"><span style="background-color:red;padding:.3em">{{ examineCount1 }}</span></router-link>
           &nbsp;&nbsp;|
         </div>
         <div class="badgeDiv">
           <span>{{ currentTime }}</span>
         </div>
-        <div class="badgeDiv">
+        <!-- <div class="badgeDiv">
           <router-link to="/"><el-button type="primary" plain size="mini">返回</el-button></router-link>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="middle">
@@ -35,9 +35,79 @@
         <!-- <div class="two"><span>进入系统&nbsp;&nbsp;>>&nbsp;&nbsp;>>&nbsp;&nbsp;>></span></div> -->
         <div class="two"><router-link to="/"><span>进入系统&nbsp;&nbsp;>>&nbsp;&nbsp;>>&nbsp;&nbsp;>></span></router-link></div>
       </div>
+      <div class="middle_bottom">
+        <div class="left">
+          <ul>
+            <li>
+              <div v-if="videos[0]" style="float:left;">
+                <object class="simpleVideo" width="100%" height="100%" events="True">
+                  <param :value="videos[0]" name="mrl">
+                  <param name="allowscriptaccess" value="always">
+                  <param name="wmode" value="transparent">
+                  <param name="volume" value="50">
+                  <param name="autoplay" value="true">
+                  <param name="fullscreen" value="false">
+                  <param name="controls" value="true">
+                  <param name="loop" value="false">
+                  <embed :src="videos[0]" class="simpleVideo" width="360px" height="274px" type="application/x-vlc-plugin" version="VideoLAN.VLCPlugin.2" pluginspage="http://www.videolan.org" >
+                </object>
+              </div>
+            </li>
+            <li>
+              <div v-if="videos[1]" style="float:left;">
+                <object class="simpleVideo" width="100%" height="100%" events="True">
+                  <param :value="videos[1]" name="mrl">
+                  <param name="allowscriptaccess" value="always">
+                  <param name="wmode" value="transparent">
+                  <param name="volume" value="50">
+                  <param name="autoplay" value="true">
+                  <param name="fullscreen" value="false">
+                  <param name="controls" value="true">
+                  <param name="loop" value="false">
+                  <embed :src="videos[1]" class="simpleVideo" width="360px" height="274px" type="application/x-vlc-plugin" version="VideoLAN.VLCPlugin.2" pluginspage="http://www.videolan.org" >
+                </object>
+              </div>
+            </li>
+            <li>
+              <div v-if="videos[2]" style="float:left;">
+                <object class="simpleVideo" width="360px" height="274px" events="True">
+                  <param :value="videos[2]" name="mrl">
+                  <param name="allowscriptaccess" value="always">
+                  <param name="wmode" value="transparent">
+                  <param name="volume" value="50">
+                  <param name="autoplay" value="true">
+                  <param name="fullscreen" value="false">
+                  <param name="controls" value="true">
+                  <param name="loop" value="false">
+                  <embed :src="videos[2]" class="simpleVideo" width="360px" height="274px" type="application/x-vlc-plugin" version="VideoLAN.VLCPlugin.2" pluginspage="http://www.videolan.org" >
+                </object>
+              </div>
+            </li>
+            <li>
+              <div v-if="videos[3]" style="float:left;">
+                <object class="simpleVideo" width="100%" height="100%" events="True">
+                  <param :value="videos[3]" name="mrl">
+                  <param name="allowscriptaccess" value="always">
+                  <param name="wmode" value="transparent">
+                  <param name="volume" value="50">
+                  <param name="autoplay" value="true">
+                  <param name="fullscreen" value="false">
+                  <param name="controls" value="true">
+                  <param name="loop" value="false">
+                  <embed :src="videos[3]" class="simpleVideo" width="360px" height="274px" type="application/x-vlc-plugin" version="VideoLAN.VLCPlugin.2" pluginspage="http://www.videolan.org" >
+                </object>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="right">
+          <div id="container1" style="width:100%;height:210px;margin-bottom:50px"/>
+          <div id="container2" style="width:100%;height:210px;"/>
+        </div>
+      </div>
     </div>
     <div class="bottom">
-      <div id="container" style="max-width:100%;height:80%"/>
+      <div id="container" style="width:100%;height:240px"/>
     </div>
   </div>
 </template>
@@ -54,9 +124,9 @@ export default {
       // 报警数量
       alarmCount: 0,
       // 所有的审批
-      examineCount: 2,
+      examineCount: [],
       // 未审批数量
-      examineCount1: 0,
+      examineCount1: 5,
       // 当前时间
       currentTime: '',
       // 当前机房id
@@ -72,7 +142,21 @@ export default {
       // 获取温湿度时间
       temperatureTimes: [],
       temperatureTimes1: [],
-      temperatureTimes2: []
+      temperatureTimes2: [],
+      // 获取所有的视频
+      videos: [],
+      // 获取ups交流输出电压
+      upsDataPV1: [],
+      upsDataPV2: [],
+      upsDataPV3: [],
+      // 获取ups交流输出电流
+      upsDataCT1: [],
+      upsDataCT2: [],
+      upsDataCT3: [],
+      // 获取ups交流输出电流电压的时间
+      upsDataTimes: [],
+      // 定时器的名称
+      timer: null
     }
   },
   created() {
@@ -86,21 +170,26 @@ export default {
     // 高度
     $('.video').height($(window).height() - 16)
   },
+  // 当页面发生跳转的时候清除定时器
+  beforeDestroy() {
+    clearInterval(this.timer)
+    this.timer = null
+  },
   methods: {
     // 每隔1分钟重新刷新所有的数据
     timeToRefresh() {
-      setInterval(() => {
-        // this.findAllrooms()
-        this.getAllAlarms()
+      this.timer = setInterval(() => {
+        this.findAllrooms()
+        // this.getAllAlarms()
         this.timeSetInterval()
-        this.getAllExamine()
+        // this.getAllExamine()
         // this.findRoomAllMessage(this.currentRoomId)
-      }, 600000)
+      }, 10000)
     },
     // 获取所有的机房
     findAllrooms() {
       axios.get('/api_room/list_all_room/').then(({ data }) => {
-        console.log('所有的机房的信息', data)
+        // console.log('所有的机房的信息', data)
         this.currentRoomId = data[0].room_id
         // 通过id查找机房的设备信息
         // this.findAllMessages(this.currentRoomId)
@@ -136,25 +225,26 @@ export default {
     // },
     // 获取所有的报警信息
     getAllAlarms() {
+      // console.log(1)
       axios.get('/api_alarm/get_current_alarm/').then(({ data }) => {
-        // console.log('data',data)
-        this.alarmCount = data.alarm_total
-        // console.log(this.alarmCount)
+        console.log('data', data)
+        this.alarmCount = data.alarm_total - 1
+        console.log('报警数量', this.alarmCount)
       }).catch(() => {
 
       })
     },
     // 获取所有的未审批
     getAllExamine() {
+      // alert(1)
       axios.get('/api_approval/get_approval_list/').then(({ data }) => {
-        console.log('data', data)
+        // console.log('data==========', data)
         data.result.map((item) => {
-          // alert(1)
           if (item.approval_status === '未审批') {
             this.examineCount.push(item.approval_status)
           }
         })
-        console.log(this.examineCount.length)
+        console.log('未审批个数', this.examineCount)
         this.examineCount1 = this.examineCount.length
       }).catch(() => {
 
@@ -193,11 +283,40 @@ export default {
       // this.currentRoomId = id
       // alert(id)
       axios.get('api_room_monitor/getSimpleIndexData/?room_id=' + id).then(({ data }) => {
-        console.log('=======', data)
+        // console.log('=======', data)
         this.simpleBaseData = data
+        this.videos = data.video_src
+        // console.log('所有的视频',this.videos)
         this.humitureArray = data.thData
+        // 获取ups交流输出电压
+        this.upsDataPV1 = data.upsData[0].data.map((item) => {
+          return item[1]
+        })
+        this.upsDataPV2 = data.upsData[1].data.map((item) => {
+          return item[1]
+        })
+        this.upsDataPV3 = data.upsData[2].data.map((item) => {
+          return item[1]
+        })
+        this.upsDataTimes = data.upsData[0].data.map((item) => {
+          return item[0].split('T')[1]
+        })
+        // console.log('时间为:',this.upsDataTimes)
+        // console.log('upsDataCT1',this.upsDataPV1)
+        // console.log('upsDataPV2',this.upsDataPV2)
+        // console.log('upsDataPV3',this.upsDataPV3)
+        // 获取UPS电流
+        this.upsDataCT1 = data.upsData[3].data.map((item) => {
+          return item[1]
+        })
+        this.upsDataCT2 = data.upsData[4].data.map((item) => {
+          return item[1]
+        })
+        this.upsDataCT3 = data.upsData[5].data.map((item) => {
+          return item[1]
+        })
         // console.log('humitureArray',this.humitureArray)
-        console.log('++++', this.humitureArray)
+        // console.log('++++', this.humitureArray)
         if ((this.humitureArray[0].data.length !== 0) || (this.humitureArray[1].data.length !== 0)) {
           this.temperature = this.humitureArray[0].data
           this.temperature.map((item) => {
@@ -205,44 +324,54 @@ export default {
             this.temperature1.push(item[1])
           })
           // console.log('温度',this.temperature)
-          console.log('温度1', this.temperature1)
+          // console.log('温度1', this.temperature1)
           this.humidity = this.humitureArray[1].data
           this.humidity.map((item) => {
             this.humidity1.push(item[1])
           })
-          console.log(this.temperatureTimes1)
+          // console.log(this.temperatureTimes1)
           // console.log('湿度',this.humidity)
           //  alert(this.humidity1)
-          console.log('湿度1', this.humidity1)
+          // console.log('湿度1', this.humidity1)
           this.humidity.map((item) => {
             this.temperatureTimes.push(item[0])
           })
-          console.log('温湿度时间', this.temperatureTimes)
+          // console.log('温湿度时间', this.temperatureTimes)
           this.temperatureTimes.map((item) => {
             this.temperatureTimes1.push(item.split('T'))
           })
-          console.log('温湿度时间1', this.temperatureTimes1)
+          // console.log('温湿度时间1', this.temperatureTimes1)
           this.temperatureTimes1.map((item) => {
             this.temperatureTimes2.push(item[1])
           })
-          console.log('温湿度时间2', this.temperatureTimes2)
+          // console.log('温湿度时间2', this.temperatureTimes2)
         } else {
           this.temperature1 = []
           this.humidity1 = []
         }
         this.drawVis1()
+        this.drawVis2()
+        this.drawVis3()
       }).catch(() => {
 
       })
     },
+    // 绘制温湿度图表
     drawVis1() {
+      // console.log(timeData)
       var myChart = echarts.init(document.getElementById('container'))
       myChart.setOption({
+        textStyle: {
+          color: 'rgba(255, 255, 255, 0.3)'
+        },
         tooltip: {
           trigger: 'axis'
         },
         legend: {
-          data: ['温度', '湿度']
+          data: ['温度℃', '湿度%'],
+          textStyle: {
+            color: 'rgba(255, 255, 255, 0.3)'
+          }
         },
         grid: {
           left: '3%',
@@ -250,31 +379,138 @@ export default {
           bottom: '3%',
           containLabel: true
         },
-        // toolbox: {
-        //   feature: {
-        //     saveAsImage: {}
-        //   }
-        // },
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: this.temperatureTimes2
+          data: this.temperatureTimes2.reverse()
         },
-        yAxis: {
+        yAxis: [{
+          name: '℃',
           type: 'value'
-        },
+        }],
+        color: ['#F56C6C', '#E6A23C', '#b03a5b'],
         series: [
           {
-            name: '温度',
+            name: '温度℃',
             type: 'line',
-            stack: '总量',
+            smooth: true,
             data: this.temperature1
           },
           {
-            name: '湿度',
+            name: '湿度%',
             type: 'line',
-            stack: '总量',
+            smooth: true,
             data: this.humidity1
+          }
+        ]
+      })
+    },
+    // 绘制UPS交流输出电压图表
+    drawVis2() {
+      // console.log(timeData)
+      var myChart = echarts.init(document.getElementById('container1'))
+      myChart.setOption({
+        textStyle: {
+          color: 'rgba(255, 255, 255, 0.3)'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['UPS交流输出电压 ph_A', 'UPS交流输出电压 ph_B', 'UPS交流输出电压 ph_C'],
+          textStyle: {
+            color: 'rgba(255, 255, 255, 0.3)'
+          }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.upsDataTimes.reverse()
+        },
+        yAxis: [{
+          name: 'V',
+          type: 'value'
+        }],
+        color: ['#F56C6C', '#E6A23C', '#b03a5b'],
+        series: [
+          {
+            name: 'UPS交流输出电压 ph_A',
+            type: 'line',
+            smooth: true,
+            data: this.upsDataPV1
+          },
+          {
+            name: 'UPS交流输出电压 ph_B',
+            type: 'line',
+            smooth: true,
+            data: this.upsDataPV2
+          },
+          {
+            name: 'UPS交流输出电压 ph_C',
+            type: 'line',
+            smooth: true,
+            data: this.upsDataPV3
+          }
+        ]
+      })
+    },
+    // 绘制UPS交流输出电流图表
+    drawVis3() {
+      // console.log(timeData)
+      var myChart = echarts.init(document.getElementById('container2'))
+      myChart.setOption({
+        textStyle: {
+          color: 'rgba(255, 255, 255, 0.3)'
+        },
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          data: ['UPS交流输出电流 ph_A', 'UPS交流输出电流 ph_B', 'UPS交流输出电流 ph_C'],
+          textStyle: {
+            color: 'rgba(255, 255, 255, 0.3)'
+          }
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.upsDataTimes
+        },
+        yAxis: [{
+          name: 'A',
+          type: 'value'
+        }],
+        color: ['#F56C6C', '#E6A23C', '#b03a5b'],
+        series: [
+          {
+            name: 'UPS交流输出电流 ph_A',
+            type: 'line',
+            smooth: true,
+            data: this.upsDataCT1
+          },
+          {
+            name: 'UPS交流输出电流 ph_B',
+            type: 'line',
+            smooth: true,
+            data: this.upsDataCT2
+          },
+          {
+            name: 'UPS交流输出电流 ph_C',
+            type: 'line',
+            smooth: true,
+            data: this.upsDataCT3
           }
         ]
       })
@@ -286,13 +522,13 @@ export default {
 <style scoped>
   .video {
     padding: .5em;
-    overflow-y:auto;
+    /* overflow-y:auto; */
     background-color: #304156
   }
   .video .top {
     width: 100%;
     height: 57px;
-    background-color: aqua;
+    /* background-color: aqua; */
     overflow: hidden;
   }
   .video .top .left {
@@ -350,6 +586,7 @@ export default {
     /* background-color: blueviolet; */
     box-sizing: border-box;
     float: right;
+    text-align: right
   }
   .video .top .right .badgeDiv{
     /* float: right;
@@ -366,7 +603,7 @@ export default {
     width: 100%;
     margin-bottom: .5em;
     margin-top: .5em;
-    background-color: blueviolet
+    /* background-color: blueviolet */
   }
   .video .middle .middle_top {
     height: 54px;
@@ -404,14 +641,54 @@ export default {
   }
   .video .middle .middle_top .two span {
     font-size: 22px;
-    color: #fff;
+    /* color: #fff; */
     font-weight: lighter;
     margin-left: 25%;
     line-height: 54px
   }
+  .video .middle .middle_bottom {
+    position: relative;
+  }
+  .video .middle .middle_bottom .left {
+    height: 563px;
+    width: 40%;
+    box-sizing: border-box;
+    /* background-color: #1e6f09; */
+    margin-right: .5em;
+    display: inline-block;
+    padding: .5em
+  }
+  .video .middle .middle_bottom .left ul{
+    overflow: hidden;
+  }
+  .video .middle .middle_bottom .left li{
+    width: 49%;
+    height: 270px;
+    float: left;
+    /* background-color: burlywood */
+  }
+  .video .middle .middle_bottom .left li:nth-child(1){
+    margin-right: .3em;
+    margin-bottom: .6em
+  }
+   .video .middle .middle_bottom .left li:nth-child(2){
+    margin-bottom: .6em
+  }
+  .video .middle .middle_bottom .left li:nth-child(3){
+    margin-right: .3em;
+  }
+  .video .middle .middle_bottom .right {
+    width: 59%;
+    height: 553px;
+    /* background-color: darkturquoise; */
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    padding: .5em
+  }
   .video .bottom {
     height: 257px;
     width: 100%;
-    background-color: cornflowerblue
+    /* background-color: cornflowerblue */
   }
 </style>
