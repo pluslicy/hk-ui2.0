@@ -54,6 +54,7 @@
         ref="multipleTable"
         :data="rooms"
         :height="he"
+        :row-style="rowStyle"
         tooltip-effect="dark"
         style="width: 100%"
         size="mini"
@@ -65,9 +66,18 @@
           width="55" />
         <el-table-column
           prop="room_name"
-          label="名称"
+          label="机房名称"
           align="center"
           width="200" />
+        <el-table-column
+          align="center"
+          prop="room_plane_imgpath"
+          label="机房图片"
+          width="300">
+          <template slot-scope="{row}">
+            <img :src="row.room_plane_imgpath" height="50" alt="请添加图片">
+          </template>
+        </el-table-column>
         <el-table-column
           prop="device_count"
           label="设备数量"
@@ -112,15 +122,16 @@
             <el-input :rows="2" v-model="managerDialog.form.room_desc" type="textarea" placeholder="" />
             <!-- </el-input> -->
           </el-form-item>
-          <el-form-item>
+          <el-form-item v-if="roomImgShow" :label-width="formLabelWidth" label="上传图片" prop="imageUrl">
             <!-- 上传图片 -->
             <el-upload
+              :data="imgData"
               :show-file-list="false"
               :on-success="handleAvatarSuccess"
               :on-error="handleAvatarError"
               :before-upload="beforeAvatarUpload"
-              class="avatar-uploader"
-              action="https://jsonplaceholder.typicode.com/posts/">
+              :action="actionImg"
+              class="avatar-uploader">
               <img v-if="imageUrl" :src="imageUrl" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon" />
             </el-upload>
@@ -153,6 +164,8 @@ export default {
         room_id: undefined,
         page: 1
       },
+      // 表格行高
+      rowStyle: { height: '70px' },
       // 验证规则
       rules: {
         room_name: [
@@ -173,7 +186,17 @@ export default {
       },
       // 表单label宽度
       formLabelWidth: '100px',
-      imageUrl: ''
+      imageUrl: '',
+      // 是否显示机房图片
+      roomImgShow: false,
+      // 上传图片地址
+      actionImg: axios.defaults.baseURL + '/api_room/upload_room_image/',
+      // 上传图片时传递的值
+      imgData: {
+        room_id: ''
+      },
+      // 修改信息的roomId
+      currentRoomId: ''
     }
   },
   watch: {
@@ -209,9 +232,18 @@ export default {
                   message: '保存成功',
                   type: 'success'
                 })
+                // this.closeDialog()
                 this.findAllRoom()
                 this.findAllRoomName()
-                this.closeDialog()
+                this.roomImgShow = true
+              })
+              .catch((error) => {
+                console.log(error)
+                this.$notify({
+                  title: '失败',
+                  message: '修改失败',
+                  type: 'error'
+                })
               })
           } else {
             // 保存新增
@@ -225,6 +257,14 @@ export default {
                 this.findAllRoom()
                 this.findAllRoomName()
                 this.closeDialog()
+                // this.roomImgShow = true
+              })
+              .catch(() => {
+                this.$notify({
+                  title: '失败',
+                  message: '保存失败',
+                  type: 'error'
+                })
               })
           }
         }
@@ -239,8 +279,11 @@ export default {
     // 修改机房信息
     toUpdateManager(row) {
       this.managerDialog.visible = true
+      this.roomImgShow = true
       this.managerDialog.title = '修改机房信息'
       this.managerDialog.form = row
+      this.currentRoomId = row.room_id
+      this.imageUrl = row.room_plane_imgpath
     },
     // 删除机房
     deleteManager(id) {
@@ -264,6 +307,11 @@ export default {
             })
             .catch((error) => {
               console.log(error)
+              this.$notify({
+                title: '失败',
+                message: '删除失败',
+                type: 'error'
+              })
             })
         })
     },
@@ -290,6 +338,11 @@ export default {
             })
             .catch((error) => {
               console.log(error)
+              this.$notify({
+                title: '失败',
+                message: '删除失败',
+                type: 'error'
+              })
             })
         })
     },
@@ -309,12 +362,32 @@ export default {
     // 上传图片
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
+      this.findAllRoom()
+      this.$notify({
+        title: '成功',
+        type: 'success',
+        message: '机房信息上传成功'
+      })
     },
-    // 图片格式与大小
+    handleAvatarError() {
+      this.$notify({
+        title: '失败',
+        type: 'error',
+        message: '机房信息上传失败'
+      })
+    },
+    // 上传图片之前
     beforeAvatarUpload(file) {
+      // if(this.managerDialog.title === "新增机房信息"){
+      //   this.imgData.room_id = this.newId
+      // }
+      if (this.managerDialog.title === '修改机房信息') {
+        this.imgData.room_id = this.currentRoomId
+        // alert(this.imgData.room_id)
+      }
+      // 图片格式与大小
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
-
       if (!isJPG) {
         this.$message.error('上传头像图片只能是 JPG 格式!')
       }
@@ -336,6 +409,11 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
         .finally(() => {
           this.loading = false
@@ -350,6 +428,11 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     }
   }
@@ -422,6 +505,7 @@ export default {
     color: #F56C6C;
     padding-left: .5em;
   }
+  /* 上传图片样式 */
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;

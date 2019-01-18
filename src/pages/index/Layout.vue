@@ -132,7 +132,14 @@ export default {
           this.alarmData = result
           setTimeout(() => {
             this.drawAlarm()
-          }, 10)
+          }, 50)
+        })
+        .catch(() => {
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     },
     // 获取数量统计的数据
@@ -143,7 +150,14 @@ export default {
           this.numberData = data
           setTimeout(() => {
             this.drawNumber()
-          }, 10)
+          }, 50)
+        })
+        .catch(() => {
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     },
     // 获取审批统计的数据
@@ -160,22 +174,38 @@ export default {
           this.checkData = result
           setTimeout(() => {
             this.drawCheck()
-          }, 10)
+          }, 50)
+        })
+        .catch(() => {
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     },
     // 获取详细温湿度数据
     findAllHumitureDataById(id, index) {
       const vm = this
+      // alert(room_id)
       axios.get('/api_room_monitor/getSimpleIndexData/', {
         params: { room_id: id }
       })
         .then(({ data }) => {
+          // alert(room_id)
           // console.log(data,'----')
           this.currentHumitureData = data
           setTimeout(() => {
             vm.drawHumiture(index)
             // alert(1)
           }, 200)
+        })
+        .catch(() => {
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     },
     // 获取每个机房基本数据
@@ -184,6 +214,13 @@ export default {
         .then(({ data }) => {
           // console.log(data)
           this.roomBaseData = data
+        })
+        .catch(() => {
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     },
     // 绘制报警统计
@@ -306,7 +343,7 @@ export default {
       const timeData = vm.currentHumitureData.thData[0].data.map((item) => {
         return item[0].split('T')[1]
       })
-      console.log(timeData)
+      // console.log(timeData)
       var myChart = echarts.init(document.getElementById('humiture' + index))
       myChart.setOption({
         tooltip: {

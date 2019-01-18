@@ -16,8 +16,8 @@
         </el-form-item>
         <el-row>
           <el-col :span="10">
-            <el-form-item :label-width="formLabelWidth" label="设备类型" prop="devicetype">
-              <el-select v-model="deviceDialog.form.devicetype" :disabled="deviceDialog.disabled" placeholder="请选择类型" clearable>
+            <el-form-item :label-width="formLabelWidth" label="设备类型" prop="devicetype_id">
+              <el-select v-model="deviceDialog.form.devicetype_id" :disabled="deviceDialog.disabled" placeholder="请选择类型" clearable>
                 <el-option v-for="devicetype in devicetypes" :key="devicetype.devicetype_id" :label="devicetype.devicetype_name" :value="devicetype.devicetype_id" />
                 <!-- <el-option label="区域二" value="beijing"></el-option> -->
               </el-select>
@@ -36,7 +36,21 @@
           <el-input :rows="2" v-model="deviceDialog.form.device_desc" type="textarea" placeholder="" />
           <!-- </el-input> -->
         </el-form-item>
-        {{ deviceDialog.form }}
+        <!-- {{ deviceDialog.form }} -->
+        <el-form-item v-if="deviceImgShow" :label-width="formLabelWidth" label="上传图片" prop="imageUrl">
+          <!-- 上传图片 -->
+          <el-upload
+            :data="imgData"
+            :show-file-list="false"
+            :on-success="handleAvatarSuccess"
+            :on-error="handleAvatarError"
+            :before-upload="beforeAvatarUpload"
+            :action="actionImg"
+            class="avatar-uploader">
+            <img v-if="imageUrl" :src="imageUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+          </el-upload>
+        </el-form-item>
       </el-form>
       <!-- 尾 -->
       <div slot="footer" class="dialog-footer">
@@ -67,7 +81,7 @@
           </ul>
         </el-col>
         <el-col :span="10" style="text-align:center;">
-          <img src="deviceViewDialog.devices.device_imgpath" alt="" height="110" >
+          <img :src="deviceViewDialog.devices.device_imgpath" alt="" height="130" >
         </el-col>
       </el-row>
       <ul>
@@ -95,7 +109,7 @@ export default {
         return []
       }
     },
-    find_all_device: {
+    findAllDevice: {
       type: Function,
       default: null
     }
@@ -140,11 +154,22 @@ export default {
         device_desc: [
           { required: true, message: '请填写活动形式', trigger: 'blur' }
         ]
-      }
+      },
+      imageUrl: '',
+      // 是否显示机房图片
+      deviceImgShow: false,
+      // 上传图片地址
+      actionImg: axios.defaults.baseURL + '/api_device/upload_device_image/',
+      // 上传图片时传递的值
+      imgData: {
+        device_id: ''
+      },
+      // 修改信息的deviceId
+      currentDeviceId: ''
     }
   },
   mounted() {
-    this.find_all_deviceType()
+    this.findAllDeviceType()
     this.findAllroom()
   },
   methods: {
@@ -156,14 +181,24 @@ export default {
             // 修改
             axios.post('/api_device/update_device/', this.deviceDialog.form)
               .then(() => {
-                console.log(this.deviceDialog.form)
+                // console.log(this.deviceDialog.form)
                 this.$notify({
                   title: '成功',
                   message: '保存成功',
                   type: 'success'
                 })
-                this.closeDialog()
-                this.findAllDevice()
+                // this.closeDialog()
+                // this.findAllDevice()
+                // this.$parent.find_all_deviceName()
+                this.deviceImgShow = true
+              })
+              .catch((error) => {
+                console.log(error)
+                this.$notify({
+                  title: '失败',
+                  message: '修改失败',
+                  type: 'error'
+                })
               })
           } else {
             // 新增
@@ -175,25 +210,94 @@ export default {
                   type: 'success'
                 })
                 this.closeDialog()
-                this.find_all_device()
-                // this.$emit('find_all_device')
+                this.$emit.findAllDevice()
                 // this.$parent.findAllroom()
-                // this.$parent.find_all_deviceType()
-                // this.$parent.find_all_deviceName()
+                // this.$parent.findAllDeviceType()
+                this.$parent.find_all_deviceName()
+              })
+              .catch(() => {
+                this.$notify({
+                  title: '失败',
+                  message: '保存失败',
+                  type: 'error'
+                })
               })
           }
         }
       })
     },
+    // 上传图片
+    handleAvatarSuccess(res, file) {
+      this.imageUrl = URL.createObjectURL(file.raw)
+      this.findAllDevice()
+      this.$notify({
+        title: '成功',
+        type: 'success',
+        message: '设备信息上传成功'
+      })
+    },
+    handleAvatarError() {
+      this.$notify({
+        title: '失败',
+        type: 'error',
+        message: '设备信息上传失败'
+      })
+    },
+    // 上传图片之前
+    beforeAvatarUpload(file) {
+      if (this.deviceDialog.title === '修改设备信息') {
+        this.imgData.device_id = this.currentDeviceId
+        // alert(this.imgData.device_id)
+      }
+      // 图片格式与大小
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isJPG) {
+        this.$message.error('上传头像图片只能是 JPG 格式!')
+      }
+      if (!isLt2M) {
+        this.$message.error('上传头像图片大小不能超过 2MB!')
+      }
+      return isJPG && isLt2M
+    },
+    // 获取所有的设备
+    // findAllDevice() {
+    //   this.loading = true
+    //   axios.get('/api_device/list_device/', {
+    //     params: this.params
+    //   })
+    //     .then(({ data }) => {
+    //       // console.log(data)
+    //       this.devices = data.results
+    //       // this.count = data.count
+    //       // this.$parent.total = data.count
+    //     })
+    //     .catch((error) => {
+    //       console.log(error)
+    //       this.$notify({
+    //         title: '失败',
+    //         message: '网络异常',
+    //         type: 'error'
+    //       })
+    //     })
+    //     .finally(() => {
+    //       this.loading = false
+    //     })
+    // },
     // 获取所有设备类型
-    find_all_deviceType() {
+    findAllDeviceType() {
       axios.get('/api_devicetype/list_all_devicetypes/')
         .then(({ data }) => {
           this.devicetypes = data
-          console.log(this.devicetypes)
+          // console.log(this.devicetypes)
         })
         .catch((error) => {
           console.log(error)
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     },
     // 获取所有机房
@@ -205,6 +309,11 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     },
     // 关闭查看信息模态框
@@ -233,11 +342,35 @@ export default {
   }
   .device_dialog ul li {
     list-style: none;
-    line-height: 2.5em;
+    line-height: 3em;
     padding: 0 10px;
     border-bottom: 1px dashed #ccc;
   }
-  .device_dialog img {
+  /* .device_dialog img {
     border: 1px dashed #ccc;
+  } */
+  /* 上传图片样式 */
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #409EFF;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
   }
 </style>

@@ -15,7 +15,8 @@
         fixed="left"
         type="selection"
         align="center"
-        width="55" />
+        width="55"
+        height="70" />
       <!-- </el-table-column> -->
       <el-table-column
         prop="device_name"
@@ -51,7 +52,7 @@
       </el-table-column>
     </el-table>
     <!-- 模态框 -->
-    <device-dialog ref="deviceDialog" :devices="devices" :find_all_device="findAllDevice" />
+    <device-dialog ref="deviceDialog" :devices="devices" @findAllDevice="findAllDevice" />
   </div>
 </template>
 
@@ -121,6 +122,11 @@ export default {
             })
             .catch((error) => {
               console.log(error)
+              this.$notify({
+                title: '失败',
+                message: '删除失败',
+                type: 'error'
+              })
             })
         })
     },
@@ -132,34 +138,43 @@ export default {
     },
     // 修改设备信息
     toUpdateDevice(row) {
+      // console.log(JSON.stringify(row))
+      this.$refs.deviceDialog.deviceImgShow = true
       this.$refs.deviceDialog.showDialog()
       this.$refs.deviceDialog.deviceDialog.title = '修改设备信息'
       const device = _.clone(row)
-
       // this.$refs.deviceDialog.deviceDialog.form = row
 
       // 过滤设备类型id
       const devicetypeArr = this.devicetypes.filter((item) => {
         return item.devicetype_name === row.devicetype.devicetype_name
       })
-      console.log(devicetypeArr)
+      // console.log(devicetypeArr)
       if (devicetypeArr.length > 0) {
-        device.devicetype = devicetypeArr[0].devicetype_id
+        device.devicetype_id = devicetypeArr[0].devicetype_id
       }
+      // alert(device.devicetype_id)
+      // delete device.devicetype
       this.$refs.deviceDialog.deviceDialog.disabled = true
-      // 过滤设备类型id
+      // 过滤机房id
       const roomArr = this.rooms.filter((item) => {
         return item.room_name === row.room.room_name
       })
       if (roomArr.length > 0) {
         device.room = roomArr[0].room_id
       }
+      // delete device.room
+      console.log(device)
+      // this.$refs.deviceDialog.deviceDialog.form = device
       this.$refs.deviceDialog.deviceDialog.form.device_id = device.device_id
       this.$refs.deviceDialog.deviceDialog.form.device_name = device.device_name
       this.$refs.deviceDialog.deviceDialog.form.device_code = device.device_code
       this.$refs.deviceDialog.deviceDialog.form.device_desc = device.device_desc
       this.$refs.deviceDialog.deviceDialog.form.room = device.room
-      this.$refs.deviceDialog.deviceDialog.form.devicetype = device.devicetype
+      this.$refs.deviceDialog.deviceDialog.form.devicetype_id = device.devicetype_id
+      this.$refs.deviceDialog.deviceDialog.form.device_imgpath = device.device_imgpath
+      this.$refs.deviceDialog.currentDeviceId = device.device_id
+      this.$refs.deviceDialog.imageUrl = device.device_imgpath
     },
     // 多选
     handleSelectionChange(val) {
@@ -179,6 +194,11 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
         .finally(() => {
           this.loading = false

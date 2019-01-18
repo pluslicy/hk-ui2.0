@@ -345,6 +345,17 @@ export default {
             this.temperatureTimes2.push(item[1])
           })
           // console.log('温湿度时间2', this.temperatureTimes2)
+          // console.log('湿度',this.humidity)
+          //  alert(this.humidity1)
+          this.humidity.map((item) => {
+            this.temperatureTimes.push(item[0])
+          })
+          this.temperatureTimes.map((item) => {
+            this.temperatureTimes1.push(item.split('T'))
+          })
+          this.temperatureTimes1.map((item) => {
+            this.temperatureTimes2.push(item[1])
+          })
         } else {
           this.temperature1 = []
           this.humidity1 = []

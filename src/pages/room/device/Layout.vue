@@ -146,6 +146,11 @@ export default {
             })
             .catch((error) => {
               console.log(error)
+              this.$notify({
+                title: '失败',
+                message: '删除失败',
+                type: 'error'
+              })
             })
         })
     },
@@ -158,6 +163,11 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     },
     // 获取所有设备类型
@@ -169,6 +179,11 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     },
     // 获取设备列表名称
@@ -180,6 +195,11 @@ export default {
         })
         .catch((error) => {
           console.log(error)
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
         })
     }
   }
