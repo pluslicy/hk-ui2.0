@@ -100,7 +100,6 @@ export default {
     // 获取所有的机房
     findAllrooms() {
       axios.get('/api_room/list_all_room/').then(({ data }) => {
-        console.log('所有的机房的信息', data)
         this.currentRoomId = data[0].room_id
         // 通过id查找机房的设备信息
         // this.findAllMessages(this.currentRoomId)
@@ -147,14 +146,12 @@ export default {
     // 获取所有的未审批
     getAllExamine() {
       axios.get('/api_approval/get_approval_list/').then(({ data }) => {
-        console.log('data', data)
         data.result.map((item) => {
           // alert(1)
           if (item.approval_status === '未审批') {
             this.examineCount.push(item.approval_status)
           }
         })
-        console.log(this.examineCount.length)
         this.examineCount1 = this.examineCount.length
       }).catch(() => {
 
@@ -193,11 +190,9 @@ export default {
       // this.currentRoomId = id
       // alert(id)
       axios.get('api_room_monitor/getSimpleIndexData/?room_id=' + id).then(({ data }) => {
-        console.log('=======', data)
         this.simpleBaseData = data
         this.humitureArray = data.thData
         // console.log('humitureArray',this.humitureArray)
-        console.log('++++', this.humitureArray)
         if ((this.humitureArray[0].data.length !== 0) || (this.humitureArray[1].data.length !== 0)) {
           this.temperature = this.humitureArray[0].data
           this.temperature.map((item) => {
@@ -205,27 +200,21 @@ export default {
             this.temperature1.push(item[1])
           })
           // console.log('温度',this.temperature)
-          console.log('温度1', this.temperature1)
           this.humidity = this.humitureArray[1].data
           this.humidity.map((item) => {
             this.humidity1.push(item[1])
           })
-          console.log(this.temperatureTimes1)
           // console.log('湿度',this.humidity)
           //  alert(this.humidity1)
-          console.log('湿度1', this.humidity1)
           this.humidity.map((item) => {
             this.temperatureTimes.push(item[0])
           })
-          console.log('温湿度时间', this.temperatureTimes)
           this.temperatureTimes.map((item) => {
             this.temperatureTimes1.push(item.split('T'))
           })
-          console.log('温湿度时间1', this.temperatureTimes1)
           this.temperatureTimes1.map((item) => {
             this.temperatureTimes2.push(item[1])
           })
-          console.log('温湿度时间2', this.temperatureTimes2)
         } else {
           this.temperature1 = []
           this.humidity1 = []
