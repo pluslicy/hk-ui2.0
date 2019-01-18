@@ -70,8 +70,10 @@
 }
 .monitor_content_content {
   width: 100%;
+  padding: 1em;
   height: calc(100vh - 180px);
-  background-color: pink;
+  overflow: auto;
+  background-color: #ffffff;
 }
 
 </style>
@@ -116,10 +118,10 @@ export default {
     }
   },
   created() {
+    this.loadDevice()
     if (!this.roomId) {
       this.updateRoom(2)
     }
-    this.loadDevice()
     this.loadRoom()
   },
   methods: {
@@ -143,15 +145,10 @@ export default {
           } else {
             this.device_id = ''
           }
+          this.$refs.upsIT.device_id = this.device_id
+          this.$refs.upsIT.loadAllDevice()
         })
     },
-    // 加载所有设备类型
-    // loadDeviceTypes() {
-    //   axios.get('/api_devicetype/list_detail_devicetypes/')
-    //     .then(({ data }) => {
-    //       this.deviceType = data.results
-    //     })
-    // },
     // 加载机房
     loadRoom() {
       axios.get('/api_room/list_all_room/').then(({ data }) => {

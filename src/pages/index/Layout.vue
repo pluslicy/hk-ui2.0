@@ -306,7 +306,6 @@ export default {
       const timeData = vm.currentHumitureData.thData[0].data.map((item) => {
         return item[0].split('T')[1]
       })
-      console.log(timeData)
       var myChart = echarts.init(document.getElementById('humiture' + index))
       myChart.setOption({
         tooltip: {
