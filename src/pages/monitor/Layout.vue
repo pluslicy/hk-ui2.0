@@ -3,7 +3,7 @@
     <!-- 机房部分 -->
     <div class="monitor_nav">
       <el-menu class="el-menu-vertical-demo" background-color="#F0F2F5">
-        <el-menu-item v-for="item in rooms" :index="item.room_id+''" :key="item.room_id" @click="updateRoom(item.room_id)">
+        <el-menu-item v-for="item in rooms" :index="item.room_id+''" :key="item.room_id" default-active="2" @click="updateRoom(item.room_id)">
           <i class="el-icon-menu" />
           <span slot="title" :title="item.room_name">{{ item.room_name }}</span>
         </el-menu-item>
@@ -116,31 +116,42 @@ export default {
     }
   },
   created() {
-    this.loadDeviceTypes()
-    this.loadRoom()
-    // this.findAllDevice()
+    if (!this.roomId) {
+      this.updateRoom(2)
+    }
     this.loadDevice()
+    this.loadRoom()
   },
   methods: {
     updateRoom(roomId) {
       axios.get('/api_room_monitor/get_types_in_room/', { params: { room_id: roomId }}).then(({ data }) => {
         this.deviceType = data
         this.roomId = roomId
+        if (this.deviceType[0]) {
+          this.devicetype_id = this.deviceType[0].devicetype_id
+        } else {
+          this.devicetype_id = ''
+        }
       })
     },
     loadDevice() {
       axios.get('/api_room_monitor/get_devices/', { params: { room_id: this.roomId, devicetype_id: this.devicetype_id }})
         .then(({ data }) => {
           this.device = data
+          if (this.device[0]) {
+            this.device_id = this.device[0].device_id
+          } else {
+            this.device_id = ''
+          }
         })
     },
     // 加载所有设备类型
-    loadDeviceTypes() {
-      axios.get('/api_devicetype/list_detail_devicetypes/')
-        .then(({ data }) => {
-          this.deviceType = data.results
-        })
-    },
+    // loadDeviceTypes() {
+    //   axios.get('/api_devicetype/list_detail_devicetypes/')
+    //     .then(({ data }) => {
+    //       this.deviceType = data.results
+    //     })
+    // },
     // 加载机房
     loadRoom() {
       axios.get('/api_room/list_all_room/').then(({ data }) => {
