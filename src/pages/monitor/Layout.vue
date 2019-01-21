@@ -85,6 +85,7 @@ import distribution from '@/pages/monitor/type/distribution.vue'
 import upsBattery from '@/pages/monitor/type/upsBattery.vue'
 import TemperatureAndHumidity from '@/pages/monitor/type/TemperatureAndHumidity.vue'
 import axios from '@/http/axios'
+// import $ from 'jquery'
 export default {
   components: {
     upsIT,
@@ -146,7 +147,9 @@ export default {
             this.device_id = ''
           }
           this.$refs.upsIT.device_id = this.device_id
-          this.$refs.upsIT.loadAllDevice()
+          this.$refs.upsIT.devicetype_id = this.devicetype_id
+          // this.$refs.upsIT.loadAllDevice()
+          setInterval(() => { this.$refs.upsIT.loadAllDevice() }, 1000)
         })
     },
     // 加载机房
