@@ -226,16 +226,18 @@ export default {
         }
       })
     },
-    // 上传图片
+    // 上传图片成功
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
       this.findAllDevice()
+      this.closeDialog()
       this.$notify({
         title: '成功',
         type: 'success',
         message: '设备信息上传成功'
       })
     },
+    // 上传图片失败
     handleAvatarError() {
       this.$notify({
         title: '失败',
