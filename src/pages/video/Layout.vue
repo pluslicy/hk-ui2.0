@@ -7,7 +7,7 @@
       </div>
       <div class="rooms">
         <ul>
-          <li v-for="item in allRooms" :key="item.room_id" :value="item.room_id" @click="findRoomAllMessage(item.room_id)">{{ item.room_name }}</li>
+          <li v-for="item in allRooms" :key="item.room_id" :value="item.room_id" class="roomNameSpan" @click="findRoomAllMessage(item.room_id,)">{{ item.room_name }}</li>
         </ul>
       </div>
       <div class="right">
@@ -635,7 +635,7 @@ export default {
   }
   .video .middle .middle_top .one span {
     font-size: 22px;
-    color: #fff;
+    /* color: #fff; */
     font-weight: lighter;
     margin-left: 5%;
     line-height: 54px;

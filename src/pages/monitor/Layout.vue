@@ -15,8 +15,8 @@
         <el-select v-model="devicetype_id">
           <el-option v-for="item in deviceType" :key="item.devicetype_id" :label="item.devicetype_name" :value="item.devicetype_id" />
         </el-select>
-        <el-select v-model="device_id">
-          <el-option v-for="item in device" :key="item.device_id" :label="item.device_name" :value="item.device_id" />
+        <el-select v-model="device_id" @change="changeCool(device_id)">
+          <el-option v-for="item in device" :key="item.device_id" :label="item.device_name" :value="item.device_id"/>
         </el-select>
       </div>
       <!-- 主页面部分 -->
@@ -127,6 +127,7 @@ export default {
   methods: {
     updateRoom(roomId) {
       axios.get('/api_room_monitor/get_types_in_room/', { params: { room_id: roomId }}).then(({ data }) => {
+        // console.log(data)
         this.deviceType = data
         this.roomId = roomId
         if (this.deviceType[0]) {
@@ -139,7 +140,9 @@ export default {
     loadDevice() {
       axios.get('/api_room_monitor/get_devices/', { params: { room_id: this.roomId, devicetype_id: this.devicetype_id }})
         .then(({ data }) => {
+          // console.log(data)
           this.device = data
+          // console.log('=====', this.device)
           if (this.device[0]) {
             this.device_id = this.device[0].device_id
           } else {
@@ -147,6 +150,8 @@ export default {
           }
           this.$refs.upsIT.device_id = this.device_id
           this.$refs.upsIT.loadAllDevice()
+          // console.log('=====', this.devicetype_id)
+          // console.log('++++++', this.device_id)
         })
     },
     // 加载机房
@@ -154,7 +159,21 @@ export default {
       axios.get('/api_room/list_all_room/').then(({ data }) => {
         this.rooms = data
       })
+    },
+    changeCool(id) {
+      alert(id)
+      // this.$refs.CoolMaster.device_id = id
+      // this.$refs.CoolMaster.room_id = this.roomId
+      // this.$refs.CoolMaster.deviceType_id = this.devicetype_id
+      // console.log(id, this.roomId, this.devicetype_id)
+      this.$refs.CoolMaster.findAllDevice(this.roomId, id)
+      this.$refs.CoolMaster.findAllData1(id)
+      this.$refs.CoolMaster.findAllData(this.devicetype_id)
+      this.$refs.CoolMaster.findAcCoolDeviceDetails(id)
     }
+    // qqq(id) {
+    //   alert(id)
+    // }
   }
 }
 
