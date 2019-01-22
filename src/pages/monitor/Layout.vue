@@ -154,8 +154,8 @@ export default {
           // console.log('=====', this.devicetype_id)
           // console.log('++++++', this.device_id)
           this.$refs.upsIT.devicetype_id = this.devicetype_id
-          // this.$refs.upsIT.loadAllDevice()
-          setInterval(() => { this.$refs.upsIT.loadAllDevice() }, 1000)
+          this.$refs.upsIT.loadAllDevice()
+          // setInterval(() => { this.$refs.upsIT.loadAllDevice() }, 1000)
         })
     },
     // 加载机房
@@ -170,10 +170,22 @@ export default {
       // this.$refs.CoolMaster.room_id = this.roomId
       // this.$refs.CoolMaster.deviceType_id = this.devicetype_id
       // console.log(id, this.roomId, this.devicetype_id)
-      this.$refs.CoolMaster.findAllDevice(this.roomId, id)
-      this.$refs.CoolMaster.findAllData1(id)
-      this.$refs.CoolMaster.findAllData(this.devicetype_id)
-      this.$refs.CoolMaster.findAcCoolDeviceDetails(id)
+      // this.$refs.CoolMaster.findAllDevice(this.roomId, id)
+      // this.$refs.CoolMaster.findAllData1(id)
+      // this.$refs.CoolMaster.findAllData(this.devicetype_id)
+      // this.$refs.CoolMaster.findAcCoolDeviceDetails(id)
+      if (this.devicetype_id === 17) {
+        this.$refs.CoolMaster.findAllDevice(this.roomId, id)
+        this.$refs.CoolMaster.findAllData1(id)
+        this.$refs.CoolMaster.device_id = id
+        this.$refs.CoolMaster.findAllData(this.devicetype_id)
+        this.$refs.CoolMaster.findAcCoolDeviceDetails(id)
+      }
+      if (this.devicetype_id === 3) {
+        // 获取图片
+        this.$refs.distribution.getDevice(this.roomId, this.devicetype_id)
+        this.$refs.distribution.deviceId = id
+      }
     }
     // qqq(id) {
     //   alert(id)

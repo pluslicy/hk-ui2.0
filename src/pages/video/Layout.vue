@@ -356,6 +356,7 @@ export default {
           this.temperatureTimes1.map((item) => {
             this.temperatureTimes2.push(item[1])
           })
+          console.log(this.temperatureTimes2, '----')
         } else {
           this.temperature1 = []
           this.humidity1 = []

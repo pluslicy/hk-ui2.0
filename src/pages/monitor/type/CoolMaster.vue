@@ -58,7 +58,7 @@
       <div id="airCoolContainer2" style="width:1000px;height:300px;"/>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDialog()">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="closeDialog()">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -84,10 +84,18 @@ export default {
       code2: 2,
       code3: 3,
       code4: 4,
+      codes1: '',
+      codes2: '',
+      codes3: '',
+      codes4: '',
       value1: '',
       value2: '',
       value3: '',
       value4: '',
+      value5: '',
+      value6: '',
+      value7: '',
+      value8: '',
       searchTime: this.time(),
       time1: this.time(),
       // timestampToTime: this.timestampToTime,
@@ -130,15 +138,39 @@ export default {
       counts: [],
       time9: [],
       name: '',
-      // 当前设备码
-      dataitem_code1: 0
+      // 当前操作码
+      dataitem_code1: 0,
+      // 设备码
+      device_codes: []
+    }
+  },
+  watch: {
+    value1: function(now, old) {
+      this.value5 = now
+      // console.log('value值的改变',now,old)
+    },
+    value2: function(now, old) {
+      this.value6 = now
+    },
+    value3: function(now, old) {
+      this.value7 = now
+    },
+    value4: function(now, old) {
+      this.value8 = now
+    },
+    device_id: function(now, old) {
+      this.findAllData1(now)
+      this.findAcCoolDeviceDetails(now)
+      this.searchChange(now)
+      this.findAllData()
+      this.findLineDataByTime(this.dataitem_code1)
     }
   },
   created() {
     this.findAllDevice(this.room_id, this.deviceType_id)
     this.findAllData1(this.device_id)
     this.findAcCoolDeviceDetails(this.device_id)
-    this.searchChange()
+    this.searchChange(this.device_id)
     this.findAllData(this.deviceType_id)
     // this.findAllData(this.deviceType_id)
   },
@@ -153,7 +185,13 @@ export default {
             this.deviceImg = item.device_imgpath
             // console.log(this.deviceImg)
           }
+          this.device_codes.push(item.device_code)
         })
+        // console.log(this.device_codes)
+        this.codes1 = this.device_codes[0]
+        this.codes2 = this.device_codes[1]
+        this.codes3 = this.device_codes[2]
+        this.codes4 = this.device_codes[3]
       }).catch(() => {
 
       })
@@ -161,11 +199,11 @@ export default {
     // 通过设备类型获取所有的数据项信息
     findAllData(id) {
       axios.get('/api_room_monitor/get_configitem_info/?devicetype_id=' + id).then((data) => {
-        console.log('+++++', data)
+        // console.log('+++++', data)
         this.dataitem_codes = data.data.map((item) => {
           return item.dataitem_code
         })
-        console.log('this.dataitem_codes', this.dataitem_codes)
+        // console.log('this.dataitem_codes', this.dataitem_codes)
         // this.allData = data.data
         this.code1 = this.dataitem_codes[0]
         this.code2 = this.dataitem_codes[1]
@@ -192,7 +230,7 @@ export default {
         this.allData[1].dataitem_code = this.dataitem_codes[1]
         this.allData[2].dataitem_code = this.dataitem_codes[2]
         this.allData[3].dataitem_code = this.dataitem_codes[3]
-        console.log(this.allData)
+        // console.log(this.allData)
         // console.log(this.allData)
       }).catch(() => {
 
@@ -220,7 +258,7 @@ export default {
       } else {
         this.searchTime = this.quarter()
       }
-      this.searchChange()
+      this.searchChange(this.device_id)
     },
     changeTimeByOption(option) {
       if (option === 1) {
@@ -302,11 +340,11 @@ export default {
     },
     // 查找数据,绘制曲线
     // 获取某一设备的所有数据项的历史数据，给后台一个设备id和开始和结束时间
-    searchChange() {
+    searchChange(device_id) {
       const obj = { params: {
         start_time: this.searchTime[0],
         end_time: this.searchTime[1],
-        device_id: this.device_id
+        device_id: device_id
       }}
       // console.log(obj)
       axios.get('/api_room_monitor/get_device_data/', obj).then((data) => {
@@ -314,7 +352,7 @@ export default {
         this.temperature = data.data.datas[0].data
         this.humidity = data.data.datas[1].data
         this.times = data.data.times
-        // console.log(this.times)
+        // console.log('this.tioime',this.times)
         setTimeout(() => {
           this.drawFirst1()
         }, 200)
@@ -346,7 +384,7 @@ export default {
       this.dataitem_code1 = id
       this.dialog.title = title
       this.dialog.visible = true
-      this.findLineDataByTime()
+      // this.findLineDataByTime()
       // this.findAcCoolOneHistoryValueOfOne(id)
       this.findLineDataByTime(id)
     },
@@ -376,6 +414,7 @@ export default {
           console.log('data', data)
           this.counts = data.data.values[0].data
           this.time9 = data.data.times
+          console.log('this.time9', this.time9)
           this.name = data.data.values[0].name
           this.drawFirst2()
         }).catch(() => {
@@ -385,23 +424,95 @@ export default {
     },
     // 保存按钮1
     save1(code1) {
-      alert(code1)
+      // alert(this.code1,this.codes1,this.value5)
+      // alert(this.codes1)
+      // alert(this.value5)
+      this.value5.toString()
+      const obj = {
+        device_code: this.codes1,
+        operate_code: this.code1,
+        value: this.value5
+      }
+      console.log(obj)
+      axios.post('/api_room_monitor/operate_device/', obj).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '保存成功',
+          type: 'success'
+        })
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '保存失败'
+        })
+      })
     },
     save2(code2) {
-
+      this.value6.toString()
+      const obj = {
+        device_code: this.codes1,
+        operate_code: this.code2,
+        value: this.value6
+      }
+      console.log(obj)
+      axios.post('/api_room_monitor/operate_device/', obj).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '保存成功',
+          type: 'success'
+        })
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '保存失败'
+        })
+      })
     },
     save3(code3) {
-
+      this.value7.toString()
+      const obj = {
+        device_code: this.codes1,
+        operate_code: this.code3,
+        value: this.value7
+      }
+      console.log(obj)
+      axios.post('/api_room_monitor/operate_device/', obj).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '保存成功',
+          type: 'success'
+        })
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '保存失败'
+        })
+      })
     },
     save4(code4) {
-      alert(code4)
+      this.value8.toString()
+      const obj = {
+        device_code: this.codes1,
+        operate_code: this.code4,
+        value: this.value8
+      }
+      console.log(obj)
+      axios.post('/api_room_monitor/operate_device/', obj).then(() => {
+        this.$notify({
+          title: '成功',
+          message: '保存成功',
+          type: 'success'
+        })
+      }).catch(() => {
+        this.$notify.error({
+          title: '错误',
+          message: '保存失败'
+        })
+      })
     },
     drawFirst2() {
       var myChart = echarts.init(document.getElementById('airCoolContainer2'))
       myChart.setOption({
-        textStyle: {
-          color: 'rgba(255, 255, 255, 0.3)'
-        },
         tooltip: {
           trigger: 'axis'
         },
@@ -441,20 +552,55 @@ export default {
     drawFirst1() {
       var myChart = echarts.init(document.getElementById('airCoolContainer1'))
       myChart.setOption({
-        textStyle: {
-          color: 'rgba(255, 255, 255, 0.3)'
-        },
+        // tooltip: {
+        //   trigger: 'axis'
+        // },
+        // legend: {
+        //   data: ['回风温度测量值℃', '回风湿度测量值%'],
+        //   textStyle: {
+        //     color: 'rgba(255, 255, 255, 0.3)'
+        //   }
+        // },
+        // grid: {
+        //   left: '0%',
+        //   right: '4%',
+        //   bottom: '3%',
+        //   containLabel: true
+        // },
+        // xAxis: {
+        //   type: 'category',
+        //   boundaryGap: true,
+        //   data: this.times
+        // },
+        // yAxis: [{
+        //   name: '温湿度',
+        //   type: 'value'
+        // }],
+        // color: ['#F56C6C', '#E6A23C', '#b03a5b'],
+        // series: [
+        //   {
+        //     name: '回风温度测量值℃',
+        //     type: 'line',
+        //     smooth: true,
+        //     data: this.temperature
+        //   },
+        //   {
+        //     name: '回风湿度测量值%',
+        //     type: 'line',
+        //     smooth: true,
+        //     data: this.humidity
+        //   }
+        // ]
         tooltip: {
           trigger: 'axis'
         },
         legend: {
-          data: ['回风温度测量值℃', '回风湿度测量值%'],
-          textStyle: {
-            color: 'rgba(255, 255, 255, 0.3)'
-          }
+          right: 40,
+          top: 20,
+          data: ['回风温度测量值℃', '回风湿度测量值%']
         },
         grid: {
-          left: '0%',
+          left: '3%',
           right: '4%',
           bottom: '3%',
           containLabel: true
@@ -463,12 +609,12 @@ export default {
           type: 'category',
           boundaryGap: false,
           data: this.times
+          // data: data.times
         },
         yAxis: [{
           name: '温湿度',
           type: 'value'
         }],
-        color: ['#F56C6C', '#E6A23C', '#b03a5b'],
         series: [
           {
             name: '回风温度测量值℃',
