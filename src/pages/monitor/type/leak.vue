@@ -3,23 +3,24 @@
     <!-- 漏水 -->
     <!-- 漏水图片 -->
     <div class="leak_img">
-      <img src="" alt="图片找不到了">
+      <img :src="room.room_plane_imgpath" alt="图片加载中..." style="height:100%;width:100%">
+      <canvas id="leakCanvas" :width="canvasWidth" height="250px" />
     </div>
     <!-- 漏水数据 -->
     <div class="leak_data">
       <el-table
         v-loading="loading"
-        :data="leak"
+        :data="currentDeviceData"
         border
         size="mini"
-        height="300"
-        style="width: 83%">
+        height="250"
+        style="width: 84%">
         <el-table-column
           prop="device_name"
           label="设备名称"
           align="center" />
         <el-table-column
-          prop="address"
+          prop="data[0].value"
           label="浸水"
           align="center" />
       </el-table>
@@ -60,10 +61,10 @@ import $ from 'jquery'
 export default {
   data() {
     return {
+      // 加载
       loading: false,
       // 漏水数据
       leak: [],
-      leakdata: [],
       // 设备名称
       deviceNames: [],
       // 查询参数
@@ -72,6 +73,7 @@ export default {
         start_time: undefined,
         end_time: undefined
       },
+      // 选择时间
       time: [new Date(new Date() - 24 * 60 * 60 * 1000), new Date()],
       // 快捷选择时间
       pickerTime: {
@@ -108,7 +110,13 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }]
-      }
+      },
+      // 当前设备数据
+      currentDeviceData: [],
+      // 机房
+      room: {},
+      // 画布宽度
+      canvasWidth: 590
     }
   },
   watch: {
@@ -120,14 +128,52 @@ export default {
     }
   },
   created() {
+    // 图表高度
     this.he = 'width: 92%;height: ' + ($(window).height() - 560) + 'px;'
+    // 加载所有设备名称
     this.findAllDeviceName()
+    // 加载所有漏水历史数据
     this.findAllLeakData()
+    // 查询时间改变
     this.queryChange()
     // this.leak = this.$parent.device
+    // 加载所有的设备
     this.findAllDeviceByIds()
+    this.findAllRoom()
   },
   methods: {
+    // 温湿度位置
+    drawCanvas() {
+      const vm = this
+      const canvas = document.getElementById('leakCanvas')
+      const context = canvas.getContext('2d')
+      context.fillStyle = 'block'
+      context.lineWidth = 4
+      // let devicePosition = this.th.map((item) => {
+      //   return item
+      // })
+      // console.log(devicePosition)
+      this.leak.forEach((item) => {
+        const slicePath = item.device_imgpath.split('/images/devices/')[1]
+        if (slicePath !== 'default.png') {
+          const image = new Image()
+          image.src = item.device_imgpath
+          image.onload = function() {
+            // 绘制图像的函数
+            // context.drawImage(image,item.x,item.y,20,20);
+            context.drawImage(image, item.pos.pos_x / 100 * vm.canvasWidth, item.pos.pos_y / 100 * 216, 20, 20)
+          }
+          context.fillText(item.device_name, item.pos.pos_x / 100 * vm.canvasWidth - 10, item.pos.pos_y / 100 * 216 - 10, 100)
+        } else {
+          context.beginPath()
+          // context.arc(item.x,item.y,10,0,2*Math.PI);
+          context.arc(item.pos.pos_x / 100 * vm.canvasWidth, item.pos.pos_y / 100 * 216, 10, 0, 2 * Math.PI)
+          context.fill()
+          // context.fillText(item.text,item.x-15,item.y-15,100);
+          context.fillText(item.device_name, item.pos.pos_x / 100 * vm.canvasWidth - 15, item.pos.pos_y / 100 * 216 - 15, 100)
+        }
+      })
+    },
     // 日期时间选择器确定时触发
     queryChange() {
       this.query.start_time = this.time[0]
@@ -136,14 +182,11 @@ export default {
     // 绘制漏水曲线图
     drawLeak(data) {
       // console.log(data)
+      // 得到温湿度时间
       var leakTime = data.times.map((item) => {
         return item.split(' ')[1]
       })
       // console.log(leakTime)
-      var leakData = data.datas.map((item) => {
-        return item.data
-      })
-      // console.log(leakData)
       // 基于准备好的dom，初始化echarts实例
       var myChart = echarts.init(document.getElementById('leak'))
       // 指定图表的配置项和数据
@@ -151,6 +194,7 @@ export default {
         tooltip: {
           trigger: 'axis'
         },
+        color: ['#8dbfef'],
         grid: {
           top: '10%',
           left: '3%',
@@ -169,13 +213,40 @@ export default {
           {
             name: '浸水',
             type: 'line',
-            step: 'start',
-            data: leakData
+            step: 'leak',
+            data: data.datas[0].data
           }
         ]
       }
       // 使用刚指定的配置项和数据显示图表。
       myChart.setOption(option)
+    },
+    // 获取所有机房信息
+    findAllRoom() {
+      axios.get('/api_room/list_all_room/', {
+        params: { room_id: this.$parent.roomId }
+      })
+        .then(({ data }) => {
+          this.room = data[0]
+          // console.log(data[0])
+        })
+    },
+    // 获取设备当前数据
+    findCurrentDeviceData(ids) {
+      this.loading = true
+      axios.get('/api_room_monitor/get_current_data/', {
+        params: { device_ids: ids }
+      })
+        .then(({ data }) => {
+          // console.log(data)
+          this.currentDeviceData = data
+        })
+        .catch(() => {
+
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
     // 获取所有漏水历史数据
     findAllLeakData() {
@@ -189,8 +260,7 @@ export default {
             this.drawLeak(data)
           }, 100)
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
           // this.$notify({
           //   title: '失败',
           //   message: '网络异常',
@@ -218,7 +288,7 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error)
+          console.log(error, '设备名称')
         })
     },
     // 通过机房ID和设备类型ID获取所有设备
@@ -230,11 +300,19 @@ export default {
         }
       })
         .then(({ data }) => {
-          console.log(data)
+          // console.log(data)
           this.leak = data
+          var idsArr = data.map((item) => {
+            return item.device_id
+          })
+          var ids = idsArr.toString()
+          this.findCurrentDeviceData(ids)
+          setTimeout(() => {
+            this.drawCanvas()
+          }, 100)
         })
         .catch((error) => {
-          console.log(error)
+          console.log(error, '获取所有设备')
         })
         .finally(() => {
           this.loading = false
@@ -245,14 +323,20 @@ export default {
 </script>
 <style scoped>
 .leak_img {
-  background: #ccc;
-  width: 40%;
-  height: 300px;
+  /* background: #ccc; */
+  width: 37%;
+  height: 250px;
   float: left;
+  position: relative;
+}
+.leak_img #leakCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .leak_data {
   /* background: #223356; */
-  margin-left: 41%;
+  margin-left: 38%;
   margin-bottom: 1em;
 }
 </style>

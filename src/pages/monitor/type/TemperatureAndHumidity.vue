@@ -3,27 +3,28 @@
     <!-- 温湿度 -->
     <!-- 温湿度图片 -->
     <div class="th_img">
-      <img src="" alt="图片找不到了">
+      <img :src="room.room_plane_imgpath" alt="图片加载中..." style="height:100%;width:100%">
+      <canvas id="thCanvas" :width="canvasWidth" height="250px" />
     </div>
     <!-- 温湿度数据 -->
     <div class="th_data">
       <el-table
         v-loading="loading"
-        :data="th"
+        :data="currentDeviceData"
         border
         size="mini"
-        height="300"
-        style="width: 83%">
+        height="250"
+        style="width: 84%">
         <el-table-column
           prop="device_name"
           label="设备名称"
           align="center" />
         <el-table-column
-          prop="device_name"
+          prop="data[0].value"
           label="湿度"
           align="center" />
         <el-table-column
-          prop="address"
+          prop="data[1].value"
           label="温度"
           align="center" />
       </el-table>
@@ -109,7 +110,14 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }]
-      }
+      },
+      // device_ids:[],
+      // 当前设备数据
+      currentDeviceData: [],
+      // 机房
+      room: {},
+      // 画布宽度
+      canvasWidth: 590
     }
   },
   watch: {
@@ -128,13 +136,76 @@ export default {
     this.findAllDeviceName()
     this.findAllHumitureData()
     this.thQueryChange()
+    this.findAllRoom()
+    // this.findCurrentDeviceData()
+    // this.drawCanvas()
   },
   methods: {
+    // 温湿度位置
+    drawCanvas() {
+      const vm = this
+      const canvas = document.getElementById('thCanvas')
+      const context = canvas.getContext('2d')
+      context.fillStyle = 'block'
+      context.lineWidth = 4
+      const devicePosition = this.th.map((item) => {
+        return item
+      })
+      console.log(devicePosition)
+      this.th.forEach((item) => {
+        const slicePath = item.device_imgpath.split('/images/devices/')[1]
+        if (slicePath !== 'default.png') {
+          const image = new Image()
+          image.src = item.device_imgpath
+          image.onload = function() {
+            // 绘制图像的函数
+            // context.drawImage(image,item.x,item.y,20,20);
+            context.drawImage(image, item.pos.pos_x / 100 * vm.canvasWidth, item.pos.pos_y / 100 * 216, 20, 20)
+          }
+          context.fillText(item.device_name, item.pos.pos_x / 100 * vm.canvasWidth - 10, item.pos.pos_y / 100 * 216 - 10, 100)
+        } else {
+          context.beginPath()
+          // context.arc(item.x,item.y,10,0,2*Math.PI)
+          context.arc(item.pos.pos_x / 100 * vm.canvasWidth, item.pos.pos_y / 100 * 216, 10, 0, 2 * Math.PI)
+          context.fill()
+          // context.fillText(item.text,item.x-15,item.y-15,100)
+          context.fillText(item.device_name, item.pos.pos_x / 100 * vm.canvasWidth - 15, item.pos.pos_y / 100 * 216 - 15, 100)
+        }
+      })
+    },
     // 日期时间选择器确定时触发
     thQueryChange() {
       this.thQuery.start_time = this.time[0]
       this.thQuery.end_time = this.time[1]
     },
+    // 获取所有机房信息
+    findAllRoom() {
+      axios.get('/api_room/list_all_room/', {
+        params: { room_id: this.$parent.roomId }
+      })
+        .then(({ data }) => {
+          this.room = data[0]
+          // console.log(data[0])
+        })
+    },
+    // 获取设备当前数据
+    findCurrentDeviceData(ids) {
+      this.loading = true
+      axios.get('/api_room_monitor/get_current_data/', {
+        params: { device_ids: ids }
+      })
+        .then(({ data }) => {
+          // console.log(data)
+          this.currentDeviceData = data
+        })
+        .catch(() => {
+
+        })
+        .finally(() => {
+          this.loading = false
+        })
+    },
+    // 获取所有的温湿度数据
     findAllTHData() {
       this.loading = true
       axios.get('/api_room_monitor/get_devices/', {
@@ -144,17 +215,26 @@ export default {
         }
       })
         .then(({ data }) => {
-          console.log(data)
+          // console.log(JSON.stringify(data))
           this.th = data
+          var idsArr = data.map((item) => {
+            return item.device_id
+          })
+          var ids = idsArr.toString()
+          this.findCurrentDeviceData(ids)
+          setTimeout(() => {
+            this.drawCanvas()
+          }, 100)
+          // console.log(this.device_ids)
         })
         .catch((error) => {
-          console.log(error)
+          console.log(error, '温湿度数据')
         })
         .finally(() => {
           this.loading = false
         })
     },
-    // 获取详细温湿度数据
+    // 获取详细温湿度历史数据
     findAllHumitureData() {
       // this.loading = true
       axios.get('/api_room_monitor/get_device_data/', {
@@ -166,8 +246,7 @@ export default {
             this.drawHumiture(data)
           }, 100)
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
           // console.log(JSON.stringify(this.thQuery))
           // this.$notify({
           //   title: '失败',
@@ -195,8 +274,8 @@ export default {
             this.thQuery.device_id = ''
           }
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
+          // 错误信息
         })
     },
     // 绘制温湿度图表
@@ -207,17 +286,7 @@ export default {
       const timeData = data.times.map((item) => {
         return item.split(' ')[1]
       })
-      // console.log(timeData)
-      // 温度数据
-      // var temperatureData = data.datas.map((item) => {
-      //   return item[1]
-      // })
-      // console.log(temperatureData)
-      // 湿度数据
-      // var humidityData = data[1].data.map((item) => {
-      //   return item[1]
-      // })
-      // console.log(humidityData)
+      console.log(timeData)
       var myChart = echarts.init(document.getElementById('th'))
       var option = {
         tooltip: {
@@ -237,7 +306,8 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: timeData.reverse()
+          data: timeData
+          // data: data.times
         },
         yAxis: [{
           name: '℃ / %',
@@ -266,14 +336,20 @@ export default {
 
 <style scoped>
 .th_img {
-  background: #ccc;
-  width: 40%;
-  height: 300px;
+  /* background: #ccc; */
+  width: 37%;
+  height: 250px;
   float: left;
+  position: relative;
+}
+.th_img #thCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .th_data {
   /* background: #223356; */
-  margin-left: 41%;
+  margin-left: 38%;
   margin-bottom: 1em;
 }
 </style>
