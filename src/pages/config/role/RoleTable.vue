@@ -24,7 +24,7 @@
       <el-table-column
         prop="last_names"
         label="用户名称"
-        width="450" />
+        width="150" />
       <el-table-column
         width="100"
         align="center"
@@ -69,6 +69,7 @@ export default {
   methods: {
     // 加载表格数据
     findAllRoles() {
+      // alert(1)
       axios.get('/api_permission/get_permission_list').then(({ data: result }) => {
         console.log('...', result.data)
         this.roles = result.data

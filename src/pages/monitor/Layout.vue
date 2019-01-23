@@ -165,7 +165,7 @@ export default {
       })
     },
     changeCool(id) {
-      alert(id)
+      // alert(id)
       // this.$refs.CoolMaster.device_id = id
       // this.$refs.CoolMaster.room_id = this.roomId
       // this.$refs.CoolMaster.deviceType_id = this.devicetype_id
@@ -175,7 +175,7 @@ export default {
       // this.$refs.CoolMaster.findAllData(this.devicetype_id)
       // this.$refs.CoolMaster.findAcCoolDeviceDetails(id)
       if (this.devicetype_id === 17) {
-        this.$refs.CoolMaster.findAllDevice(this.roomId, id)
+        // this.$refs.CoolMaster.findAllDevice(this.roomId, id)
         this.$refs.CoolMaster.findAllData1(id)
         this.$refs.CoolMaster.device_id = id
         this.$refs.CoolMaster.findAllData(this.devicetype_id)

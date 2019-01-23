@@ -17,7 +17,7 @@
         </el-card>
       </div>
       <div class="choiceTime">
-        <el-date-picker v-model="searchTime" :picker-options="pickerOptions" value-format="yyyy-MM-dd HH:mm:ss" size="mini" type="datetimerange" range-separator="至" align="right" @change="searchChange"/>
+        <el-date-picker v-model="searchTime" value-format="yyyy-MM-dd HH:mm:ss" size="mini" type="datetimerange" range-separator="至" align="right" @change="searchChange"/>
         <span class="dataOptions optionDay" @click="changeTimeByOption1(1)">本天</span>
         <span class="dataOptions optionWeek" @click="changeTimeByOption1(2)">本周</span>
         <span class="dataOptions optionMonth" @click="changeTimeByOption1(3)">本月</span>
@@ -35,7 +35,6 @@
       center>
       <el-date-picker
         v-model="time1"
-        :picker-options="pickerOptions"
         value-format="yyyy-MM-dd HH:mm:ss"
         size="mini"
         type="datetimerange"
@@ -46,7 +45,7 @@
       <span class="dataOptions optionWeek" @click="changeTimeByOption(2)">本周</span>
       <span class="dataOptions optionMonth" @click="changeTimeByOption(3)">本月</span>
       <span class="dataOptions optionQuarter " @click="changeTimeByOption(4)">本季度</span>
-      <div id="container3" style="width:1000px;height:300px;"/>
+      <div id="container3" style="width:1080px;height:300px;"/>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="primary" @click="closeDialog()">确 定</el-button>
@@ -140,16 +139,28 @@ export default {
     this.getCurrentData()
     this.searchChange()
     this.findAllData()
+    this.timeToRefresh()
+  },
+   beforeDestroy() {
+    clearInterval(this.timer)
+    this.timer = null
   },
   methods: {
+    // 每隔1分钟刷新一次数据
+    timeToRefresh() {
+      this.timer = setInterval(() => {
+        // this.findLineDataByTime()
+        this.searchChange()
+      }, 60000)
+    },
     // 通过设备类型获取所有的数据项信息
     findAllData() {
       axios.get('/api_room_monitor/get_configitem_info/?devicetype_id=' + this.devicetype_id).then((data) => {
-        console.log('+++++', data)
+        // console.log('+++++', data)
         this.dataitem_codes = data.data.map((item) => {
           return item.dataitem_code
         })
-        console.log('this.dataitem_codes', this.dataitem_codes)
+        // console.log('this.dataitem_codes', this.dataitem_codes)
         // this.allData = data.data
         // this.code1 = this.dataitem_codes[0]
         // this.code2 = this.dataitem_codes[1]
@@ -199,7 +210,7 @@ export default {
     toOpenDialog(dataitem_code, name) {
       // 更改当前的设备项码
       this.dataitem_code1 = dataitem_code
-      this.findLineDataByTime(dataitem_code)
+      this.findLineDataByTime()
       this.dialog.title = name
       this.dialog.visible = true
     },
@@ -217,14 +228,15 @@ export default {
     },
     // 通过确定的时间选择该时间点对应的数据
     // 获取某一设备的某一数据项的历史数据，给后台一个设备id和开始和结束时间和数据项码
-    findLineDataByTime(id) {
+    findLineDataByTime() {
+      // alert(1)
       if (this.time1 != null) {
         // 获取选择的时间
         const obj = { params: {
           start_time: this.time1[0],
           end_time: this.time1[1],
           device_ids: this.deviceId,
-          dataitem_code: id
+          dataitem_code: this. dataitem_code1
         }}
         axios.get('/api_room_monitor/get_history_data/', obj).then((data) => {
           // console.log('data', data)
@@ -243,6 +255,7 @@ export default {
     // 查找数据,绘制曲线
     // 获取某一设备的所有数据项的历史数据，给后台一个设备id和开始和结束时间
     searchChange() {
+      // console.log(1)
       const obj = { params: {
         start_time: this.searchTime[0],
         end_time: this.searchTime[1],
@@ -365,51 +378,6 @@ export default {
       // console.log(timeData)
       var myChart = echarts.init(document.getElementById('container2'))
       myChart.setOption({
-        // tooltip: {
-        //   trigger: 'axis'
-        // },
-        // legend: {
-        //   data: ['A相电压', 'B相电压', 'C相电压'],
-        //   textStyle: {
-        //     color: 'rgba(255, 255, 255, 0.3)'
-        //   }
-        // },
-        // grid: {
-        //   left: '3%',
-        //   right: '4%',
-        //   bottom: '3%',
-        //   containLabel: true
-        // },
-        // xAxis: {
-        //   type: 'category',
-        //   boundaryGap: false,
-        //   data: this.ctTime
-        // },
-        // yAxis: [{
-        //   name: 'V',
-        //   type: 'value'
-        // }],
-        // // color: ['#F56C6C', '#E6A23C', '#b03a5b'],
-        // series: [
-        //   {
-        //     name: 'A相电压',
-        //     type: 'line',
-        //     smooth: true,
-        //     data: this.DC1
-        //   },
-        //   {
-        //     name: 'B相电压',
-        //     type: 'line',
-        //     smooth: true,
-        //     data: this.DC2
-        //   },
-        //   {
-        //     name: 'C相电压',
-        //     type: 'line',
-        //     smooth: true,
-        //     data: this.DC3
-        //   }
-        // ]
         tooltip: {
           trigger: 'axis'
         },
@@ -479,7 +447,7 @@ export default {
       } else {
         this.time1 = this.quarter()
       }
-      this.findLineDataByTime(this.dataitem_code1)
+      this.findLineDataByTime()
     },
     // 获取当天时间段
     time() {

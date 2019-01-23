@@ -3,12 +3,12 @@
     <div class="list">
       <img :src="deviceImg" alt="图片正在加载...">
       <el-card v-for="item in allData" :key="item.name" :id="item.dataitem_code" class="box-card">
-        <div class="text item" @click="toOpenDialog(item.dataitem_code,item.name)">
+        <div class="text item" @click="toOpenDialog(item.dataitem_code,item.dataitem_name)">
           <div class="card_top">
-            <span>{{ item.value }}</span>
+            <span>{{ item.dataitem_value }}{{item.dataitem_unit}}</span>
           </div>
           <div class="card_bottom">
-            <span>{{ item.name }}</span>
+            <span>{{ item.dataitem_name }}</span>
           </div>
         </div>
       </el-card>
@@ -25,7 +25,7 @@
     </div>
     <div class="right">
       <div class="choiceTime">
-        <el-date-picker v-model="searchTime" :picker-options="pickerOptions" value-format="yyyy-MM-dd HH:mm:ss" size="mini" type="datetimerange" range-separator="至" align="right" @change="searchChange"/>
+        <el-date-picker v-model="searchTime" value-format="yyyy-MM-dd HH:mm:ss" size="mini" type="datetimerange" range-separator="至" align="right" @change="searchChange"/>
         <span class="dataOptions optionDay" @click="changeTimeByOption1(1)">本天</span>
         <span class="dataOptions optionWeek" @click="changeTimeByOption1(2)">本周</span>
         <span class="dataOptions optionMonth" @click="changeTimeByOption1(3)">本月</span>
@@ -44,7 +44,6 @@
       center>
       <el-date-picker
         v-model="time1"
-        :picker-options="pickerOptions"
         value-format="yyyy-MM-dd HH:mm:ss"
         size="mini"
         type="datetimerange"
@@ -55,7 +54,7 @@
       <span class="dataOptions optionWeek" @click="changeTimeByOption(2)">本周</span>
       <span class="dataOptions optionMonth" @click="changeTimeByOption(3)">本月</span>
       <span class="dataOptions optionQuarter " @click="changeTimeByOption(4)">本季度</span>
-      <div id="airCoolContainer2" style="width:1000px;height:300px;"/>
+      <div id="airCoolContainer2" style="width:1130px;height:300px;"/>
       <span slot="footer" class="dialog-footer">
         <el-button @click="closeDialog()">取 消</el-button>
         <el-button type="primary" @click="closeDialog()">确 定</el-button>
@@ -84,10 +83,14 @@ export default {
       code2: 2,
       code3: 3,
       code4: 4,
-      codes1: '',
-      codes2: '',
-      codes3: '',
-      codes4: '',
+      // 所有的设备码及当前的设备码
+      allCodes: [],
+      currentCodes: '2_3_Air_ITEAQ3',
+      // 设备码
+      // codes1: '',
+      // codes2: '',
+      // codes3: '',
+      // codes4: '',
       value1: '',
       value2: '',
       value3: '',
@@ -159,39 +162,57 @@ export default {
       this.value8 = now
     },
     device_id: function(now, old) {
+      // alert(now)
       this.findAllData1(now)
       this.findAcCoolDeviceDetails(now)
-      this.searchChange(now)
-      this.findAllData()
+      this.searchChange()
+      this.findAllData(this.deviceType_id)
       this.findLineDataByTime(this.dataitem_code1)
+      this.findAllDevice(this.room_id,this.deviceType_id)
+      this.changeCodes()
+      this.timeToRefresh()
     }
   },
   created() {
     this.findAllDevice(this.room_id, this.deviceType_id)
     this.findAllData1(this.device_id)
     this.findAcCoolDeviceDetails(this.device_id)
-    this.searchChange(this.device_id)
+    this.searchChange()
     this.findAllData(this.deviceType_id)
     // this.findAllData(this.deviceType_id)
+    this.timeToRefresh()
+  },
+  beforeDestroy() {
+    clearInterval(this.timer)
+    this.timer = null
   },
   methods: {
+    // 每隔1分钟刷新所有的数据
+    timeToRefresh() {
+      this.timer = setInterval(() => {
+        // this.findLineDataByTime()
+        this.searchChange()
+      }, 60000)
+    },
     // 获取机房中某种设备类型的所有设备的列表
     findAllDevice(room_id, deviceType_id) {
       axios.get('/api_room_monitor/get_devices/', { params: { room_id: room_id, devicetype_id: deviceType_id }}).then((data) => {
-        // console.log('=======', data)
+        // console.log('所有的设备码=======', data.data)
+        this.allCodes = data.data
+        this.changeCodes()
         data.data.map((item) => {
           if (item.device_id === this.device_id) {
             // alert(1)
             this.deviceImg = item.device_imgpath
             // console.log(this.deviceImg)
           }
-          this.device_codes.push(item.device_code)
+          // this.device_codes.push(item.device_code)
         })
-        // console.log(this.device_codes)
-        this.codes1 = this.device_codes[0]
-        this.codes2 = this.device_codes[1]
-        this.codes3 = this.device_codes[2]
-        this.codes4 = this.device_codes[3]
+        // console.log('所有的设备码this.device_codes',this.device_codes)
+        // this.codes1 = this.device_codes[0]
+        // this.codes2 = this.device_codes[1]
+        // this.codes3 = this.device_codes[2]
+        // this.codes4 = this.device_codes[3]
       }).catch(() => {
 
       })
@@ -218,18 +239,18 @@ export default {
       // console.log(id)
       axios.get('/api_room_monitor/get_current_data/?device_ids=' + id).then((data) => {
         // console.log('+++++', data)
-        this.allData = data.data[0].data
-        // console.log(this.allData)
-        if (this.allData[2].value === '1') {
-          this.allData[2].value = '运行'
-        }
-        if (this.allData[3].value === '0') {
-          this.allData[3].value = '混合模式'
-        }
-        this.allData[0].dataitem_code = this.dataitem_codes[0]
-        this.allData[1].dataitem_code = this.dataitem_codes[1]
-        this.allData[2].dataitem_code = this.dataitem_codes[2]
-        this.allData[3].dataitem_code = this.dataitem_codes[3]
+        // this.allData = data.data[0].data
+        // // console.log(this.allData)
+        // if (this.allData[2].value === '1') {
+        //   this.allData[2].value = '运行'
+        // }
+        // if (this.allData[3].value === '0') {
+        //   this.allData[3].value = '混合模式'
+        // }
+        // this.allData[0].dataitem_code = this.dataitem_codes[0]
+        // this.allData[1].dataitem_code = this.dataitem_codes[1]
+        // this.allData[2].dataitem_code = this.dataitem_codes[2]
+        // this.allData[3].dataitem_code = this.dataitem_codes[3]
         // console.log(this.allData)
         // console.log(this.allData)
       }).catch(() => {
@@ -239,7 +260,13 @@ export default {
     // 通过设备id查找设备详细信息，包括设备码，操作码
     findAcCoolDeviceDetails(id) {
       axios.get('/api_device/list_device_detail/?device_id=' + id).then((data) => {
-        // console.log(data)
+        // console.log('通过设备id查找设备详细信息，包括设备码，操作码',data.data[0].dataitems[0].table)
+        this.allData = data.data[0].dataitems[0].table
+        this.allData[0].dataitem_code = this.dataitem_codes[0]
+        this.allData[1].dataitem_code = this.dataitem_codes[1]
+        this.allData[2].dataitem_code = this.dataitem_codes[2]
+        this.allData[3].dataitem_code = this.dataitem_codes[3]
+        // console.log(this.allData)
       }).catch(() => {
 
       })
@@ -258,7 +285,7 @@ export default {
       } else {
         this.searchTime = this.quarter()
       }
-      this.searchChange(this.device_id)
+      this.searchChange()
     },
     changeTimeByOption(option) {
       if (option === 1) {
@@ -340,11 +367,12 @@ export default {
     },
     // 查找数据,绘制曲线
     // 获取某一设备的所有数据项的历史数据，给后台一个设备id和开始和结束时间
-    searchChange(device_id) {
+    searchChange() {
+      // console.log(1)
       const obj = { params: {
         start_time: this.searchTime[0],
         end_time: this.searchTime[1],
-        device_id: device_id
+        device_id: this.device_id
       }}
       // console.log(obj)
       axios.get('/api_room_monitor/get_device_data/', obj).then((data) => {
@@ -402,6 +430,7 @@ export default {
     // 通过确定的时间选择该时间点对应的数据
     // 获取某一设备的某一数据项的历史数据，给后台一个设备id和开始和结束时间和数据项码
     findLineDataByTime(id) {
+      // alert(1)
       if (this.time1 != null) {
         // 获取选择的时间
         const obj = { params: {
@@ -411,10 +440,11 @@ export default {
           dataitem_code: id
         }}
         axios.get('/api_room_monitor/get_history_data/', obj).then((data) => {
-          console.log('data', data)
+          // console.log('data', data)
           this.counts = data.data.values[0].data
+          // console.log('this.counts', this.counts)
           this.time9 = data.data.times
-          console.log('this.time9', this.time9)
+          // console.log('this.time9', this.time9)
           this.name = data.data.values[0].name
           this.drawFirst2()
         }).catch(() => {
@@ -422,24 +452,35 @@ export default {
         })
       }
     },
+    // 更改设备码
+    changeCodes() {
+      // this.currentCodes = this.codes1
+      // if(this.device_id === this.allCodes)
+      this.allCodes.map((item)=>{
+        if(item.device_id === this.device_id) {
+          this.currentCodes = item.device_code
+        }
+      })
+    },
     // 保存按钮1
     save1(code1) {
-      // alert(this.code1,this.codes1,this.value5)
-      // alert(this.codes1)
+      // alert(this.code1)
+      // alert(this.code1)
       // alert(this.value5)
       this.value5.toString()
       const obj = {
-        device_code: this.codes1,
+        device_code: this.currentCodes,
         operate_code: this.code1,
         value: this.value5
       }
-      console.log(obj)
+      // console.log(obj)
       axios.post('/api_room_monitor/operate_device/', obj).then(() => {
         this.$notify({
           title: '成功',
           message: '保存成功',
           type: 'success'
         })
+        this.value1 = 0
       }).catch(() => {
         this.$notify.error({
           title: '错误',
@@ -450,17 +491,18 @@ export default {
     save2(code2) {
       this.value6.toString()
       const obj = {
-        device_code: this.codes1,
+        device_code: this.currentCodes,
         operate_code: this.code2,
         value: this.value6
       }
-      console.log(obj)
+      // console.log(obj)
       axios.post('/api_room_monitor/operate_device/', obj).then(() => {
         this.$notify({
           title: '成功',
           message: '保存成功',
           type: 'success'
         })
+        this.value2 = 0
       }).catch(() => {
         this.$notify.error({
           title: '错误',
@@ -471,17 +513,19 @@ export default {
     save3(code3) {
       this.value7.toString()
       const obj = {
-        device_code: this.codes1,
+        device_code: this.currentCodes,
         operate_code: this.code3,
         value: this.value7
       }
-      console.log(obj)
+      // console.log(obj)
       axios.post('/api_room_monitor/operate_device/', obj).then(() => {
         this.$notify({
           title: '成功',
           message: '保存成功',
           type: 'success'
         })
+        this.value3 = 0
+
       }).catch(() => {
         this.$notify.error({
           title: '错误',
@@ -492,17 +536,18 @@ export default {
     save4(code4) {
       this.value8.toString()
       const obj = {
-        device_code: this.codes1,
+        device_code: this.currentCodes,
         operate_code: this.code4,
         value: this.value8
       }
-      console.log(obj)
+      // console.log(obj)
       axios.post('/api_room_monitor/operate_device/', obj).then(() => {
         this.$notify({
           title: '成功',
           message: '保存成功',
           type: 'success'
         })
+        this.value4 = 0
       }).catch(() => {
         this.$notify.error({
           title: '错误',
