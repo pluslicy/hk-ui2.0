@@ -36,8 +36,7 @@
             :value="name.device_id" />
         </el-select>
         <el-date-picker
-          v-model="time"
-          :picker-options="pickerTime"
+          v-model="pickTime"
           value-format="yyyy-MM-dd HH:mm:ss"
           type="datetimerange"
           range-separator="至"
@@ -47,6 +46,10 @@
           size="mini"
           clearable
           @change="queryChange" />
+        <span @click="changeTimeByOption(1)" class="dataOptions optionDay">本天</span>
+        <span @click="changeTimeByOption(2)" class="dataOptions optionWeek">本周</span>
+        <span @click="changeTimeByOption(3)" class="dataOptions optionMonth">本月</span>
+        <span @click="changeTimeByOption(4)" class="dataOptions optionQuarter">本季度</span>
       </div>
       <div class="leak_history_data">
         <div id="leak" :style="he" />
@@ -74,50 +77,48 @@ export default {
         end_time: undefined
       },
       // 选择时间
-      time: [new Date(new Date() - 24 * 60 * 60 * 1000), new Date()],
+      pickTime: [],
       // 快捷选择时间
-      pickerTime: {
-        shortcuts: [{
-          text: '最近一天',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 1)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      },
+      // pickerTime: {
+      //   shortcuts: [{
+      //     text: '本天',
+      //     onClick(picker) {
+      //       picker.$emit('pick', this.time());
+      //     }
+      //   },{
+      //     text: '本周',
+      //     onClick(picker) {
+      //       picker.$emit('pick', this.week());
+      //     }
+      //   },{
+      //     text: '本月',
+      //     onClick(picker) {
+      //       picker.$emit('pick', this.month());
+      //     }
+      //   },{
+      //     text: '本季度',
+      //     onClick(picker) {
+      //       picker.$emit('pick', this.quarter());
+      //     }
+      //   }]
+      // },
       // 当前设备数据
       currentDeviceData: [],
       // 机房
       room: {},
       // 画布宽度
-      canvasWidth: 590
+      canvasWidth: 590,
+      // 定时器
+      timer:null
     }
+  },
+  computed:{
+  //   time(){
+  //     return [new Date(this.currentDate() - 24 * 60 * 60 * 1000), this.currentDate()]
+  //   }
+    // pickTime(){
+    //   return this.time()
+    // }
   },
   watch: {
     query: {
@@ -130,6 +131,7 @@ export default {
   created() {
     // 图表高度
     this.he = 'width: 92%;height: ' + ($(window).height() - 560) + 'px;'
+    this.pickTime = this.time()
     // 加载所有设备名称
     this.findAllDeviceName()
     // 加载所有漏水历史数据
@@ -140,8 +142,133 @@ export default {
     // 加载所有的设备
     this.findAllDeviceByIds()
     this.findAllRoom()
+    this.currentDate()
+  },
+  destroyed(){
+    clearInterval(this.timer)
   },
   methods: {
+    // 当前时间
+    currentDate() {
+      var date = new Date()
+      // console.log(date)
+      var year = date.getFullYear()
+      var month = date.getMonth() + 1
+      month = this.addZero(month)
+      var day = date.getDate()
+      day = this.addZero(day)
+      var hours = date.getHours()
+      hours = this.addZero(hours)
+      var minutes = date.getMinutes()
+      minutes = this.addZero(minutes)
+      var seconds = date.getSeconds()
+      seconds = this.addZero(seconds)
+      return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds
+    },
+    addZero(num){
+      return num <10?'0'+num:num
+    },
+    // 点击本天 本周 本月 本季度
+    changeTimeByOption(option){
+      if(option==1){
+        this.pickTime = this.time();
+      }else if(option==2){
+        this.pickTime = this.week();
+      }else if(option==3){
+        this.pickTime = this.month();
+      }else{
+        this.pickTime = this.quarter();
+      }
+      this.queryChange()
+      // this.findAllLeakData();
+    },
+    timestampToTime(timestamp){
+      let date = new Date(timestamp) //时间戳为10位需*1000，时间戳为13位的话不需乘1000
+      let Y = date.getFullYear() + '-'
+      let M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-'
+      let D = date.getDate() + ' '
+      let h = date.getHours() + ':'
+      let m = date.getMinutes() + ':'
+      let s = date.getSeconds()
+      return Y+M+D+h+m+s
+    },
+    // 获取当天时间段
+    time(){
+      let time = new Date();
+      let now = time.getTime();
+      let todayStart = time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate()+'T'+'0:0:0'+'Z';
+      let todayEnd = time.getFullYear()+'-'+(time.getMonth()+1)+'-'+time.getDate()+'T'+'23:59:59'+'Z';
+      // if(!new Date(todayStart).getTime()){
+      // 	todayStart = todayStart.replace(/-/g,'/');
+      // 	todayEnd = todayEnd.replace(/-/g,'/');
+      // }
+      return([todayStart,todayEnd])
+      // console.log(new Date(todayStart),new Date(todayEnd))
+      // return [new Date(todayStart),new Date(todayEnd)];
+    },
+    // console.log(time())
+    // 获取本月时间段
+    month(){
+      let month = new Date();
+      let monthStart = month.getFullYear()+'-'+(month.getMonth()+1)+'-'+1+' '+'0:0:0';
+      // console.log(month.getMonth())
+      if (month.getMonth() <= 10){
+        var monthEnd = month.getFullYear()+'-'+(month.getMonth()+2)+'-'+1+' '+'0:0:0';
+      } else {
+        var monthEnd = (month.getFullYear()+1)+'-'+1+'-'+1+' '+'0:0:0';
+      }
+      // if(!new Date(monthStart).getTime()){
+      // 	monthStart = monthStart.replace(/-/g,'/');
+      // 	monthEnd = monthEnd.replace(/-/g,'/');
+      // }
+      // return [new Date(monthStart),new Date(monthEnd)];
+      return [monthStart,monthEnd];
+    },
+    // 获取本周时间段
+    week(){
+      let now = new Date(); //当前日期 
+      let nowDayOfWeek = now.getDay(); //今天本周的第几天 
+      let nowDay = now.getDate(); //当前日 
+      let nowMonth = now.getMonth(); //当前月 
+      let nowYear = now.getYear()+1900; //当前年 
+      let weekStartDate = new Date(nowYear, nowMonth, nowDay - nowDayOfWeek); 
+      let weekEndDate = new Date(nowYear, nowMonth, nowDay + (7 - nowDayOfWeek)); 
+      weekStartDate = this.timestampToTime(Date.parse(weekStartDate));
+      weekEndDate = this.timestampToTime(Date.parse(weekEndDate));
+      // if(!new Date(weekStartDate).getTime()){
+      // 	weekStartDate = weekStartDate.replace(/-/g,'/');
+      // 	weekEndDate = weekEndDate.replace(/-/g,'/');
+      // }
+      return [weekStartDate,weekEndDate];
+    },
+    // 获取本季度时间段
+    quarter(){
+      let now = new Date();
+      let nowYear = now.getYear()+1900;//年
+      let nowMonth = now.getMonth(); //当前月 
+      let start = '';
+      let end = '';
+      if(nowMonth < 3){
+        start = nowYear+'-1-1 0:0:0';
+        end = nowYear+'-4-1 0:0:0';
+      }else if (nowMonth >= 3 && nowMonth < 6){
+        start = nowYear+'-4-1 0:0:0';
+        end = nowYear+'-7-1 0:0:0';
+      }else if(nowMonth >= 6 && nowMonth< 9){
+        start = nowYear+'-7-1 0:0:0';
+        end = nowYear+'-10-1 0:0:0';
+      }else if (nowMonth >= 9){
+        start = nowYear+'-10-1 0:0:0';
+        end = (nowYear+1)+'-1-1 0:0:0';
+      }
+      // if(!new Date(nowYear+'-1-1 0:0:0').getTime()){
+      // 	start = start.replace(/-/g,'/');
+      // 	end = end.replace(/-/g,'/');
+      // 	return [new Date(start),new Date(end)];
+      // }
+      // return [new Date(start),new Date(end)];
+      return [start,end];
+    },
     // 温湿度位置
     drawCanvas() {
       const vm = this
@@ -176,8 +303,9 @@ export default {
     },
     // 日期时间选择器确定时触发
     queryChange() {
-      this.query.start_time = this.time[0]
-      this.query.end_time = this.time[1]
+      this.query.start_time = this.pickTime[0]
+      // console.log(this.query.start_time)
+      this.query.end_time = this.pickTime[1]
     },
     // 绘制漏水曲线图
     drawLeak(data) {
@@ -204,7 +332,8 @@ export default {
         },
         xAxis: {
           type: 'category',
-          data: leakTime
+          // data: leakTime
+          data: data.times
         },
         yAxis: {
           type: 'value'
@@ -233,7 +362,7 @@ export default {
     },
     // 获取设备当前数据
     findCurrentDeviceData(ids) {
-      this.loading = true
+      // this.loading = true
       axios.get('/api_room_monitor/get_current_data/', {
         params: { device_ids: ids }
       })
@@ -245,7 +374,7 @@ export default {
 
         })
         .finally(() => {
-          this.loading = false
+          // this.loading = false
         })
     },
     // 获取所有漏水历史数据
@@ -255,6 +384,7 @@ export default {
         params: this.query
       })
         .then(({ data }) => {
+          // console.log(JSON.stringify(this.query))
           // console.log(JSON.stringify(data))
           setTimeout(() => {
             this.drawLeak(data)
@@ -307,6 +437,9 @@ export default {
           })
           var ids = idsArr.toString()
           this.findCurrentDeviceData(ids)
+          this.timer = setInterval(()=>{
+            this.findCurrentDeviceData(ids)
+          },10000)
           setTimeout(() => {
             this.drawCanvas()
           }, 100)
@@ -338,5 +471,25 @@ export default {
   /* background: #223356; */
   margin-left: 38%;
   margin-bottom: 1em;
+}
+.leak_history .leak_history_form .dataOptions {
+  cursor: pointer;
+  margin-right: .5em;
+  color: #fff;
+  border-radius: 3px;
+  padding: 3px;
+  font-size: 14px;
+}
+.leak_history .leak_history_form .optionDay {
+  background: #409eff;
+}
+.leak_history .leak_history_form .optionWeek {
+  background: #409eff;
+}
+.leak_history .leak_history_form .optionMonth {
+  background: #409eff;
+}
+.leak_history .leak_history_form .optionQuarter {
+  background: #409eff;
 }
 </style>

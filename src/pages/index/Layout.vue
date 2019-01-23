@@ -107,13 +107,13 @@ export default {
   methods: {
     // 幻灯片切换
     changeRoom(newIndex, oldIndex) {
+      // console.log(this.roomBaseData)
       // console.log(newIndex, oldIndex)
       this.currentRoomBaseData = this.roomBaseData[newIndex]
       // console.log(this.currentRoomBaseData)
       setTimeout(() => {
         this.findAllHumitureDataById(this.currentRoomBaseData.room_id, newIndex)
       }, 100)
-
       // this.currentHumitureData = this.humitureData
       // console.log(this.currentHumitureData)
     },
@@ -188,9 +188,7 @@ export default {
     findAllHumitureDataById(id, index) {
       const vm = this
       // alert(room_id)
-      axios.get('/api_room_monitor/getSimpleIndexData/', {
-        params: { room_id: id }
-      })
+      axios.get('/api_room_monitor/getSimpleIndexData/?room_id=' + id)
         .then(({ data }) => {
           // alert(room_id)
           // console.log(data,'----')
