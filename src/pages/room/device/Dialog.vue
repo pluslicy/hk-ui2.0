@@ -7,17 +7,17 @@
       <!-- 体 -->
       <el-form ref="ruleForm" :rules="rules" :model="deviceDialog.form" size="mini">
         <el-form-item :label-width="formLabelWidth" label="设备名称" prop="device_name">
-          <el-input v-model="deviceDialog.form.device_name" autocomplete="off" clearable />
+          <el-input v-model="deviceDialog.form.device_name" auto-complete="off" clearable />
           <!-- </el-input> -->
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="设备码" prop="device_code">
-          <el-input v-model="deviceDialog.form.device_code" autocomplete="off" clearable />
+          <el-input v-model="deviceDialog.form.device_code" auto-complete="off" clearable />
           <!-- </el-input> -->
         </el-form-item>
         <el-row>
           <el-col :span="10">
-            <el-form-item :label-width="formLabelWidth" label="设备类型" prop="devicetype_id">
-              <el-select v-model="deviceDialog.form.devicetype_id" :disabled="deviceDialog.disabled" placeholder="请选择类型" clearable>
+            <el-form-item :label-width="formLabelWidth" label="设备类型" prop="devicetype">
+              <el-select v-model="deviceDialog.form.devicetype" :disabled="deviceDialog.disabled" placeholder="请选择类型" clearable>
                 <el-option v-for="devicetype in devicetypes" :key="devicetype.devicetype_id" :label="devicetype.devicetype_name" :value="devicetype.devicetype_id" />
                 <!-- <el-option label="区域二" value="beijing"></el-option> -->
               </el-select>
@@ -36,7 +36,7 @@
           <el-input :rows="2" v-model="deviceDialog.form.device_desc" type="textarea" placeholder="" />
           <!-- </el-input> -->
         </el-form-item>
-        <!-- {{ deviceDialog.form }} -->
+        {{ deviceDialog.form }}
         <el-form-item v-if="deviceImgShow" :label-width="formLabelWidth" label="上传图片" prop="imageUrl">
           <!-- 上传图片 -->
           <el-upload
@@ -210,12 +210,13 @@ export default {
                   type: 'success'
                 })
                 this.closeDialog()
-                this.$emit.findAllDevice()
+                // this.$emit.findAllDevice()
                 // this.$parent.findAllroom()
                 // this.$parent.findAllDeviceType()
                 this.$parent.find_all_deviceName()
               })
-              .catch(() => {
+              .catch((error) => {
+                console.log(error)
                 this.$notify({
                   title: '失败',
                   message: '保存失败',
@@ -226,16 +227,18 @@ export default {
         }
       })
     },
-    // 上传图片
+    // 上传图片成功
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
       this.findAllDevice()
+      this.closeDialog()
       this.$notify({
         title: '成功',
         type: 'success',
         message: '设备信息上传成功'
       })
     },
+    // 上传图片失败
     handleAvatarError() {
       this.$notify({
         title: '失败',

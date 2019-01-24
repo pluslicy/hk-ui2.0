@@ -7,7 +7,7 @@
       </div>
       <div class="rooms">
         <ul>
-          <li v-for="item in allRooms" :key="item.room_id" :value="item.room_id" @click="findRoomAllMessage(item.room_id)">{{ item.room_name }}</li>
+          <li v-for="item in allRooms" :key="item.room_id" :value="item.room_id" class="roomNameSpan" @click="findRoomAllMessage(item.room_id,)">{{ item.room_name }}</li>
         </ul>
       </div>
       <div class="right">
@@ -356,6 +356,7 @@ export default {
           this.temperatureTimes1.map((item) => {
             this.temperatureTimes2.push(item[1])
           })
+          console.log(this.temperatureTimes2, '----')
         } else {
           this.temperature1 = []
           this.humidity1 = []
@@ -372,6 +373,15 @@ export default {
       // console.log(timeData)
       var myChart = echarts.init(document.getElementById('container'))
       myChart.setOption({
+        // noDataLoadingOption: {
+        //   text: '暂无数据',
+        //   effect: 'bubble',
+        //   effectOption: {
+        //     effect: {
+        //       n: 0
+        //     }
+        //   }
+        // },
         textStyle: {
           color: 'rgba(255, 255, 255, 0.3)'
         },
@@ -635,7 +645,7 @@ export default {
   }
   .video .middle .middle_top .one span {
     font-size: 22px;
-    color: #fff;
+    /* color: #fff; */
     font-weight: lighter;
     margin-left: 5%;
     line-height: 54px;
