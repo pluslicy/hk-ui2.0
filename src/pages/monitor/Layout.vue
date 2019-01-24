@@ -116,14 +116,18 @@ export default {
     },
     'roomId': function(newVal, oldVal) {
       this.loadDevice()
+    },
+    'device_id': function(newVal, oldVal) {
+      this.change()
     }
   },
   created() {
-    this.loadDevice()
     if (!this.roomId) {
       this.updateRoom(2)
     }
     this.loadRoom()
+    this.loadDevice()
+    this.change()
   },
   methods: {
     updateRoom(roomId) {
@@ -146,10 +150,6 @@ export default {
           } else {
             this.device_id = ''
           }
-          this.$refs.upsIT.device_id = this.device_id
-          this.$refs.upsIT.devicetype_id = this.devicetype_id
-          // this.$refs.upsIT.loadAllDevice()
-          setInterval(() => { this.$refs.upsIT.loadAllDevice() }, 1000)
         })
     },
     // 加载机房
@@ -157,6 +157,22 @@ export default {
       axios.get('/api_room/list_all_room/').then(({ data }) => {
         this.rooms = data
       })
+    },
+    change() {
+      if (this.devicetype_id === 16) {
+        this.$refs.upsIT.device_id = this.device_id
+        this.$refs.upsIT.loadAllDevice()
+      } else if (this.devicetype_id === 15) {
+        this.$refs.upsBattery.device_id = this.device_id
+        this.$refs.upsBattery.loadAllDevice()
+      }
+      // else if( this.devicetype_id === 5 ) {
+      //   this.$refs.leak.query.device_id = this.device_id
+      //   this.$refs.leak.findAllLeakData()
+      // } else if(this.devicetype_id === 4) {
+      //   this.$refs.TemperatureAndHumidity.thQuery.device_id = this.device_id
+      //   this.$refs.TemperatureAndHumidity.findAllHumitureData()
+      // }
     }
   }
 }
