@@ -76,13 +76,13 @@ export default {
           { required: true, message: '账号仅限数字字母下划线', trigger: 'blur' }
         ],
         name: [
-          { required: true, message: '请输入用户名', trigger: 'change' }
+          { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
         tel: [
-          { required: true, message: '请输入电话', trigger: 'change' }
+          { required: true, message: '请输入电话', trigger: 'blur' }
         ],
         address: [
-          { required: true, message: '请输入地址', trigger: 'change' }
+          { required: true, message: '请输入地址', trigger: 'blur' }
         ],
         description: [
           { required: true, message: '请输入描述', trigger: 'blur' }

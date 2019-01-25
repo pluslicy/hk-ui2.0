@@ -1,7 +1,7 @@
 <template>
   <div class="distribution">
     <div class="left">
-      <img :src="deviceImg1" alt="">
+      <img :src="deviceImg1" alt="设备图片未找到...">
     </div>
     <div class="right">
       <div class="list">
@@ -128,7 +128,7 @@ export default {
   },
   watch: {
     deviceId: function(now, old) {
-      this.getDevice(this.room_id, now)
+      this.getDevice(this.room_id, this.devicetype_id)
       this.getCurrentData()
       this.searchChange()
       this.findAllData()
@@ -185,12 +185,13 @@ export default {
         this.deviceImg = data.data.map((item) => {
           return item.device_imgpath
         })
+        console.log(this.deviceImg)
         if (this.deviceId === 18) {
           this.deviceImg1 = this.deviceImg[0]
-          // console.log(this.deviceImg1)
+          console.log(this.deviceImg1)
         } else if (this.deviceId === 19) {
           this.deviceImg1 = this.deviceImg[1]
-          // console.log(this.deviceImg1)
+          console.log(this.deviceImg1)
         }
       }).catch(() => {
 
@@ -399,7 +400,7 @@ export default {
           // data: data.times
         },
         yAxis: [{
-          name: 'A',
+          name: 'V',
           type: 'value'
         }],
         series: [

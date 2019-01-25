@@ -153,8 +153,6 @@ export default {
           } else {
             this.device_id = ''
           }
-<<<<<<< HEAD
-=======
           this.$refs.upsIT.device_id = this.device_id
           this.$refs.upsIT.loadAllDevice()
           // console.log('=====', this.devicetype_id)
@@ -162,7 +160,6 @@ export default {
           this.$refs.upsIT.devicetype_id = this.devicetype_id
           this.$refs.upsIT.loadAllDevice()
           // setInterval(() => { this.$refs.upsIT.loadAllDevice() }, 1000)
->>>>>>> 386a0142f8e8d4f80f0433b906be87be410c412d
         })
     },
     // 加载机房
@@ -171,7 +168,6 @@ export default {
         this.rooms = data
       })
     },
-<<<<<<< HEAD
     change() {
       if (this.devicetype_id === 16) {
         this.$refs.upsIT.device_id = this.device_id
@@ -180,6 +176,7 @@ export default {
         this.$refs.upsBattery.device_id = this.device_id
         this.$refs.upsBattery.loadAllDevice()
       }
+    },
       // else if( this.devicetype_id === 5 ) {
       //   this.$refs.leak.query.device_id = this.device_id
       //   this.$refs.leak.findAllLeakData()
@@ -187,7 +184,6 @@ export default {
       //   this.$refs.TemperatureAndHumidity.thQuery.device_id = this.device_id
       //   this.$refs.TemperatureAndHumidity.findAllHumitureData()
       // }
-=======
     changeCool(id) {
       // alert(id)
       // this.$refs.CoolMaster.device_id = id
@@ -210,12 +206,10 @@ export default {
         this.$refs.distribution.getDevice(this.roomId, this.devicetype_id)
         this.$refs.distribution.deviceId = id
       }
->>>>>>> 386a0142f8e8d4f80f0433b906be87be410c412d
     }
     // qqq(id) {
     //   alert(id)
     // }
   }
 }
-
 </script>
