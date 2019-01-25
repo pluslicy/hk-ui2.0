@@ -175,7 +175,6 @@ export default {
       } else if (this.devicetype_id === 15) {
         this.$refs.upsBattery.device_id = this.device_id
         this.$refs.upsBattery.loadAllDevice()
-<<<<<<< HEAD
       }else if( this.devicetype_id === 5 ) {
         this.$refs.leak.query.device_id = this.device_id
         this.$refs.leak.findAllLeakData()
@@ -185,31 +184,9 @@ export default {
       } else if (this.devicetype_id === 17) {
         this.$refs.CoolMaster.findAllData1(this.device_id)
         this.$refs.CoolMaster.device_id = this.device_id
-=======
-      }
-    },
-      // else if( this.devicetype_id === 5 ) {
-      //   this.$refs.leak.query.device_id = this.device_id
-      //   this.$refs.leak.findAllLeakData()
-      // } else if(this.devicetype_id === 4) {
-      //   this.$refs.TemperatureAndHumidity.thQuery.device_id = this.device_id
-      //   this.$refs.TemperatureAndHumidity.findAllHumitureData()
-      // }
-    changeCool(id) {
-      // alert(id)
-      // this.$refs.CoolMaster.device_id = id
-      // this.$refs.CoolMaster.room_id = this.roomId
-      // this.$refs.CoolMaster.deviceType_id = this.devicetype_id
-      // console.log(id, this.roomId, this.devicetype_id)
-      // this.$refs.CoolMaster.findAllDevice(this.roomId, id)
-      // this.$refs.CoolMaster.findAllData1(id)
-      // this.$refs.CoolMaster.findAllData(this.devicetype_id)
-      // this.$refs.CoolMaster.findAcCoolDeviceDetails(id)
-      if (this.devicetype_id === 17) {
-        // this.$refs.CoolMaster.findAllDevice(this.roomId, id)
-        this.$refs.CoolMaster.findAllData1(id)
-        this.$refs.CoolMaster.device_id = id
->>>>>>> 217c8c565b06e5b55f86dd20e629485699e4f883
+      } else if (this.devicetype_id === 17) {
+        this.$refs.CoolMaster.findAllData1(this.device_id)
+        this.$refs.CoolMaster.device_id = this.device_id
         this.$refs.CoolMaster.findAllData(this.devicetype_id)
         this.$refs.CoolMaster.findAcCoolDeviceDetails(this.device_id)
       } else if (this.devicetype_id === 3) {
@@ -217,16 +194,8 @@ export default {
         this.$refs.distribution.getDevice(this.roomId, this.devicetype_id)
         this.$refs.distribution.deviceId = this.device_id
       }
-<<<<<<< HEAD
-  }
-}
-}
-=======
     }
-    // qqq(id) {
-    //   alert(id)
-    // }
-  }
 }
->>>>>>> 217c8c565b06e5b55f86dd20e629485699e4f883
+}
+
 </script>
