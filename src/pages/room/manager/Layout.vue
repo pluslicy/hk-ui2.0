@@ -103,7 +103,7 @@
     <div class="manager_pagination">
       <el-pagination
         :total="total"
-        :page-size="20"
+        :page-size="10"
         layout="total, prev, pager, next"
         @current-change="handleCurrentChange" />
         <!-- </el-pagination> -->
@@ -115,7 +115,7 @@
         <!-- {{ managerDialog.form }} -->
         <el-form ref="ruleForm" :rules="rules" :model="managerDialog.form" size="mini">
           <el-form-item :label-width="formLabelWidth" prop="room_name" label="机房名称">
-            <el-input v-model="managerDialog.form.room_name" autocomplete="off" clearable />
+            <el-input v-model="managerDialog.form.room_name" auto-complete="off" clearable />
             <!-- </el-input> -->
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" prop="room_desc" label="机房描述">
@@ -275,6 +275,7 @@ export default {
       this.managerDialog.visible = true
       this.managerDialog.title = '新增机房信息'
       this.managerDialog.form = {}
+      this.roomImgShow = false
     },
     // 修改机房信息
     toUpdateManager(row) {
@@ -324,6 +325,7 @@ export default {
       })
         .then(() => {
           const ids = this.multipleSelection.map(item => item.room_id)
+          console.log(ids)
           axios.post('/api_room/delete_room/', {
             room_ids: ids
           })
@@ -363,6 +365,7 @@ export default {
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
       this.findAllRoom()
+      this.closeDialog()
       this.$notify({
         title: '成功',
         type: 'success',

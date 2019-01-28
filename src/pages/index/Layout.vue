@@ -170,7 +170,7 @@ export default {
               name: item[0]
             }
           })
-          // console.log(result)
+          console.log(JSON.stringify(result))
           this.checkData = result
           setTimeout(() => {
             this.drawCheck()
