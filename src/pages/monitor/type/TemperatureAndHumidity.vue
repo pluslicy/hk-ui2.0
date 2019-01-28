@@ -32,13 +32,13 @@
     <!-- 查询历史数据 -->
     <div class="th_history">
       <div class="th_history_form">
-        <el-select v-model="thQuery.device_id" clearable placeholder="请选择设备" size="mini">
+        <!-- <el-select v-model="thQuery.device_id" clearable placeholder="请选择设备" size="mini">
           <el-option
             v-for="name in deviceNames"
             :key="name.device_id"
             :label="name.device_name"
             :value="name.device_id" />
-        </el-select>
+        </el-select> -->
         <el-date-picker
           v-model="pickTime"
           value-format="yyyy-MM-dd HH:mm:ss"
@@ -139,7 +139,7 @@ export default {
     // this.th = this.$parent.device
     // console.log(this.th)
     this.findAllTHData()
-    this.findAllDeviceName()
+    // this.findAllDeviceName()
     this.findAllHumitureData()
     this.thQueryChange()
     this.findAllRoom()
@@ -285,7 +285,7 @@ export default {
     },
     // 日期时间选择器确定时触发
     thQueryChange() {
-      // this.thQuery.device_id = this.$parent.device_id
+      this.thQuery.device_id = this.$parent.device_id
       this.thQuery.start_time = this.pickTime[0]
       this.thQuery.end_time = this.pickTime[1]
     },
