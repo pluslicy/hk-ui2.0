@@ -292,6 +292,7 @@
 <script type="text/javascript">
 import $ from 'jquery'
 import axios from '@/http/axios'
+import Highcharts from 'highcharts'
 export default {
   data() {
     return {

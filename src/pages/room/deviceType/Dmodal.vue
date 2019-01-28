@@ -72,7 +72,7 @@ export default {
     // 刷新数据项
     updateData() {
       // let num = this.currentDevicetypeId + ''
-      axios.post('/api_devicetype/Shujuxiang/', this.currentDevicetypeId).then(({ data }) => {
+      axios.post('/api_devicetype/dataitems/', this.currentDevicetypeId).then(({ data }) => {
         this.dataType = data.list
         this.$notify({
           title: '刷新成功',

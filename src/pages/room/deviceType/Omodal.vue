@@ -70,7 +70,7 @@ export default {
     },
     updateData() {
       // let num = this.currentDevicetypeId + ''
-      axios.post('/api_devicetype/Caozuoxiang/', this.currentDevicetypeId).then(({ data }) => {
+      axios.post('/api_devicetype/operitems/', this.currentDevicetypeId).then(({ data }) => {
         this.operationType = data.list
         this.$notify({
           title: '刷新成功',

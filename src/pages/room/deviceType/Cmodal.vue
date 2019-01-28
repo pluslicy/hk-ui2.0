@@ -66,7 +66,7 @@ export default {
     },
     updateData() {
       // let num = this.currentDevicetypeId + ''
-      axios.post('/api_devicetype/Peizhixiang/', this.currentDevicetypeId).then(({ data }) => {
+      axios.post('/api_devicetype/configitems/', this.currentDevicetypeId).then(({ data }) => {
         this.configurationType = data.list
         this.$notify({
           title: '刷新成功',
