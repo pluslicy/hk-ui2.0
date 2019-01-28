@@ -6,128 +6,162 @@
     center
   >
     <div class="dialogCenter">
-      <el-form :model="toUpdataRoleDialog.form">
-        <el-form-item label-width="120" label="活动名称"><br> {{ toUpdataRoleDialog.form }}
-          <el-checkbox-group v-model="toUpdataRoleDialog.form.checkList">
-            <el-checkbox label="查看日志" />
-            <el-checkbox label="提交申请" />
-            <el-checkbox label="一级审批" />
-            <el-checkbox label="二级审批" />
-            <el-checkbox label="查看报警" />
-            <el-checkbox label="处理报警" />
-            <el-checkbox label="查看报警" />
-            <el-checkbox label="审核报警" /><br>
-            <el-checkbox label="权限:我的机房" />
-          </el-checkbox-group>
-          <!-- <span>权限:</span> -->
-          <el-checkbox-group v-model="toUpdataRoleDialog.form.checkList1">
-            <!-- <el-checkbox label="我的机房" /> -->
-            <el-checkbox label="查看我的机房" />
-            <el-checkbox label="管理我的机房" />
-            <el-checkbox label="删除我的机房" />
-          </el-checkbox-group>
-        </el-form-item>
-      </el-form>
+      <el-tree
+        ref="tree"
+        :data="allPowers"
+        :default-expanded-keys="Options.parent_ids"
+        :default-checked-keys="Options.hasOptions"
+        :props="defaultProps"
+        show-checkbox
+        node-key="id"/>
     </div>
     <div slot="footer" class="dialog-footer" style="text-align:right">
-      <el-button size="mini" @click="toUpdataRoleDialog.visible = false">取 消</el-button>
-      <el-button type="primary" size="mini" class="btn-rig">确 定</el-button>
-      <el-button type="primary" size="mini" class="btn-rig  btn-rig1">删除全部权限</el-button>
+      <el-button size="mini" @click="toCloseDialog">取 消</el-button>
+      <el-button type="primary" size="mini" class="btn-rig" @click="updateGroupPower()">确 定</el-button>
+      <!-- <el-button type="primary" size="mini" class="btn-rig  btn-rig1" @click="updateGroupPowerAll()">删除全部权限</el-button> -->
     </div>
   </el-dialog>
 </template>
 <script>
+import axios from '@/http/axios'
 export default {
   data() {
     return {
-      // 模态框树形控件
-      // props: {
-      //   label: 'name',
-      //   children: 'zones'
-      // },
-      // count: 1,
       toUpdataRoleDialog: {
         title: '',
-        form: {
-          checkList: [],
-          checkList1: []
-        },
+        form: {},
         visible: false
       },
-      arr1: [],
-      arr2: [],
-      arr3: [],
-      arr4: []
-      // obj: {},
-      // checked: true,
-      // check1: false,
-      // check2: false,
-      // check3: false,
-      // check4: false,
-      // check5: false,
-      // check6: false,
-      // check7: false
+      // 所有的权限
+      allDevicesId: [],
+      allDevicesName: [],
+      allDevices: [],
+      options: [{
+        name: '机房名称',
+        id: 1
+      }],
+      Options: {
+        parent_ids: [],
+        hasOptions: []
+      },
+      // 组id
+      groupId: 0,
+      allPowers: [],
+      // arr1: [],
+      // arr2: [],
+      // arr3: [],
+      // arr4: []
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      }
     }
   },
   methods: {
-    // 模态框树形控件开始
-    // handleCheckChange(data, checked, indeterminate) {
-    //   console.log(data, checked, indeterminate)
-    // },
-    // handleNodeClick(data) {
-    //   console.log(data)
-    // },
-    // loadNode(node, resolve) {
-    //   if (node.level === 0) {
-    //     return resolve([{ name: 'region1' }, { name: 'region2' }])
-    //   }
-    //   if (node.level > 3) return resolve([])
-    //   var hasChild
-    //   if (node.data.name === 'region1') {
-    //     hasChild = true
-    //   } else if (node.data.name === 'region2') {
-    //     hasChild = false
-    //   } else {
-    //     hasChild = Math.random() > 0.5
-    //   }
-    //   setTimeout(() => {
-    //     var data
-    //     if (hasChild) {
-    //       data = [{
-    //         name: 'zone' + this.count++
-    //       }, {
-    //         name: 'zone' + this.count++
-    //       }]
-    //     } else {
-    //       data = []
-    //     }
-    //     resolve(data)
-    //   }, 500)
-    // },
+    // 关闭模态框
+    toCloseDialog() {
+      this.Options.hasOptions = []
+      this.Options.parent_ids = []
+      this.toUpdataRoleDialog.visible = false
+    },
+    // 打开模态框
     toOpenDialog(row) {
-      console.log('row', row)
-      this.arr2 = row.permission_names.split('：')
-      console.log('arr2', this.arr2)
-      this.arr3 = this.arr2[0].split(',')
-      console.log('arr3', this.arr3)
-      // this.checkList = this.arr3
-      this.arr4 = this.arr2[1].split(',')
-      console.log('arr4', this.arr4)
-      // this.checkList1 = this.arr4
-      // this.arr2.forEach(() => {
-      //   if ('查看日志') {
-      //     this.check1 = true
-      //   } else {
-      //     this.check1 = false
-      //   }
-      //   if ('提交申请') {
-      //     this.check2 = true
-      //   } else {
-      //     this.check2 = false
-      //   }
-      // })
+      // console.log('row', row)
+      // this.arr2 = row.permission_names.split('：')
+      // console.log('arr2', this.arr2)
+      // this.arr3 = this.arr2[0].split(',')
+      // console.log('arr3', this.arr3)
+      // // this.checkList = this.arr3
+      // this.arr4 = this.arr2[1].split(',')
+      // console.log('arr4', this.arr4)
       this.toUpdataRoleDialog.title = '更改角色权限'
+      this.findAllJurisdiction(row)
+      this.groupId = row.group_id
       this.toUpdataRoleDialog.visible = true
+      setTimeout(() => {
+        this.toUpdataRoleDialog.visible = true
+      }, 1000)
+    },
+    // 查找所有的权限
+    findAllJurisdiction(row) {
+      // let str = row.permission_ids
+      // console.log('str:',str)
+      // 将str转换成数组
+      // let arr = str.split(",")
+      // console.log(str.split(","))
+      // this.Options.parent_ids = arr;
+      // this.Options.hasOptions = arr
+      // this.groupId = row.group_id
+      axios.get('/api_permission/get_permission_of_group?group_id=' + row.group_id).then((data) => {
+        this.allDevices = data.data.data
+        console.log(this.allDevices)
+        // data.data.data.forEach((item) => {
+        //   if(item.has_id!=0 && item.upper_id!=0){
+        //       this.Options.hasOptions.push(item.permission_id)
+        //       this.Options.parent_ids.push(item.upper_id)
+        //   }
+        // })
+        // this.Options.hasOptions = arr
+        console.log(this.Options.hasOptions)
+        console.log(this.Options.parent_ids)
+        this.allPowers = []
+        var allList = []
+        data.data.data.forEach((item) => {
+          if (item.upper_id === 0) {
+            var parent_id = item.permission_id
+            var chs = []
+            data.data.data.forEach(function(obj) {
+              if (obj.upper_id !== 0 && obj.upper_id === parent_id) {
+                var secondTitle = {
+                  id: obj.permission_id,
+                  label: obj.permission_name
+                }
+                chs.push(secondTitle)
+              }
+            })
+            var list = {
+              id: item.permission_id,
+              label: item.permission_name,
+              children: chs
+            }
+            allList.push(list)
+          }
+        })
+        this.allPowers = allList
+      })
+    },
+    // 删除所有的权限
+    updateGroupPowerAll() {
+      this.$refs.tree.setCheckedKeys([])
+      this.updateGroupPower()
+    },
+    // 修改权限
+    updateGroupPower() {
+      // 获取所有选中的权限提交给后台，然后重新获取所有权限
+      var allPowersId = this.$refs.tree.getCheckedKeys()
+      var obj = {
+        'group_id': this.groupId,
+        'permission_ids': allPowersId
+      }
+      this.$confirm('组权限将被修改,是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        axios.post('/api_permission/set_permission_of_group', obj).then(() => {
+          this.$notify({ title: '成功', type: 'success', message: '修改权限成功!' })
+          // this.$parent.findAllRoles()
+        }).catch(() => {
+          this.$notify({ title: '失败', type: 'error', message: '修改权限失败' })
+        })
+      }).catch(() => {
+        this.$message({ title: '提示', type: 'info', message: '已取消权限更改' })
+      })
+      this.toCloseDialog()
+      setTimeout((item) => {
+        this.$parent.findAllRoles()
+        this.$parent.loading = true
+      }, 2000)
     }
   }
 }

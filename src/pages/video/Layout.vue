@@ -373,6 +373,15 @@ export default {
       // console.log(timeData)
       var myChart = echarts.init(document.getElementById('container'))
       myChart.setOption({
+        // noDataLoadingOption: {
+        //   text: '暂无数据',
+        //   effect: 'bubble',
+        //   effectOption: {
+        //     effect: {
+        //       n: 0
+        //     }
+        //   }
+        // },
         textStyle: {
           color: 'rgba(255, 255, 255, 0.3)'
         },

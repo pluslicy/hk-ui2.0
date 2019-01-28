@@ -15,7 +15,7 @@
         <el-select v-model="devicetype_id">
           <el-option v-for="item in deviceType" :key="item.devicetype_id" :label="item.devicetype_name" :value="item.devicetype_id" />
         </el-select>
-        <el-select v-model="device_id" @change="changeCool(device_id)">
+        <el-select v-model="device_id">
           <el-option v-for="item in device" :key="item.device_id" :label="item.device_name" :value="item.device_id"/>
         </el-select>
       </div>
@@ -116,14 +116,18 @@ export default {
     },
     'roomId': function(newVal, oldVal) {
       this.loadDevice()
+    },
+    'device_id': function(newVal, oldVal) {
+      this.change()
     }
   },
   created() {
-    this.loadDevice()
     if (!this.roomId) {
       this.updateRoom(2)
     }
     this.loadRoom()
+    this.loadDevice()
+    this.change()
   },
   methods: {
     updateRoom(roomId) {
@@ -164,33 +168,34 @@ export default {
         this.rooms = data
       })
     },
-    changeCool(id) {
-      alert(id)
-      // this.$refs.CoolMaster.device_id = id
-      // this.$refs.CoolMaster.room_id = this.roomId
-      // this.$refs.CoolMaster.deviceType_id = this.devicetype_id
-      // console.log(id, this.roomId, this.devicetype_id)
-      // this.$refs.CoolMaster.findAllDevice(this.roomId, id)
-      // this.$refs.CoolMaster.findAllData1(id)
-      // this.$refs.CoolMaster.findAllData(this.devicetype_id)
-      // this.$refs.CoolMaster.findAcCoolDeviceDetails(id)
-      if (this.devicetype_id === 17) {
-        this.$refs.CoolMaster.findAllDevice(this.roomId, id)
-        this.$refs.CoolMaster.findAllData1(id)
-        this.$refs.CoolMaster.device_id = id
+    change() {
+      if (this.devicetype_id === 16) {
+        this.$refs.upsIT.device_id = this.device_id
+        this.$refs.upsIT.loadAllDevice()
+      } else if (this.devicetype_id === 15) {
+        this.$refs.upsBattery.device_id = this.device_id
+        this.$refs.upsBattery.loadAllDevice()
+      }else if( this.devicetype_id === 5 ) {
+        this.$refs.leak.query.device_id = this.device_id
+        this.$refs.leak.findAllLeakData()
+      } else if(this.devicetype_id === 4) {
+        this.$refs.TemperatureAndHumidity.thQuery.device_id = this.device_id
+        this.$refs.TemperatureAndHumidity.findAllHumitureData()
+      } else if (this.devicetype_id === 17) {
+        this.$refs.CoolMaster.findAllData1(this.device_id)
+        this.$refs.CoolMaster.device_id = this.device_id
+      } else if (this.devicetype_id === 17) {
+        this.$refs.CoolMaster.findAllData1(this.device_id)
+        this.$refs.CoolMaster.device_id = this.device_id
         this.$refs.CoolMaster.findAllData(this.devicetype_id)
-        this.$refs.CoolMaster.findAcCoolDeviceDetails(id)
-      }
-      if (this.devicetype_id === 3) {
+        this.$refs.CoolMaster.findAcCoolDeviceDetails(this.device_id)
+      } else if (this.devicetype_id === 3) {
         // 获取图片
         this.$refs.distribution.getDevice(this.roomId, this.devicetype_id)
-        this.$refs.distribution.deviceId = id
+        this.$refs.distribution.deviceId = this.device_id
       }
     }
-    // qqq(id) {
-    //   alert(id)
-    // }
-  }
+}
 }
 
 </script>

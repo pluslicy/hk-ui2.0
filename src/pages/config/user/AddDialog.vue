@@ -102,16 +102,16 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' }
         ],
         last_name: [
-          { required: true, message: '请输入用户名', trigger: 'change' }
+          { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
         user_tel: [
-          { required: true, message: '请输入电话', trigger: 'change' }
+          { required: true, message: '请输入电话', trigger: 'blur' }
         ],
         user_address: [
-          { required: true, message: '请输入地址', trigger: 'change' }
+          { required: true, message: '请输入地址', trigger: 'blur' }
         ],
         user_note: [
-          { required: true, message: '请输入描述', trigger: 'change' }
+          { required: true, message: '请输入描述', trigger: 'blur' }
         ]
       }
     }

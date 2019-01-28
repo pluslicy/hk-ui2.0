@@ -83,6 +83,7 @@
 </style>
 <script type="text/javascript">
 import axios from '@/http/axios'
+import Highcharts from 'highcharts'
 export default {
   data() {
     return {
@@ -120,7 +121,8 @@ export default {
       // 所有设备类型下的数据
       allDeviceType: [],
       device_id: '',
-      upsItOneHistoryValueOfOne: []
+      upsItOneHistoryValueOfOne: [],
+      interval:null
     }
   },
   computed: {
@@ -150,17 +152,21 @@ export default {
     }
   },
   created() {
-    // this.loadAllDevice()
+    this.interval = setInterval(()=>{this.loadAllDevice()},60000)
+  },
+  beforeDestroy(){
+    clearInterval(this.interval);
   },
   methods: {
     month() {
       const month = new Date()
+      var monthEnd
       const monthStart = month.getFullYear() + '-' + (month.getMonth() + 1) + '-' + 1 + ' ' + '0:0:0'
 
       if (month.getMonth() <= 10) {
-        var monthEnd = month.getFullYear() + '-' + (month.getMonth() + 2) + '-' + 1 + ' ' + '0:0:0'
+        monthEnd = month.getFullYear() + '-' + (month.getMonth() + 2) + '-' + 1 + ' ' + '0:0:0'
       } else {
-        var monthEnd = (month.getFullYear() + 1) + '-' + 1 + '-' + 1 + ' ' + '0:0:0'
+        monthEnd = (month.getFullYear() + 1) + '-' + 1 + '-' + 1 + ' ' + '0:0:0'
       }
       return [monthStart, monthEnd]
     },
@@ -245,7 +251,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x',
@@ -342,7 +348,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -453,7 +459,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -566,7 +572,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -666,7 +672,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -766,7 +772,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -877,7 +883,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -977,7 +983,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -1077,7 +1083,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -1177,7 +1183,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -1288,7 +1294,7 @@ export default {
           this.allLineData.push(tempObj)
         })
       }
-      const chart = Highcharts.chart('upsItContainer', {
+      var chart = Highcharts.chart('upsItContainer', {
         colors: ['#7AB6EC', '#F56C6C'],
         chart: {
           zoomType: 'x'
@@ -1377,7 +1383,6 @@ export default {
     // 获取当天时间段
     time() {
       const time = new Date()
-      const now = time.getTime()
       const todayStart = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate() + 'T' + '0:0:0' + 'Z'
       const todayEnd = time.getFullYear() + '-' + (time.getMonth() + 1) + '-' + time.getDate() + 'T' + '23:59:59' + 'Z'
       return ([todayStart, todayEnd])
@@ -1412,7 +1417,7 @@ export default {
           setTimeout(() => {
             const tempArr = ['模块1插入', '模块2插入', '模块3插入', '模块4插入', '模块5插入', '模块6插入']
             const result = tempArr.some((item) => {
-              return item == this.currentDataitemName
+              return item === this.currentDataitemName
             })
             if (result) {
               this.drawFirst4()
@@ -1442,14 +1447,14 @@ export default {
       }
     },
     loadAllDeviceType() {
-      axios.get('/api_room_monitor/get_configitem_info/', { params: { devicetype_id: this.devicetype_id }}).then(({ data }) => {
+      axios.get('/api_room_monitor/get_configitem_info/', { params: { devicetype_id: 16 } }).then(({ data }) => {
         // console.log(data)
         this.upsItAllDeviceOfOne = data
       })
     },
     loadAllDevice() {
       const num = Number(this.device_id)
-      axios.get('/api_device/list_device_detail/', { params: { device_id: num }}).then(({ data }) => {
+      axios.get('/api_device/list_device_detail/', { params: { device_id: num } }).then(({ data }) => {
         // 将空值设置为‘--’
         if (data[0]) {
           data[0].dataitems.forEach((obj) => {

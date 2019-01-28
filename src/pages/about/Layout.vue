@@ -1,6 +1,5 @@
 <template>
   <div class="about">
-    关于我们
     <!-- <el-button @click='handleClick'>open</el-button>
     <about-dialog :dialogVisible="dialogVisible"/> -->
     <!-- 关于我们 -->
