@@ -227,7 +227,7 @@ export default {
     // 上传图片成功
     handleAvatarSuccess(res, file) {
       this.imageUrl = URL.createObjectURL(file.raw)
-      this.findAllDevice()
+      this.$parent.findAllDevice()
       this.closeDialog()
       this.$notify({
         title: '成功',

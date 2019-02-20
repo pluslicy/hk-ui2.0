@@ -74,7 +74,7 @@ export default {
       // 所有设备名称
       deviceNames: [],
       // 设备总数
-      total: 5,
+      total: 0,
       // 监听数据
       params: {
         page: 1,

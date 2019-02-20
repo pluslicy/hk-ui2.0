@@ -12,9 +12,11 @@
     <div class="monitor_content">
       <!-- 下拉菜单 -->
       <div class="monitor_content_top">
+        <!-- {{devicetype_id}} -->
         <el-select v-model="devicetype_id">
           <el-option v-for="item in deviceType" :key="item.devicetype_id" :label="item.devicetype_name" :value="item.devicetype_id" />
         </el-select>
+        <!-- {{device_id}} -->
         <el-select v-model="device_id">
           <el-option v-for="item in device" :key="item.device_id" :label="item.device_name" :value="item.device_id"/>
         </el-select>
@@ -177,10 +179,10 @@ export default {
         this.$refs.upsBattery.loadAllDevice()
       } else if( this.devicetype_id === 5 ) {
         this.$refs.leak.query.device_id = this.device_id
-        this.$refs.leak.findAllLeakData()
+        // this.$refs.leak.findAllLeakData()
       } else if(this.devicetype_id === 4) {
         this.$refs.TemperatureAndHumidity.thQuery.device_id = this.device_id
-        this.$refs.TemperatureAndHumidity.findAllHumitureData()
+        // this.$refs.TemperatureAndHumidity.findAllHumitureData()
       } else if (this.devicetype_id === 17) {
         this.$refs.CoolMaster.findAllData1(this.device_id)
         this.$refs.CoolMaster.device_id = this.device_id

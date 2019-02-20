@@ -78,30 +78,6 @@ export default {
       },
       // 选择时间
       pickTime: [],
-      // 快捷选择时间
-      // pickerTime: {
-      //   shortcuts: [{
-      //     text: '本天',
-      //     onClick(picker) {
-      //       picker.$emit('pick', this.time());
-      //     }
-      //   },{
-      //     text: '本周',
-      //     onClick(picker) {
-      //       picker.$emit('pick', this.week());
-      //     }
-      //   },{
-      //     text: '本月',
-      //     onClick(picker) {
-      //       picker.$emit('pick', this.month());
-      //     }
-      //   },{
-      //     text: '本季度',
-      //     onClick(picker) {
-      //       picker.$emit('pick', this.quarter());
-      //     }
-      //   }]
-      // },
       // 当前设备数据
       currentDeviceData: [],
       // 机房
@@ -111,14 +87,6 @@ export default {
       // 定时器
       timer:null
     }
-  },
-  computed:{
-  //   time(){
-  //     return [new Date(this.currentDate() - 24 * 60 * 60 * 1000), this.currentDate()]
-  //   }
-    // pickTime(){
-    //   return this.time()
-    // }
   },
   watch: {
     query: {
@@ -134,7 +102,7 @@ export default {
     // this.query.device_id = this.$parent.device_id
     this.pickTime = this.time()
     // 加载所有漏水历史数据
-    this.findAllLeakData()
+    // this.findAllLeakData()
     // 加载所有设备名称
     // this.findAllDeviceName()
     // 查询时间改变

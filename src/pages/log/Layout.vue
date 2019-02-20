@@ -79,7 +79,7 @@ export default {
       // 选择时间
       time: [],
       // 日志总数
-      total: 10
+      total: 0
     }
   },
   watch: {

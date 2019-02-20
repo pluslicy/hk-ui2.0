@@ -154,7 +154,7 @@ export default {
       // 机房名称
       roomNames: [],
       // 机房总数
-      total: 1,
+      total: 0,
       // 监听数据
       params: {
         room_id: undefined,
