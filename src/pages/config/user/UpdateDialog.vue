@@ -2,7 +2,7 @@
   <!-- 修改权限模态框 -->
   <div class="user_data_dialog2">
     <el-dialog :title="updateModel.title" :visible.sync="updateModel.visible" width="35%">
-      <el-form ref="ruleForm" :model="updateModel.form" :rules="rules" label-position="left">{{ updateModel.form }}
+      <el-form ref="ruleForm" :model="updateModel.form" :rules="rules" label-position="left">
         <el-form-item :label-width="formLabelWidth" label="账号:" prop="username">
           <el-input v-model="updateModel.form.username" autocomplete="off" readonly />
         </el-form-item>
@@ -93,6 +93,7 @@ export default {
   methods: {
     // 弹出修改模态框
     toOpenDialog(row) {
+      this.updateModel.title = '修改密码'
       console.log(row)
       if (row.is_superuser === '是') {
         row.is_superuser = true

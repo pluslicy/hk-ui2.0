@@ -13,12 +13,12 @@
       <div class="right">
         <div class="badgeDiv">
           <span>报警</span>
-          <router-link to="/alarm/index"><span style="background-color:red;padding:.3em">{{ alarmCount }}</span></router-link>
+          <router-link to="/alarm/index"><span style="color:red;padding:.3em">{{ alarmCount }}</span></router-link>
           &nbsp;&nbsp;|
         </div>
         <div class="badgeDiv">
           <span>待审批</span>
-          <router-link to="/check/index"><span style="background-color:red;padding:.3em">{{ examineCount1 }}</span></router-link>
+          <router-link to="/check/index"><span style="color:red;padding:.3em">{{ examineCount1 }}</span></router-link>
           &nbsp;&nbsp;|
         </div>
         <div class="badgeDiv">
@@ -116,6 +116,7 @@
 import axios from '@/http/axios'
 import $ from 'jquery'
 import echarts from 'echarts'
+import Highcharts from 'highcharts'
 export default {
   data() {
     return {
@@ -183,8 +184,8 @@ export default {
         // this.getAllAlarms()
         this.timeSetInterval()
         // this.getAllExamine()
-        // this.findRoomAllMessage(this.currentRoomId)
-      }, 10000)
+        this.findRoomAllMessage(this.currentRoomId)
+      }, 60000)
     },
     // 获取所有的机房
     findAllrooms() {
@@ -227,9 +228,13 @@ export default {
     getAllAlarms() {
       // console.log(1)
       axios.get('/api_alarm/get_current_alarm/').then(({ data }) => {
-        console.log('data', data)
-        this.alarmCount = data.alarm_total - 1
-        console.log('报警数量', this.alarmCount)
+        // console.log('data', data)
+        if (data.alarm_total >= 1) {
+          this.alarmCount = data.alarm_total - 1
+        } else {
+          this.alarmCount = 0
+        }
+        // console.log('报警数量', this.alarmCount)
       }).catch(() => {
 
       })
@@ -244,7 +249,7 @@ export default {
             this.examineCount.push(item.approval_status)
           }
         })
-        console.log('未审批个数', this.examineCount)
+        // console.log('未审批个数', this.examineCount)
         this.examineCount1 = this.examineCount.length
       }).catch(() => {
 
@@ -283,38 +288,72 @@ export default {
       // this.currentRoomId = id
       // alert(id)
       axios.get('api_room_monitor/getSimpleIndexData/?room_id=' + id).then(({ data }) => {
-        // console.log('=======', data)
+        console.log('=======', data)
         this.simpleBaseData = data
         this.videos = data.video_src
         // console.log('所有的视频',this.videos)
         this.humitureArray = data.thData
         // 获取ups交流输出电压
-        this.upsDataPV1 = data.upsData[0].data.map((item) => {
-          return item[1]
-        })
-        this.upsDataPV2 = data.upsData[1].data.map((item) => {
-          return item[1]
-        })
-        this.upsDataPV3 = data.upsData[2].data.map((item) => {
-          return item[1]
-        })
-        this.upsDataTimes = data.upsData[0].data.map((item) => {
-          return item[0].split('T')[1]
-        })
+        // alert(1)
+        // this.upsDataPV1 = data.upsData[0].data.map((item) => {
+        //   return item[1]
+        // })
+        // this.upsDataPV2 = data.upsData[1].data.map((item) => {
+        //   return item[1]
+        // })
+        // this.upsDataPV3 = data.upsData[2].data.map((item) => {
+        //   return item[1]
+        // })
+        // this.upsDataTimes = data.upsData[0].data.map((item) => {
+        //   return item[0].split('T')[1]
+        // })
+        if (data.upsData.length !== 0) {
+          this.upsDataPV1 = data.upsData[0].data.map((item) => {
+            return item[1]
+          })
+          this.upsDataPV2 = data.upsData[1].data.map((item) => {
+            return item[1]
+          })
+          this.upsDataPV3 = data.upsData[2].data.map((item) => {
+            return item[1]
+          })
+          this.upsDataTimes = data.upsData[0].data.map((item) => {
+            return item[0].split('T')[1]
+          })
+          // 获取UPS电流
+          this.upsDataCT1 = data.upsData[3].data.map((item) => {
+            return item[1]
+          })
+          this.upsDataCT2 = data.upsData[4].data.map((item) => {
+            return item[1]
+          })
+          this.upsDataCT3 = data.upsData[5].data.map((item) => {
+            return item[1]
+          })
+        } else {
+          this.upsDataPV1 = []
+          this.upsDataPV2 = []
+          this.upsDataPV3 = []
+          this.upsDataTimes = []
+          this.upsDataCT1 = []
+          this.upsDataCT2 = []
+          this.upsDataCT3 = []
+        }
+        // alert(2)
         // console.log('时间为:',this.upsDataTimes)
         // console.log('upsDataCT1',this.upsDataPV1)
         // console.log('upsDataPV2',this.upsDataPV2)
         // console.log('upsDataPV3',this.upsDataPV3)
         // 获取UPS电流
-        this.upsDataCT1 = data.upsData[3].data.map((item) => {
-          return item[1]
-        })
-        this.upsDataCT2 = data.upsData[4].data.map((item) => {
-          return item[1]
-        })
-        this.upsDataCT3 = data.upsData[5].data.map((item) => {
-          return item[1]
-        })
+        // this.upsDataCT1 = data.upsData[3].data.map((item) => {
+        //   return item[1]
+        // })
+        // this.upsDataCT2 = data.upsData[4].data.map((item) => {
+        //   return item[1]
+        // })
+        // this.upsDataCT3 = data.upsData[5].data.map((item) => {
+        //   return item[1]
+        // })
         // console.log('humitureArray',this.humitureArray)
         // console.log('++++', this.humitureArray)
         if ((this.humitureArray[0].data.length !== 0) || (this.humitureArray[1].data.length !== 0)) {
@@ -324,7 +363,7 @@ export default {
             this.temperature1.push(item[1])
           })
           // console.log('温度',this.temperature)
-          // console.log('温度1', this.temperature1)
+          console.log('温度1', this.temperature1)
           this.humidity = this.humitureArray[1].data
           this.humidity.map((item) => {
             this.humidity1.push(item[1])
@@ -356,7 +395,7 @@ export default {
           this.temperatureTimes1.map((item) => {
             this.temperatureTimes2.push(item[1])
           })
-          console.log(this.temperatureTimes2, '----')
+          // console.log(this.temperatureTimes2, '----')
         } else {
           this.temperature1 = []
           this.humidity1 = []
@@ -371,59 +410,139 @@ export default {
     // 绘制温湿度图表
     drawVis1() {
       // console.log(timeData)
-      var myChart = echarts.init(document.getElementById('container'))
-      myChart.setOption({
-        // noDataLoadingOption: {
-        //   text: '暂无数据',
-        //   effect: 'bubble',
-        //   effectOption: {
-        //     effect: {
-        //       n: 0
-        //     }
-        //   }
+      // var myChart = echarts.init(document.getElementById('container'))
+      // myChart.setOption({
+      //   // noDataLoadingOption: {
+      //   //   text: '暂无数据',
+      //   //   effect: 'bubble',
+      //   //   effectOption: {
+      //   //     effect: {
+      //   //       n: 0
+      //   //     }
+      //   //   }
+      //   // },
+      //   textStyle: {
+      //     color: 'rgba(255, 255, 255, 0.3)'
+      //   },
+      //   tooltip: {
+      //     trigger: 'axis'
+      //   },
+      //   legend: {
+      //     data: ['温度℃', '湿度%'],
+      //     textStyle: {
+      //       color: 'rgba(255, 255, 255, 0.3)'
+      //     }
+      //   },
+      //   grid: {
+      //     left: '3%',
+      //     right: '4%',
+      //     bottom: '3%',
+      //     containLabel: true
+      //   },
+      //   xAxis: {
+      //     type: 'category',
+      //     boundaryGap: false,
+      //     data: this.temperatureTimes2.reverse()
+      //   },
+      //   yAxis: [{
+      //     name: '℃',
+      //     type: 'value'
+      //   }],
+      //   color: ['#F56C6C', '#E6A23C', '#b03a5b'],
+      //   series: [
+      //     {
+      //       name: '温度℃',
+      //       type: 'line',
+      //       smooth: true,
+      //       data: this.temperature1
+      //     },
+      //     {
+      //       name: '湿度%',
+      //       type: 'line',
+      //       smooth: true,
+      //       data: this.humidity1
+      //     }
+      //   ]
+      // })
+      var chart = Highcharts.chart('container', {
+        // style: {
+        //   backgroundColor:'#304156',
+        //   plotBackgroundColor :'#304156',
+        //   color: '#6f7a89'
         // },
-        textStyle: {
-          color: 'rgba(255, 255, 255, 0.3)'
+        chart: {
+          backgroundColor: '#304156',
+          type: 'line',
+          color: '#6f7a89'
         },
-        tooltip: {
-          trigger: 'axis'
-        },
-        legend: {
-          data: ['温度℃', '湿度%'],
-          textStyle: {
-            color: 'rgba(255, 255, 255, 0.3)'
+        colors: ['#F56C6C', '#E6A23C', '#b03a5b'],
+        title: {
+          text: '当前温湿度',
+          style: {
+            color: '#6f7a89', // 字体颜色
+            fontSize: '14px' // 字体大小
+            // fontWeight: 'bold'
           }
         },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true
+        yAxis: {
+          title: {
+            text: '温湿度'
+          },
+          labels: {
+            // y: 20, //x轴刻度往下移动20px
+            style: {
+              color: '#6f7a89', // 颜色
+              fontSize: '12px' // 字体
+            }
+          }
         },
         xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: this.temperatureTimes2.reverse()
-        },
-        yAxis: [{
-          name: '℃',
-          type: 'value'
-        }],
-        color: ['#F56C6C', '#E6A23C', '#b03a5b'],
-        series: [
-          {
-            name: '温度℃',
-            type: 'line',
-            smooth: true,
-            data: this.temperature1
-          },
-          {
-            name: '湿度%',
-            type: 'line',
-            smooth: true,
-            data: this.humidity1
+          categories: this.temperatureTimes2.reverse(),
+          labels: {
+            // y: 20, //x轴刻度往下移动20px
+            style: {
+              color: '#6f7a89', // 颜色
+              fontSize: '12px' // 字体
+            }
           }
-        ]
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'middle'
+        },
+        // plotOptions: {
+        //   series: {
+        //     label: {
+        //       connectorAllowed: false
+        //     },
+        //     pointStart: 2010
+        //   }
+        // },
+        credits: {
+          enabled: false // 禁用版权信息
+        },
+        series: [{
+          name: '温度℃',
+          data: this.temperature1
+        }, {
+          name: '湿度%',
+          data: this.humidity1
+        }],
+        responsive: {
+          rules: [{
+            condition: {
+              maxWidth: 500
+            },
+            chartOptions: {
+              legend: {
+                layout: 'horizontal',
+                align: 'center',
+                verticalAlign: 'bottom'
+              }
+            }
+          }]
+        }
       })
     },
     // 绘制UPS交流输出电压图表

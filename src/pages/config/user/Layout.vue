@@ -9,8 +9,8 @@
           :label="item.label"
           :value="item.value" />
       </el-select>
-      <el-input v-model="params.user__username" placeholder="请输入帐号" style="width:200px" size="mini" />
-      <el-input v-model="params.user__last_name" placeholder="请输入用户姓名" style="width:200px" size="mini" />
+      <el-input v-model="params.user__username" placeholder="请输入帐号" style="width:200px" size="mini" clearable />
+      <el-input v-model="params.user__last_name" placeholder="请输入用户姓名" style="width:200px" size="mini" clearable />
       <el-button type="primary" plain size="mini" @click="findUsers">查询</el-button>
       <div class="btns">
         <el-button size="mini" type="primary" plain @click="toAddUser()">新增</el-button>
@@ -61,10 +61,10 @@ export default {
     return {
       // 下拉框开始
       options: [{
-        value: '选项1',
+        value: '1',
         label: '启用'
       }, {
-        value: '选项2',
+        value: '0',
         label: '禁用'
       }],
       ids: [],
@@ -86,13 +86,13 @@ export default {
       count: 0
     }
   },
-  watch: {
-    params: function() {
-      console.log(this.params)
-      this.$refs.userDataTable.findAllUsers(this.params)
-    },
-    deep: true
-  },
+  // watch: {
+  //   params: function() {
+  //     // console.log(this.params)
+  //     this.$refs.userDataTable.findAllUsers(this.params)
+  //   },
+  //   deep: true
+  // },
   created() {
     this.findAllUsers()
   },
@@ -108,11 +108,11 @@ export default {
     },
     // 分页
     handleSizeChange(val) {
-      console.log('val', val)
+      // console.log('val', val)
       this.params.page = val
     },
     handleCurrentChange(val) {
-      console.log('val', val)
+      // console.log('val', val)
       this.params.page = val
       this.$refs.userDataTable.findAllUsers(this.params)
     },
@@ -127,9 +127,9 @@ export default {
       axios.get('/api_user/user_list/').then(({ data: result }) => {
         // console.log('=======================', result)
         // this.users = result.results
-        console.log('this.user', result)
+        // console.log('this.user', result)
         this.count = result.count
-        console.log('this.count=====', this.count)
+        // console.log('this.count=====', this.count)
         // this.transform()
       }).catch(() => {
 
@@ -137,7 +137,7 @@ export default {
     },
     // 查询按钮
     findUsers() {
-      console.log('this.params', this.params)
+      // console.log('this.params', this.params)
       this.$refs.userDataTable.findAllUsers(this.params)
     }
     // 新增之后更新

@@ -2,12 +2,12 @@
   <!-- 修改密码模态框 -->
   <div class="user_password_dialog">
     <el-dialog :visible.sync="passwordDialog.visible" title="修改密码" width="25%" center="">
-      <el-form :model="passwordDialog.form" label-position="left"> {{ passwordDialog.form }}
+      <el-form :model="passwordDialog.form" label-position="left">
         <el-form-item :label-width="formLabelWidth" label="新密码:">
-          <el-input v-model="passwordDialog.form.password" autocomplete="off" />
+          <el-input v-model="passwordDialog.form.password" autocomplete="off" type="password" />
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="确认密码:">
-          <el-input v-model="passwordDialog.form.password1" autocomplete="off" />
+          <el-input v-model="passwordDialog.form.password1" autocomplete="off" type="password" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -51,8 +51,12 @@ export default {
       //   })
       // })
       if (this.passwordDialog.form.password === this.passwordDialog.form.password1) {
-        console.log(this.passwordDialog.form)
-        axios.post('/api_user/update_user/', this.passwordDialog.form).then(() => {
+        // console.log(this.passwordDialog.form)
+        const obj = {
+          id: this.passwordDialog.form.id,
+          password: this.passwordDialog.form.password
+        }
+        axios.post('/api_user/update_user/', obj).then(() => {
           this.$notify({
             title: '成功',
             message: '修改密码成功',
