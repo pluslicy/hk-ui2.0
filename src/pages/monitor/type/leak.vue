@@ -28,13 +28,13 @@
     <!-- 查询历史数据 -->
     <div class="leak_history">
       <div class="leak_history_form">
-        <el-select v-model="query.device_id" clearable placeholder="请选择设备" size="mini">
+        <!-- <el-select v-model="query.device_id" clearable placeholder="请选择设备" size="mini">
           <el-option
             v-for="name in deviceNames"
             :key="name.device_id"
             :label="name.device_name"
             :value="name.device_id" />
-        </el-select>
+        </el-select> -->
         <el-date-picker
           v-model="pickTime"
           value-format="yyyy-MM-dd HH:mm:ss"
@@ -131,11 +131,12 @@ export default {
   created() {
     // 图表高度
     this.he = 'width: 92%;height: ' + ($(window).height() - 560) + 'px;'
+    // this.query.device_id = this.$parent.device_id
     this.pickTime = this.time()
-    // 加载所有设备名称
-    this.findAllDeviceName()
     // 加载所有漏水历史数据
     this.findAllLeakData()
+    // 加载所有设备名称
+    // this.findAllDeviceName()
     // 查询时间改变
     this.queryChange()
     // this.leak = this.$parent.device
@@ -303,6 +304,7 @@ export default {
     },
     // 日期时间选择器确定时触发
     queryChange() {
+      this.query.device_id = this.$parent.device_id
       this.query.start_time = this.pickTime[0]
       // console.log(this.query.start_time)
       this.query.end_time = this.pickTime[1]
@@ -352,12 +354,10 @@ export default {
     },
     // 获取所有机房信息
     findAllRoom() {
-      axios.get('/api_room/list_all_room/', {
-        params: { room_id: this.$parent.roomId }
-      })
+      axios.get('/api_room/list_all_room/?room_id=' + this.$parent.roomId)
         .then(({ data }) => {
           this.room = data[0]
-          // console.log(data[0])
+          // console.log(data)
         })
     },
     // 获取设备当前数据
@@ -436,6 +436,8 @@ export default {
             return item.device_id
           })
           var ids = idsArr.toString()
+          console.log(ids)
+          this.query.device_id = ids
           this.findCurrentDeviceData(ids)
           this.timer = setInterval(()=>{
             this.findCurrentDeviceData(ids)

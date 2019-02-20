@@ -56,6 +56,11 @@ export const constantRouterMap = [
     component: () => import('@/views/login/index'),
     hidden: true
   },
+  // {
+  //   path: '/login',
+  //   component: () => import('@/pages/login/Layout'),
+  //   hidden: true
+  // },
   {
     path: '/video',
     component: () => import('@/pages/video/Layout'),

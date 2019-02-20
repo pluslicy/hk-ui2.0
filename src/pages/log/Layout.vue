@@ -6,7 +6,7 @@
       <el-form :inline="true" class="demo-form-inline" size="mini">
         <el-form-item>
           <el-select v-model="params.log_type" placeholder="请选择日志类型" clearable>
-            <el-option v-for="logtype in logTypes" :key="logtype" :label="logtype" :value="logtype"/>
+            <el-option v-for="(logtype,index) in logTypes" :key="index" :label="logtype" :value="logtype"/>
           </el-select>
         </el-form-item>
         <el-form-item>
