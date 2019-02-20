@@ -80,7 +80,7 @@ export default {
   methods: {
     close() {
       this.dialogFormVisible1 = false
-      this.dataitemForm = {}
+      this.dataitemForm = { priority: '' }
     },
     add() {
       this.dialogFormVisible1 = false
@@ -111,7 +111,7 @@ export default {
               message: '这是一条错误的提示消息'
             })
           })
-        this.dataitemForm = {}
+        this.dataitemForm = { priority: '' }
       } else {
         var item = {
           dataitem_code: this.dataitemForm.dataitem_code,
@@ -138,7 +138,7 @@ export default {
               message: '这是一条错误的提示消息'
             })
           })
-        this.dataitemForm = {}
+        this.dataitemForm = { priority: '' }
       }
     }
   }

@@ -41,7 +41,7 @@
     </el-row>
     <div id="both" />
     <!-- 表格 -->
-    <el-table :data="alerm_Manager" :height="he" style="width: 100%" align="center" @row-click="rowClick" @selection-change="handleSelectionChange">
+    <el-table v-loading="loading" :data="alerm_Manager" :height="he" style="width: 100%" align="center" @row-click="rowClick" @selection-change="handleSelectionChange">
       <el-table-column type="selection" />
       <el-table-column prop="row_no" label="序号" align="center" width="70">
         <template slot-scope="{row}">
@@ -296,6 +296,7 @@ import Highcharts from 'highcharts'
 export default {
   data() {
     return {
+      loading:false,
       chartData: [],
       // 图表划分部分
       pickerOptions: {
@@ -650,6 +651,7 @@ export default {
     },
     // 获取报警列表
     loadAlerm_Manager(item) {
+      this.loading = true
       axios.get('/api_alarm/get_alarm_list/', { params: item })
         .then(({ data }) => {
           this.alerm_Manager = data.result
@@ -658,6 +660,8 @@ export default {
             title: '网络超时',
             message: '这是一条错误的提示消息'
           })
+        }).finally(() => {
+          this.loading = false
         })
     }
   }

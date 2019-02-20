@@ -43,7 +43,7 @@
       </el-form>
     </el-row>
     <!-- 表格 -->
-    <el-table :data="check_list" :height="he" style="width: 100%" size="mini">
+    <el-table v-loading="loading" :data="check_list" :height="he" style="width: 100%" size="mini">
       <el-table-column prop="row_no" label="序号" align="center" width="50" />
       <el-table-column prop="approval_type" label="审批类型" align="center" />
       <el-table-column prop="approval_user" label="申请人" align="center" />
@@ -86,6 +86,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       check_types: [],
       check_states: [],
       form: {
@@ -161,6 +162,7 @@ export default {
     },
     // 加载申请列表
     loadCheck_list(obj) {
+      this.loading = true
       axios.get('/api_approval/get_approval_list/', { params: obj })
         .then(({ data }) => {
           data.result.forEach(function(obj, index) {
@@ -177,6 +179,8 @@ export default {
             title: '网络超时',
             message: '这是一条错误的提示消息'
           })
+        }).finally(() => {
+          this.loading = false
         })
     },
     // 添加申请

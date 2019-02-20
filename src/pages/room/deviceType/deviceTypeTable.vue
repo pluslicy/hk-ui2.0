@@ -1,7 +1,7 @@
 <template>
   <div class="deviceTypeTable">
     <!-- 设备类型表格 -->
-    <el-table :data="deviceTypes" :height="he" style="width: 100%" size="mini">
+    <el-table v-loading="loading" :data="deviceTypes" :height="he" style="width: 100%" size="mini">
       <el-table-column prop="row_no" label="序号" width="200" align="center" />
       <el-table-column prop="devicetype_name" label="类型名称" align="center" />
       <el-table-column prop="devicetype_desc" label="类型描述" align="center" />
@@ -43,7 +43,8 @@ export default {
     return {
       deviceTypes: [],
       pageSize: conf.pageSize,
-      currentPage: 1
+      currentPage: 1,
+      loading: false
     }
   },
   created() {
@@ -75,6 +76,7 @@ export default {
     },
     // 加载所有设备类型
     loadDeviceTypes(obj) {
+      this.loading = true
       if (obj) {
         axios.get('/api_devicetype/list_detail_devicetypes/', obj).then(({ data }) => {
           this.deviceTypes = data.results
@@ -83,6 +85,8 @@ export default {
             title: '网络超时',
             message: '这是一条错误的提示消息'
           })
+        }).finally(() => {
+          this.loading = false
         })
       } else {
         axios.get('/api_devicetype/list_detail_devicetypes/')
@@ -93,6 +97,8 @@ export default {
               title: '网络超时',
               message: '这是一条错误的提示消息'
             })
+          }).finally(() => {
+            this.loading = false
           })
       }
     },

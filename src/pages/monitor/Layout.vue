@@ -15,7 +15,6 @@
         <el-select v-model="devicetype_id">
           <el-option v-for="item in deviceType" :key="item.devicetype_id" :label="item.devicetype_name" :value="item.devicetype_id" />
         </el-select>
-        {{device_id}}
         <el-select v-model="device_id">
           <el-option v-for="item in device" :key="item.device_id" :label="item.device_name" :value="item.device_id"/>
         </el-select>
