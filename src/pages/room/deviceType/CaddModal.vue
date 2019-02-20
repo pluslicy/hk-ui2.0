@@ -75,7 +75,7 @@ export default {
   methods: {
     close() {
       this.dialogFormVisible3 = false
-      this.configitemForm = {}
+      this.configitemForm = { priority: '' }
     },
     add() {
       this.dialogFormVisible3 = false
@@ -103,7 +103,7 @@ export default {
               message: '这是一条错误的提示消息'
             })
           })
-        this.configitemForm = {}
+        this.configitemForm = { priority: '' }
       } else {
         var item = {
           configitem_code: this.configitemForm.configitem_code,
@@ -129,7 +129,7 @@ export default {
               message: '这是一条错误的提示消息'
             })
           })
-        this.configitemForm = {}
+        this.configitemForm = { priority: '' }
       }
     }
   }

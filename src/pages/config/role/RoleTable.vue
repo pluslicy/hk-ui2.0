@@ -9,7 +9,8 @@
       @selection-change="handleSelectionChange">
       <el-table-column
         type="selection"
-        width="60" />
+        width="60"
+        align="center" />
       <!-- <el-table-column
         prop="date"
         label="序号"
@@ -17,14 +18,16 @@
       <el-table-column
         prop="group_name"
         label="角色名称"
-        width="220" />
+        width="170"
+        align="center" />
       <el-table-column
         prop="permission_names"
         label="角色权限信息" />
       <el-table-column
         prop="last_names"
         label="用户名称"
-        width="150" />
+        width="220"
+        align="center" />
       <el-table-column
         width="100"
         align="center"
@@ -90,7 +93,7 @@ export default {
       }).then(() => {
         console.log(row.group_id)
         // alert(id)
-        axios.post('/api_group/delete_group', { ids: [row.group_id] }).then(() => {
+        axios.post('/api_group/delete_group', { group_ids: [row.group_id] }).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功',
@@ -121,7 +124,7 @@ export default {
           return item.group_id + ''
         })
         const obj1 = {
-          'ids': this.ids
+          'group_ids': this.ids
         }
         console.log(obj1)
         axios.post('/api_group/delete_group', obj1).then(() => {

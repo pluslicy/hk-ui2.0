@@ -77,7 +77,7 @@ export default {
   methods: {
     close() {
       this.dialogFormVisible2 = false
-      this.operitemForm = {}
+      this.operitemForm = { priority: '' }
     },
     add() {
       this.dialogFormVisible2 = false
@@ -105,7 +105,7 @@ export default {
               message: '这是一条错误的提示消息'
             })
           })
-        this.operitemForm = {}
+        this.operitemForm = { priority: '' }
       } else {
         var item = {
           operitem_code: this.operitemForm.operitem_code,
@@ -131,7 +131,7 @@ export default {
               message: '这是一条错误的提示消息'
             })
           })
-        this.operitemForm = {}
+        this.operitemForm = { priority: '' }
       }
     }
   }

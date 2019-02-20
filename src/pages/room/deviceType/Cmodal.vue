@@ -47,8 +47,8 @@ export default {
       const obj = { configitem_ids: [oId + ''] }
       axios.post('/api_devicetype/delete_configitems/', obj)
         .then(() => {
-          this.update()
           this.updateData()
+          this.update()
           this.$notify({
             title: '删除成功',
             message: '这是一条成功的提示消息',
@@ -66,7 +66,7 @@ export default {
     },
     updateData() {
       // let num = this.currentDevicetypeId + ''
-      axios.post('/api_devicetype/Peizhixiang/', this.currentDevicetypeId).then(({ data }) => {
+      axios.post('/api_devicetype/configitems/', this.currentDevicetypeId).then(({ data }) => {
         this.configurationType = data.list
         this.$notify({
           title: '刷新成功',

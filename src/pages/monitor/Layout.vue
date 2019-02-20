@@ -175,7 +175,7 @@ export default {
       } else if (this.devicetype_id === 15) {
         this.$refs.upsBattery.device_id = this.device_id
         this.$refs.upsBattery.loadAllDevice()
-      }else if( this.devicetype_id === 5 ) {
+      } else if( this.devicetype_id === 5 ) {
         this.$refs.leak.query.device_id = this.device_id
         this.$refs.leak.findAllLeakData()
       } else if(this.devicetype_id === 4) {

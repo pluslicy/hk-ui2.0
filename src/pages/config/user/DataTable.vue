@@ -12,27 +12,34 @@
         <el-table-column
           type="selection"
           width="55"
-          fixed />
+          fixed
+          align="center" />
         <el-table-column
           prop="row_no"
           label="序号"
-          width="180" />
+          width="80"
+          align="center" />
         <el-table-column
           prop="last_name"
           label="姓名"
-          width="180" />
+          width="220"
+          align="center" />
         <el-table-column
           prop="username"
-          label="账号" />
+          label="账号"
+          align="center"/>
         <el-table-column
           prop="is_superuser"
-          label="管理员" />
+          label="管理员"
+          align="center" />
         <el-table-column
           prop="user_tel"
-          label="电话" />
+          label="电话"
+          align="center" />
         <el-table-column
           prop="is_active"
-          label="状态" />
+          label="状态"
+          align="center" />
         <el-table-column
           label="操作"
           fixed="right"
@@ -168,7 +175,7 @@ export default {
             message: '这是一条成功的提示消息',
             type: 'success'
           })
-          this.findAllRoles()
+          this.findAllUsers()
         }).catch(() => {
           this.$notify.error({
             title: '错误',
@@ -192,7 +199,7 @@ export default {
         this.ids = this.multipleSelection.map((item) => {
           return item.id + ''
         })
-        alert(this.ids)
+        // alert(this.ids)
         // this.ids = this.$refs.roleDataTable.ids
         // console.log(this.ids)
         const obj1 = {
@@ -205,7 +212,7 @@ export default {
             message: '删除成功',
             type: 'success'
           })
-          this.findAllRoles()
+          this.findAllUsers()
         }).catch(() => {
           this.$notify.error({
             title: '错误',
