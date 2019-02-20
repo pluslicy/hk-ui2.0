@@ -55,7 +55,8 @@ export default {
       this.ids1 = this.ids
       console.log(this.ids1)
       axios.get('/api_group/get_groups_of_user?user_id=' + this.ids1).then(({ data: result }) => {
-        // console.log('==========', result)
+        // alert(1)
+        console.log('==========', result)
         this.accredits = result.data
         console.log('this.accredits', this.accredits)
         // this.toOpenDialog()

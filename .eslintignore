@@ -3,3 +3,4 @@ config/*.js
 src/assets
 src/pages/alarm
 src/pages/monitor
+src/pages/video

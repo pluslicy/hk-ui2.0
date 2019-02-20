@@ -2,7 +2,7 @@
   <!-- 新增权限模态框 -->
   <div class="user_data_dialog1">
     <el-dialog :title="addUserModel.title" :visible.sync="addUserModel.visible" center="" width="35%">
-      <el-form ref="addUserModel.form" :model="addUserModel.form" :rules="rules" label-position="left" label-width="80px"> {{ addUserModel.form }}
+      <el-form ref="addUserModel.form" :model="addUserModel.form" :rules="rules" label-position="left" label-width="80px">
         <el-form-item :label-width="formLabelWidth" label="账号:" prop="username">
           <el-input v-model="addUserModel.form.username" autocomplete="off" />
         </el-form-item>
@@ -154,8 +154,8 @@ export default {
         if (a.test(this.addUserModel.form.username)) {
           // alert(1)
           axios.post('api_user/judge_username/', { username: this.addUserModel.form.username }).then(({ data }) => {
-            console.log('data', data)
-            if (data.is_usable === true) {
+            console.log('=======data', data)
+            if (data.is_usable === false) {
               const b = /^([\u4e00-\u9fa5]){2,4}$/
               if (b.test(this.addUserModel.form.last_name)) {
                 // const c = /^(([0\+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/
@@ -181,7 +181,7 @@ export default {
                 //     message: '电话输入错误，请输入例如13812341234，021-12345678，1234567',
                 //   })
                 // }
-                console.log(this.addUserModel.form)
+                // console.log(this.addUserModel.form)
                 axios.post('api_user/create_user/', this.addUserModel.form).then(() => {
                   this.$notify({
                     title: '成功',

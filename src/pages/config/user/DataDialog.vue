@@ -13,7 +13,7 @@
           <img src="" alt="">
         </el-form-item>
       </el-form> -->
-      <span>头像:</span>&nbsp;&nbsp;&nbsp;<img :src="users.user_avatarpath" alt="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>更换头像:</span>
+      <span>头像:<br></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img :src="users.user_avatarpath" alt=""><br><br><br><span>更换头像:</span>
       <el-form :model="messageModel.form">
         <el-form-item :label-width="formLabelWidth">
           <!-- <el-upload
@@ -33,18 +33,18 @@
             :on-error="handleAvatarError"
             :before-upload="beforeAvatarUpload"
             class="avatar-uploader"
-            action="http://192.168.50.95:10000/api_user/upload_user_avatar/">
+            action="http://192.168.50.90:10000/api_user/upload_user_avatar/">
             <img v-if="imageUrl" :src="imageUrl" class="avatar2">
             <i v-else class="el-icon-plus avatar-uploader-icon2"/>
           </el-upload>
         </el-form-item>
       </el-form>
-      <br><br><br><br><br>
-      <span>地址:</span>&nbsp;&nbsp;&nbsp;{{ users.user_address }}<br><br><br><br><br>
+      <br><br><br>
+      <span>地址:</span>&nbsp;&nbsp;&nbsp;{{ users.user_address }}<br><br><br>
       <span>备注:</span>&nbsp;&nbsp;&nbsp;{{ users.user_note }}<br>
       <div slot="footer" class="dialog-footer">
         <el-button @click="messageModel.visible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="messageModel.visible = false">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -93,6 +93,7 @@ export default {
         message: '这是一条成功的提示消息',
         type: 'success'
       })
+      this.$parent.findAllUsers()
     },
     beforeAvatarUpload(file) {
       const isJPG = file.type === 'image/jpeg'
@@ -118,11 +119,12 @@ export default {
 </script>
 <style scoped>
   img{
-    width: 50px;
-    height: 50px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%
   }
   .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
+    border: 1px dashed #ccc;
     border-radius: 6px;
     cursor: pointer;
     position: relative;
