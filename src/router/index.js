@@ -52,15 +52,39 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/login',
-    component: () => import('@/views/login/index'),
-    hidden: true
+    // path: '',
+    // component: Layout,
+    // redirect: 'dashboard',
+    // children: [
+    //   {
+    //     path: 'dashboard',
+    //     component: () => import('@/views/dashboard/index'),
+    //     name: 'Dashboard',
+    //     meta: { title: '环控系统', icon: 'dashboard', noCache: true }
+    //   }
+    // ]
+    path: '/',
+    component: Layout,
+    redirect: 'index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/pages/index/layout'),
+        name: 'Index',
+        meta: { title: '环控系统', icon: 'dashboard', noCache: true }
+      }
+    ]
   },
   // {
   //   path: '/login',
-  //   component: () => import('@/pages/login/Layout'),
+  //   component: () => import('@/views/login/index'),
   //   hidden: true
   // },
+  {
+    path: '/login',
+    component: () => import('@/pages/login/Layout'),
+    hidden: true
+  },
   {
     path: '/video',
     component: () => import('@/pages/video/Layout'),
@@ -80,31 +104,31 @@ export const constantRouterMap = [
     path: '/401',
     component: () => import('@/views/errorPage/401'),
     hidden: true
-  },
-  {
-    // path: '',
-    // component: Layout,
-    // redirect: 'dashboard',
-    // children: [
-    //   {
-    //     path: 'dashboard',
-    //     component: () => import('@/views/dashboard/index'),
-    //     name: 'Dashboard',
-    //     meta: { title: '环控系统', icon: 'dashboard', noCache: true }
-    //   }
-    // ]
-    path: '',
-    component: Layout,
-    redirect: 'index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/pages/index/layout'),
-        name: 'Index',
-        meta: { title: '环控系统', icon: 'dashboard', noCache: true }
-      }
-    ]
   }
+  // {
+  //   // path: '',
+  //   // component: Layout,
+  //   // redirect: 'dashboard',
+  //   // children: [
+  //   //   {
+  //   //     path: 'dashboard',
+  //   //     component: () => import('@/views/dashboard/index'),
+  //   //     name: 'Dashboard',
+  //   //     meta: { title: '环控系统', icon: 'dashboard', noCache: true }
+  //   //   }
+  //   // ]
+  //   path: '',
+  //   component: Layout,
+  //   redirect: 'index',
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/pages/index/layout'),
+  //       name: 'Index',
+  //       meta: { title: '环控系统', icon: 'dashboard', noCache: true }
+  //     }
+  //   ]
+  // }
   /*
   {
     path: '/documentation',
