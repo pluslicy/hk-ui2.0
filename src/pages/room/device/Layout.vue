@@ -44,7 +44,7 @@
     <!-- <device-pagination /> -->
     <div class="device_pagination">
       <el-pagination
-        :page-size="20"
+        :page-size="10"
         :total="total"
         layout="total, prev, pager, next"
         @current-change="handleCurrentChange" />
@@ -58,7 +58,6 @@
 <script>
 import axios from '@/http/axios'
 import deviceDataTable from './DataTable.vue'
-// import devicePagination from './Pagination.vue'
 import deviceDialog from './Dialog.vue'
 export default {
   components: {
@@ -144,8 +143,7 @@ export default {
               })
               this.$refs.deviceDataTable.findAllDevice()
             })
-            .catch((error) => {
-              console.log(error)
+            .catch(() => {
               this.$notify({
                 title: '失败',
                 message: '删除失败',
@@ -161,8 +159,7 @@ export default {
           // console.log(data)
           this.rooms = data
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
           this.$notify({
             title: '失败',
             message: '网络异常',
@@ -177,8 +174,7 @@ export default {
           // console.log(data)
           this.devicetypes = data
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
           this.$notify({
             title: '失败',
             message: '网络异常',
@@ -193,13 +189,35 @@ export default {
           // console.log(data)
           this.deviceNames = data
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
           this.$notify({
             title: '失败',
             message: '网络异常',
             type: 'error'
           })
+        })
+    },
+    // 获取所有的设备
+    findAllDevice() {
+      // this.loading = true
+      axios.get('/api_device/list_device/', {
+        params: this.$refs.deviceDataTable.params
+      })
+        .then(({ data }) => {
+          // console.log(data)
+          this.$refs.deviceDataTable.devices = data.results
+          // this.$refs.deviceDataTable.count = data.count
+          this.total = data.count
+        })
+        .catch(() => {
+          this.$notify({
+            title: '失败',
+            message: '网络异常',
+            type: 'error'
+          })
+        })
+        .finally(() => {
+          // this.loading = false
         })
     }
   }

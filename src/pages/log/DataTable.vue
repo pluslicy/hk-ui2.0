@@ -5,6 +5,7 @@
       v-loading="loading"
       :height="he"
       :data="logs"
+      size="mini"
       style="width: 100%">
       <el-table-column
         prop="row_no"

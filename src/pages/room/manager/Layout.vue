@@ -11,7 +11,6 @@
               :key="room.room_id"
               :label="room.room_name"
               :value="room.room_id" />
-              <!-- </el-option> -->
           </el-select>
         </el-form-item>
       </el-form>
@@ -106,7 +105,6 @@
         :page-size="10"
         layout="total, prev, pager, next"
         @current-change="handleCurrentChange" />
-        <!-- </el-pagination> -->
     </div>
     <!-- 模态框 -->
     <!-- <manager-dialog /> -->
@@ -116,11 +114,9 @@
         <el-form ref="ruleForm" :rules="rules" :model="managerDialog.form" size="mini">
           <el-form-item :label-width="formLabelWidth" prop="room_name" label="机房名称">
             <el-input v-model="managerDialog.form.room_name" auto-complete="off" clearable />
-            <!-- </el-input> -->
           </el-form-item>
           <el-form-item :label-width="formLabelWidth" prop="room_desc" label="机房描述">
             <el-input :rows="2" v-model="managerDialog.form.room_desc" type="textarea" placeholder="" />
-            <!-- </el-input> -->
           </el-form-item>
           <el-form-item v-if="roomImgShow" :label-width="formLabelWidth" label="上传图片" prop="imageUrl">
             <!-- 上传图片 -->
@@ -237,8 +233,7 @@ export default {
                 this.findAllRoomName()
                 this.roomImgShow = true
               })
-              .catch((error) => {
-                console.log(error)
+              .catch(() => {
                 this.$notify({
                   title: '失败',
                   message: '修改失败',
@@ -306,8 +301,7 @@ export default {
               this.findAllRoom()
               this.findAllRoomName()
             })
-            .catch((error) => {
-              console.log(error)
+            .catch(() => {
               this.$notify({
                 title: '失败',
                 message: '删除失败',
@@ -325,7 +319,7 @@ export default {
       })
         .then(() => {
           const ids = this.multipleSelection.map(item => item.room_id)
-          console.log(ids)
+          // console.log(ids)
           axios.post('/api_room/delete_room/', {
             room_ids: ids
           })
@@ -354,7 +348,7 @@ export default {
     },
     // 当前页的改变
     handleCurrentChange(page) {
-      console.log(page)
+      // console.log(page)
       this.params.page = page
     },
     // 关闭模态框

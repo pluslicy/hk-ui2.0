@@ -8,18 +8,15 @@
       <el-form ref="ruleForm" :rules="rules" :model="deviceDialog.form" size="mini">
         <el-form-item :label-width="formLabelWidth" label="设备名称" prop="device_name">
           <el-input v-model="deviceDialog.form.device_name" auto-complete="off" clearable />
-          <!-- </el-input> -->
         </el-form-item>
         <el-form-item :label-width="formLabelWidth" label="设备码" prop="device_code">
           <el-input v-model="deviceDialog.form.device_code" auto-complete="off" clearable />
-          <!-- </el-input> -->
         </el-form-item>
         <el-row>
           <el-col :span="10">
             <el-form-item :label-width="formLabelWidth" label="设备类型" prop="devicetype">
               <el-select v-model="deviceDialog.form.devicetype" :disabled="deviceDialog.disabled" placeholder="请选择类型" clearable>
                 <el-option v-for="devicetype in devicetypes" :key="devicetype.devicetype_id" :label="devicetype.devicetype_name" :value="devicetype.devicetype_id" />
-                <!-- <el-option label="区域二" value="beijing"></el-option> -->
               </el-select>
             </el-form-item>
           </el-col>
@@ -27,14 +24,12 @@
             <el-form-item :label-width="formLabelWidth" label="所属机房" prop="room">
               <el-select v-model="deviceDialog.form.room" placeholder="请选择机房" clearable>
                 <el-option v-for="r in rooms" :key="r.room_id" :label="r.room_name" :value="r.room_id" />
-                <!-- <el-option label="区域二" value="beijing"></el-option> -->
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-form-item :label-width="formLabelWidth" label="设备描述" prop="device_desc">
           <el-input :rows="2" v-model="deviceDialog.form.device_desc" type="textarea" placeholder="" />
-          <!-- </el-input> -->
         </el-form-item>
         {{ deviceDialog.form }}
         <el-form-item v-if="deviceImgShow" :label-width="formLabelWidth" label="上传图片" prop="imageUrl">
@@ -58,7 +53,7 @@
         <el-button type="primary" size="mini" @click="saveOrUpdateDevice">确 定</el-button>
       </div>
     </el-dialog>
-    <!-- 查看数据详细信息 -->
+    <!-- 查看数据详细信息模态框 -->
     <el-dialog
       :model="deviceViewDialog.devices"
       :title="deviceViewDialog.title"
@@ -116,7 +111,9 @@ export default {
   },
   data() {
     return {
+      // 设备类型
       devicetypes: [],
+      // 机房
       rooms: [],
       // 修改模态框
       deviceDialog: {
@@ -139,11 +136,11 @@ export default {
       rules: {
         device_name: [
           { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
         ],
         device_code: [
           { required: true, message: '请输入活动名称', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
         ],
         devicetype: [
           { required: true, message: '请选择活动区域', trigger: 'change' }
@@ -187,13 +184,13 @@ export default {
                   message: '保存成功',
                   type: 'success'
                 })
+                this.$parent.findAllDevice()
                 // this.closeDialog()
                 // this.findAllDevice()
                 // this.$parent.find_all_deviceName()
                 this.deviceImgShow = true
               })
-              .catch((error) => {
-                console.log(error)
+              .catch(() => {
                 this.$notify({
                   title: '失败',
                   message: '修改失败',
@@ -213,10 +210,10 @@ export default {
                 // this.$emit.findAllDevice()
                 // this.$parent.findAllroom()
                 // this.$parent.findAllDeviceType()
-                this.$parent.find_all_deviceName()
+                this.$parent.findAllDevice()
+                // this.$parent.find_all_deviceName()
               })
-              .catch((error) => {
-                console.log(error)
+              .catch(() => {
                 this.$notify({
                   title: '失败',
                   message: '保存失败',
@@ -294,8 +291,7 @@ export default {
           this.devicetypes = data
           // console.log(this.devicetypes)
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
           this.$notify({
             title: '失败',
             message: '网络异常',
@@ -310,8 +306,7 @@ export default {
           // console.log(data)
           this.rooms = data
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
           this.$notify({
             title: '失败',
             message: '网络异常',

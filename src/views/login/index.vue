@@ -65,6 +65,7 @@
 </template>
 
 <script>
+// import axios from '@/http/axios'
 import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './socialsignin'
@@ -127,6 +128,24 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
+          // axios.post('/api_token_auth/', this.form)
+          //   .then((res) => {
+          //     console.log(res)
+          //     if (res.status === 200) {
+          //       // this.token = res.data.token
+          //       // this.setCookie()
+          //       // this.handleClick()
+          //       this.loading = false
+          //       this.$router.push({ path: this.redirect || '/' })
+          //     }
+          //   })
+          //   .catch((error) => {
+          //     console.log(error)
+          //     this.$notify.error({
+          //       title: '错误',
+          //       message: '网络异常'
+          //     })
+          //   })
           this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
             this.loading = false
             this.$router.push({ path: this.redirect || '/' })

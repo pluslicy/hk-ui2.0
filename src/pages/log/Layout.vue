@@ -48,7 +48,7 @@
     <!-- 日志分页 -->
     <div class="log_pagination">
       <el-pagination
-        :page-size="20"
+        :page-size="10"
         :total="total"
         layout="total, prev, pager, next"
         @current-change="handleCurrentChange"/>
