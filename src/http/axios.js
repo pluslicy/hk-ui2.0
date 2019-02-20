@@ -1,14 +1,11 @@
 import axios from 'axios'
 import conf from './config'
 // import qs from 'qs'
-<<<<<<< HEAD
 const token = conf.getCookie('Token')
 axios.defaults.baseURL = 'http://192.168.50.50:10000'
-=======
 // axios.defaults.baseURL = 'http://192.168.50.87:10000'
-axios.defaults.baseURL = 'http://192.168.50.90:10000'
+// axios.defaults.baseURL = 'http://192.168.50.90:10000'
 // axios.defaults.baseURL = 'http://192.168.50.50:10000'
->>>>>>> d63698050e6dcae125011d7cb3c38034e1326757
 // axios.defaults.baseURL = 'http://192.168.50.95:10000'
 axios.defaults.headers.post['Content-Type'] = 'application/JSON'
 // axios.interceptors.request.use((config) => {
