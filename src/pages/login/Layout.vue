@@ -24,7 +24,7 @@
             <el-input v-model="form.password" type="password" placeholder="请输入密码" @keyup.enter.native="login" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" style="width:100%;" @click="login">登录</el-button>
+            <el-button type="primary" style="width:100%;" @click.native.prevent="login()">登录</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -42,8 +42,8 @@ export default {
     return {
       // 用户名和密码
       form: {
-        username: 'admin',
-        password: 'briup2018'
+        username: '',
+        password: ''
       },
       // 验证规则
       rules: {
@@ -76,39 +76,29 @@ export default {
     // 创建cookie
     setCookie(cname, cvalue, exdays) {
       document.cookie = 'Token=' + this.token
-      console.log(document.cookie)
-    },
-    // 回首页
-    handleClick() {
-      // 设置验证
-      axios.defaults.headers.common['Authorization'] = conf.getCookie('Token')
-      // this.$router.push({ path: '/' })
-      // this.$router.replace('/video')
-      this.$router.push('/video')
-      // this.$router.push({ path: '/video' })
-      // this.$router.push({ path: this.redirect || '/' })
     },
     // 登录
     login() {
-      this.$refs.ruleForm.validate((valid) => {
-        if (valid) {
-          axios.post('/api_token_auth/', this.form)
-            .then((res) => {
-              // console.log(res)
-              if (res.status === 200) {
-                this.token = res.data.token
-                this.setCookie()
-                this.handleClick()
-              }
-            })
-            .catch((error) => {
-              console.log(error)
-              this.$notify.error({
-                title: '错误',
-                message: '网络异常'
-              })
-            })
+      const params = {
+        'username': this.form.username,
+        'password': this.form.password
+      }
+      axios.post('/api_token_auth/', params).then((res) => {
+        if (res.status == 200) {
+          this.token = res.data.token
+          this.setCookie()
+          axios.defaults.headers.common['Authorization'] = conf.getCookie('Token')
+          this.$store.dispatch('LoginByUsername', this.form).then(() => {
+            this.loading = false
+            this.$router.push({ path: '/video' })
+          })
         }
+      }).catch((error) => {
+        // reject(error);
+        this.$notify.error({
+          title: '错误',
+          message: '用户名或密码错误'
+        })
       })
     }
   }
