@@ -425,7 +425,7 @@ export default {
     findAllDeviceByIds() {
       axios.get('/api_room_monitor/get_devices/', {
         params: {
-          room_id: this.$parent.room_id,
+          room_id: this.$parent.roomId,
           devicetype_id: this.$parent.devicetype_id
         }
       })
@@ -436,8 +436,8 @@ export default {
             return item.device_id
           })
           var ids = idsArr.toString()
-          console.log(ids)
-          this.query.device_id = ids
+          // console.log(ids)
+          // this.query.device_id = ids
           this.findCurrentDeviceData(ids)
           this.timer = setInterval(()=>{
             this.findCurrentDeviceData(ids)

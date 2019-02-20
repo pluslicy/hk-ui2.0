@@ -17,27 +17,22 @@
         align="center"
         width="55"
         height="70" />
-      <!-- </el-table-column> -->
       <el-table-column
         prop="device_name"
         label="名称"
         align="center" />
-      <!-- </el-table-column> -->
       <el-table-column
         prop="device_code"
         label="设备码"
         align="center" />
-      <!-- </el-table-column> -->
       <el-table-column
         prop="devicetype.devicetype_name"
         label="类型"
         align="center" />
-      <!-- </el-table-column> -->
       <el-table-column
         prop="room.room_name"
         label="所属机房"
         align="center" />
-      <!-- </el-table-column> -->
       <el-table-column
         width="100"
         label="操作"
@@ -97,7 +92,9 @@ export default {
     }
   },
   created() {
+    // 表格高度
     this.he = $(window).height() - 230
+    // 加载设备列表
     this.findAllDevice()
   },
   methods: {
@@ -149,9 +146,9 @@ export default {
       const devicetypeArr = this.devicetypes.filter((item) => {
         return item.devicetype_name === row.devicetype.devicetype_name
       })
-      // console.log(devicetypeArr)
+      // console.log(JSON.stringify(devicetypeArr))
       if (devicetypeArr.length > 0) {
-        device.devicetype_id = devicetypeArr[0].devicetype_id
+        device.devicetype = devicetypeArr[0].devicetype_id
       }
       // alert(device.devicetype_id)
       // delete device.devicetype
@@ -164,14 +161,14 @@ export default {
         device.room = roomArr[0].room_id
       }
       // delete device.room
-      console.log(device)
+      // console.log(device)
       // this.$refs.deviceDialog.deviceDialog.form = device
       this.$refs.deviceDialog.deviceDialog.form.device_id = device.device_id
       this.$refs.deviceDialog.deviceDialog.form.device_name = device.device_name
       this.$refs.deviceDialog.deviceDialog.form.device_code = device.device_code
       this.$refs.deviceDialog.deviceDialog.form.device_desc = device.device_desc
       this.$refs.deviceDialog.deviceDialog.form.room = device.room
-      this.$refs.deviceDialog.deviceDialog.form.devicetype_id = device.devicetype_id
+      this.$refs.deviceDialog.deviceDialog.form.devicetype = device.devicetype
       this.$refs.deviceDialog.deviceDialog.form.device_imgpath = device.device_imgpath
       this.$refs.deviceDialog.currentDeviceId = device.device_id
       this.$refs.deviceDialog.imageUrl = device.device_imgpath
@@ -192,8 +189,7 @@ export default {
           // this.count = data.count
           this.$parent.total = data.count
         })
-        .catch((error) => {
-          console.log(error)
+        .catch(() => {
           this.$notify({
             title: '失败',
             message: '网络异常',

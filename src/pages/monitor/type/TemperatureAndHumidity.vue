@@ -321,7 +321,7 @@ export default {
       this.loading = true
       axios.get('/api_room_monitor/get_devices/', {
         params: {
-          room_id: this.$parent.room_id,
+          room_id: this.$parent.roomId,
           devicetype_id: this.$parent.devicetype_id
         }
       })

@@ -1,6 +1,6 @@
 build/*.js
 config/*.js
 src/assets
-src/pages/alarm
-src/pages/monitor
-src/pages/video
+src/http
+src/pages
+src/router
