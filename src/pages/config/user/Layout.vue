@@ -31,7 +31,7 @@
         v-model="params.page"
         :total="count"
         :current-page.sync="currentPage1"
-        :page-size="20"
+        :page-size="10"
         layout="total, prev, pager, next"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />

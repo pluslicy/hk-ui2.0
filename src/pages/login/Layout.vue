@@ -57,7 +57,8 @@ export default {
         ]
       },
       psd: '',
-      redirect: undefined
+      redirect: undefined,
+      token:''
     }
   },
   watch: {

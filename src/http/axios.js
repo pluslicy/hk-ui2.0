@@ -2,7 +2,7 @@ import axios from 'axios'
 import conf from './config'
 // import qs from 'qs'
 const token = conf.getCookie('Token')
-axios.defaults.baseURL = 'http://192.168.50.50:10000'
+axios.defaults.baseURL = 'http://192.168.50.90:10000'
 // axios.defaults.baseURL = 'http://192.168.50.87:10000'
 // axios.defaults.baseURL = 'http://192.168.50.90:10000'
 // axios.defaults.baseURL = 'http://192.168.50.95:10000'

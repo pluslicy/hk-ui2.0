@@ -30,7 +30,7 @@ export default {
       toUpdataRoleDialog: {
         title: '',
         form: {},
-        visible: false
+        visible: false,
       },
       // 所有的权限
       allDevicesId: [],
@@ -54,7 +54,9 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
+      },
+      // 将已经选中的权限放进数组aa中,用数组长度判读if-else语句
+      aa: []
     }
   },
   methods: {
@@ -74,6 +76,7 @@ export default {
       // // this.checkList = this.arr3
       // this.arr4 = this.arr2[1].split(',')
       // console.log('arr4', this.arr4)
+      this.aa = []
       this.toUpdataRoleDialog.title = '更改角色权限'
       this.findAllJurisdiction(row)
       this.groupId = row.group_id
@@ -86,7 +89,7 @@ export default {
     findAllJurisdiction(row) {
       // let str = row.permission_ids
       // console.log('str:',str)
-      // 将str转换成数组
+      // // 将str转换成数组
       // let arr = str.split(",")
       // console.log(str.split(","))
       // this.Options.parent_ids = arr;
@@ -94,14 +97,30 @@ export default {
       // this.groupId = row.group_id
       axios.get('/api_permission/get_permission_of_group?group_id=' + row.group_id).then((data) => {
         this.allDevices = data.data.data
-        console.log(this.allDevices)
-        // data.data.data.forEach((item) => {
-        //   if(item.has_id!=0 && item.upper_id!=0){
-        //       this.Options.hasOptions.push(item.permission_id)
-        //       this.Options.parent_ids.push(item.upper_id)
-        //   }
-        // })
-        // this.Options.hasOptions = arr
+        console.log('++++++',this.allDevices)
+        // 将已经选中的权限放进数组中
+        this.allDevices.map((item)=>{
+          if(item.has_id !== 0) {
+            this.aa.push(item.has_id)
+          } 
+        })
+        console.log('aa',this.aa)
+        if(this.aa.length !== 0) {
+          let str = row.permission_ids
+          console.log('str:',str)
+          // 将str转换成数组
+          let arr = str.split(",")
+          console.log(str.split(","))
+          this.Options.parent_ids = arr;
+          this.Options.hasOptions = arr
+          this.groupId = row.group_id
+          data.data.data.forEach((item) => {
+          if(item.has_id!=0 && item.upper_id!=0){
+              this.Options.hasOptions.push(item.permission_id)
+              this.Options.parent_ids.push(item.upper_id)
+          }
+        })
+        this.Options.hasOptions = arr
         console.log(this.Options.hasOptions)
         console.log(this.Options.parent_ids)
         this.allPowers = []
@@ -128,6 +147,32 @@ export default {
           }
         })
         this.allPowers = allList
+        } else {
+          this.allPowers = []
+          var allList = []
+          data.data.data.forEach((item) => {
+            if (item.upper_id === 0) {
+              var parent_id = item.permission_id
+              var chs = []
+              data.data.data.forEach(function(obj) {
+                if (obj.upper_id !== 0 && obj.upper_id === parent_id) {
+                  var secondTitle = {
+                    id: obj.permission_id,
+                    label: obj.permission_name
+                  }
+                chs.push(secondTitle)
+              }
+            })
+            var list = {
+              id: item.permission_id,
+              label: item.permission_name,
+              children: chs
+            }
+            allList.push(list)
+          }
+        })
+        this.allPowers = allList
+        }
       })
     },
     // 删除所有的权限
@@ -139,6 +184,7 @@ export default {
     updateGroupPower() {
       // 获取所有选中的权限提交给后台，然后重新获取所有权限
       var allPowersId = this.$refs.tree.getCheckedKeys()
+      console.log('===========',this.$refs.tree.getCheckedKeys())
       var obj = {
         'group_id': this.groupId,
         'permission_ids': allPowersId
