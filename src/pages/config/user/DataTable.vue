@@ -127,7 +127,7 @@ export default {
     },
     // 转换获取到的用户信息
     transform() {
-      console.log(this.users)
+      // console.log(this.users)
       this.users.map((item) => {
         if (item.is_active === true) {
           item.is_active = '启用'
