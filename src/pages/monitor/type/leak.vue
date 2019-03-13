@@ -272,7 +272,7 @@ export default {
     },
     // 日期时间选择器确定时触发
     queryChange() {
-      this.query.device_id = this.$parent.device_id
+      // this.query.device_id = this.$parent.device_id
       this.query.start_time = this.pickTime[0]
       // console.log(this.query.start_time)
       this.query.end_time = this.pickTime[1]

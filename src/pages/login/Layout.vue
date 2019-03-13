@@ -85,6 +85,7 @@ export default {
       }
       axios.post('/api_token_auth/', params).then((res) => {
         if (res.status == 200) {
+          // console.log(res.data)
           this.token = res.data.token
           this.setCookie()
           axios.defaults.headers.common['Authorization'] = conf.getCookie('Token')

@@ -285,7 +285,7 @@ export default {
     },
     // 日期时间选择器确定时触发
     thQueryChange() {
-      this.thQuery.device_id = this.$parent.device_id
+      // this.thQuery.device_id = this.$parent.device_id
       this.thQuery.start_time = this.pickTime[0]
       this.thQuery.end_time = this.pickTime[1]
     },
