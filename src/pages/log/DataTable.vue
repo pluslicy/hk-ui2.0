@@ -30,7 +30,8 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+// import axios from '@/http/axios'
+import service from '@/utils/request'
 import $ from 'jquery'
 export default {
   data() {
@@ -56,7 +57,7 @@ export default {
       // params.start_time = this.$parent.time[0]
       // params.end_time = this.$parent.time[1]
       // console.log(params)
-      axios.get('/api_log/get_log_list/', {
+      service.get('/api_log/get_log_list/', {
         params: params
       })
         .then(({ data }) => {
@@ -65,7 +66,7 @@ export default {
           this.$parent.total = data.count
         })
         .catch((error) => {
-          console.log(error)
+          // console.log(error)
           this.$notify({
             title: '失败',
             message: '网络异常',

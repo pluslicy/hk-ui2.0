@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import service from '@/utils/request'
 export default {
   data() {
     return {

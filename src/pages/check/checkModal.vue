@@ -20,7 +20,8 @@
   </div>
 </template>
 <script type="text/javascript">
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   data() {
     return {
@@ -44,7 +45,7 @@ export default {
         'approval_id': this.user_check[0].approval_id,
         'approval_level': approval_id
       }
-      axios.post('/api_approval/approval_level/', obj)
+      service.post('/api_approval/approval_level/', obj)
         .then(({ data }) => {
           this.$parent.loadCheck_types()
           this.$parent.loadCheck_states()

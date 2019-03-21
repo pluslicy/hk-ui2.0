@@ -25,7 +25,8 @@
 </template>
 <script type="text/javascript">
 import CaddModal from '@/pages/room/deviceType/CaddModal.vue'
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   components: {
     CaddModal
@@ -45,7 +46,7 @@ export default {
     },
     deleteConfigurationType(oId) {
       const obj = { configitem_ids: [oId + ''] }
-      axios.post('/api_devicetype/delete_configitems/', obj)
+      service.post('/api_devicetype/delete_configitems/', obj)
         .then(() => {
           this.updateData()
           this.update()
@@ -66,7 +67,7 @@ export default {
     },
     updateData() {
       // let num = this.currentDevicetypeId + ''
-      axios.post('/api_devicetype/configitems/', this.currentDevicetypeId).then(({ data }) => {
+      service.post('/api_devicetype/configitems/', { "typeid":this.currentDevicetypeId}).then(({ data }) => {
         this.configurationType = data.list
         this.$notify({
           title: '刷新成功',

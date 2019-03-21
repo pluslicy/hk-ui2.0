@@ -30,7 +30,8 @@
   </div>
 </template>
 <script type="text/javascript">
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   data() {
     return {
@@ -85,7 +86,7 @@ export default {
     add() {
       this.dialogFormVisible1 = false
       if (this.dataitemForm.dataitem_id) {
-        console.log(this.dataitemForm.dataitem_id)
+        // console.log(this.dataitemForm.dataitem_id)
         var items = {
           dataitem_id: this.dataitemForm.dataitem_id,
           dataitem_code: this.dataitemForm.dataitem_code,
@@ -96,7 +97,7 @@ export default {
           priority: this.dataitemForm.priority
         }
         // const obj = { dataitems: [item] }
-        axios.post('/api_devicetype/update_dataitems/', items)
+        service.post('/api_devicetype/update_dataitems/', items)
           .then(() => {
             this.$parent.update()
             this.$parent.updateData()
@@ -123,7 +124,7 @@ export default {
           devicetype: this.currentDevicetypeId1
         }
         const obj = { dataitems: [item] }
-        axios.post('/api_devicetype/create_dataitems/', obj)
+        service.post('/api_devicetype/create_dataitems/', obj)
           .then(() => {
             this.$parent.updateData()
             this.$parent.update()

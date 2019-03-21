@@ -291,7 +291,8 @@
 </style>
 <script type="text/javascript">
 import $ from 'jquery'
-import axios from '@/http/axios'
+// import axios from '@/http/axios'
+import service from '@/utils/request'
 import Highcharts from 'highcharts'
 export default {
   data() {
@@ -468,7 +469,7 @@ export default {
         start_time: this.value[0],
         end_time: this.value[1]
       }
-      axios.get('/api_alarm/get_alarm_statistics/', { params: obj }).then(r => {
+      service.get('/api_alarm/get_alarm_statistics/', { params: obj }).then(r => {
         if (r.data[0][1] === 0 && r.data[1][1] === 0 && r.data[2][1] === 0) {
           this.flag = 0
         } else if (r.data[0][1] !== 0 || r.data[1][1] !== 0 || r.data[2][1] !== 0) {
@@ -553,7 +554,7 @@ export default {
         alarm_id: arr,
         process_text: this.batchTextarea
       }
-      axios.post('/api_alarm/process_alarm/', data).then(() => {
+      service.post('/api_alarm/process_alarm/', data).then(() => {
         this.loadAlerm_Manager()
         this.loadAlarm_statuss()
         this.loadAlarm_levels()
@@ -576,7 +577,7 @@ export default {
         alarm_id: [this.rows.alarm_id],
         process_text: this.dealTextarea
       }
-      axios.post('/api_alarm/process_alarm/', data).then(() => {
+      service.post('/api_alarm/process_alarm/', data).then(() => {
         this.loadAlerm_Manager()
         this.loadAlarm_statuss()
         this.loadAlarm_levels()
@@ -599,7 +600,7 @@ export default {
         alarm_id: this.rows.alarm_id,
         audit_text: this.checkTextarea
       }
-      axios.post('/api_alarm/audit_alarm/', obj).then(() => {
+      service.post('/api_alarm/audit_alarm/', obj).then(() => {
         this.loadAlerm_Manager()
         this.loadAlarm_statuss()
         this.loadAlarm_levels()
@@ -623,11 +624,11 @@ export default {
     // 当多选框改变时
     handleSelectionChange(val) {
       this.multipleSelection = val
-      console.log(this.multipleSelection)
+      // console.log(this.multipleSelection)
     },
     // 获取报警级别
     loadAlarm_levels() {
-      axios.get('/api_alarm/get_alarm_level/')
+      service.get('/api_alarm/get_alarm_level/')
         .then(({ data }) => {
           this.alarm_levels = data.result
         }).catch(() => {
@@ -639,7 +640,7 @@ export default {
     },
     // 获取报警状态
     loadAlarm_statuss() {
-      axios.get('/api_alarm/get_alarm_status/')
+      service.get('/api_alarm/get_alarm_status/')
         .then(({ data }) => {
           this.alarm_statuss = data.result
         }).catch(() => {
@@ -652,7 +653,7 @@ export default {
     // 获取报警列表
     loadAlerm_Manager(item) {
       this.loading = true
-      axios.get('/api_alarm/get_alarm_list/', { params: item })
+      service.get('/api_alarm/get_alarm_list/', { params: item })
         .then(({ data }) => {
           this.alerm_Manager = data.result
         }).catch(() => {

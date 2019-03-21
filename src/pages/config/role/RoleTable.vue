@@ -44,7 +44,9 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
+
 import roleUpdateDialog from './updateRoleDialog.vue'
 import $ from 'jquery'
 export default {
@@ -73,8 +75,8 @@ export default {
     // 加载表格数据
     findAllRoles() {
       // alert(1)
-      axios.get('/api_permission/get_permission_list').then(({ data: result }) => {
-        console.log('...', result.data)
+      service.get('/api_permission/get_permission_list').then(({ data: result }) => {
+        // console.log('...', result.data)
         this.roles = result.data
         this.loading = false
       }).catch(() => {
@@ -91,9 +93,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log(row.group_id)
+        // console.log(row.group_id)
         // alert(id)
-        axios.post('/api_group/delete_group', { group_ids: [row.group_id] }).then(() => {
+        service.post('/api_group/delete_group', { group_ids: [row.group_id] }).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功',
@@ -126,8 +128,8 @@ export default {
         const obj1 = {
           'group_ids': this.ids
         }
-        console.log(obj1)
-        axios.post('/api_group/delete_group', obj1).then(() => {
+        // console.log(obj1)
+        service.post('/api_group/delete_group', obj1).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功',

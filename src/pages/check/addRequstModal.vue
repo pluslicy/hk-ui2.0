@@ -19,7 +19,8 @@
   </div>
 </template>
 <script type="text/javascript">
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   data() {
     return {
@@ -48,7 +49,7 @@ export default {
         approval_type: this.checkForm.check_id,
         approval_text: this.checkForm.apply_context
       }
-      axios.post('/api_approval/create_approval/', obj)
+      service.post('/api_approval/create_approval/', obj)
         .then(() => {
           this.checkForm = {}
           this.$parent.loadCheck_types()

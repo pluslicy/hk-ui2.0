@@ -28,7 +28,8 @@
 </template>
 <script>
 import roleDataTable from './RoleTable.vue'
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   components: {
     roleDataTable
@@ -88,7 +89,7 @@ export default {
     // 新增的保存
     saveAddRole() {
       const obj1 = { 'name': this.toAddRoleDialog.form.name }
-      axios.post('/api_group/create_group', obj1).then(() => {
+      service.post('/api_group/create_group', obj1).then(() => {
         this.$notify({
           title: '成功',
           message: '新增用户成功',

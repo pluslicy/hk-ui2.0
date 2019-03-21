@@ -63,7 +63,8 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import echarts from 'echarts'
 import $ from 'jquery'
 export default {
@@ -291,7 +292,7 @@ export default {
     },
     // 获取所有机房信息
     findAllRoom() {
-      axios.get('/api_room/list_all_room/', {
+      service.get('/api_room/list_all_room/', {
         params: { room_id: this.$parent.roomId }
       })
         .then(({ data }) => {
@@ -302,7 +303,7 @@ export default {
     // 获取设备当前数据
     findCurrentDeviceData(ids) {
       // this.loading = true
-      axios.get('/api_room_monitor/get_current_data/', {
+      service.get('/api_room_monitor/get_current_data/', {
         params: { device_ids: ids }
       })
         .then(({ data }) => {
@@ -319,7 +320,7 @@ export default {
     // 获取所有的温湿度数据
     findAllTHData() {
       this.loading = true
-      axios.get('/api_room_monitor/get_devices/', {
+      service.get('/api_room_monitor/get_devices/', {
         params: {
           room_id: this.$parent.roomId,
           devicetype_id: this.$parent.devicetype_id
@@ -342,7 +343,7 @@ export default {
           // console.log(this.device_ids)
         })
         .catch((error) => {
-          console.log(error, '温湿度数据')
+          // console.log(error, '温湿度数据')
         })
         .finally(() => {
           this.loading = false
@@ -351,7 +352,7 @@ export default {
     // 获取详细温湿度历史数据
     findAllHumitureData() {
       // this.loading = true
-      axios.get('/api_room_monitor/get_device_data/', {
+      service.get('/api_room_monitor/get_device_data/', {
         params: this.thQuery
       })
         .then(({ data }) => {
@@ -374,7 +375,7 @@ export default {
     },
     // 获取所有的设备名称
     findAllDeviceName() {
-      axios.get('/api_device/list_device_name/', {
+      service.get('/api_device/list_device_name/', {
         params: {
           devicetype_id: this.$parent.devicetype_id
         }

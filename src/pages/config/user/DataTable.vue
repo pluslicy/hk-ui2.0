@@ -78,7 +78,8 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import $ from 'jquery'
 import userDataDialog from './DataDialog.vue'
 import userUpdateDialog from './UpdateDialog.vue'
@@ -113,7 +114,7 @@ export default {
   methods: {
     // 加载表格内容
     findAllUsers(params) {
-      axios.get('/api_user/user_list/', { params }).then(({ data: result }) => {
+      service.get('/api_user/user_list/', { params }).then(({ data: result }) => {
         // console.log('=======================', result)
         this.users = result.results
         this.transform()
@@ -169,9 +170,9 @@ export default {
         type: 'warning'
       }).then(() => {
         // alert(row.id)
-        axios.post('/api_user/delete_user/', { 'user_ids': [row.id] }).then(() => {
+        service.post('/api_user/delete_user/', { 'user_ids': [row.id] }).then(() => {
           this.$notify({
-            title: '成功',
+            title: '删除成功',
             message: '这是一条成功的提示消息',
             type: 'success'
           })
@@ -206,7 +207,7 @@ export default {
           'user_ids': this.ids
         }
         // console.log('?????????', obj1)
-        axios.post('/api_user/delete_user/', obj1).then(() => {
+        service.post('/api_user/delete_user/', obj1).then(() => {
           this.$notify({
             title: '成功',
             message: '删除成功',

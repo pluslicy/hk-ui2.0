@@ -105,7 +105,8 @@
 </style>
 <script type="text/javascript">
 // import $ from 'jquery'
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import Highcharts from 'highcharts'
 export default {
   data() {
@@ -193,7 +194,7 @@ export default {
             dataitem_code: 'sum'
           }
         }
-        axios.get('/api_room_monitor/get_UPS_history_data/', obj).then(r => {
+        service.get('/api_room_monitor/get_UPS_history_data/', obj).then(r => {
           r.data.forEach((items, indexs) => {
             items.data.forEach(it => {
               it[0] = new Date(it[0].replace(/-/g, '/')).getTime()
@@ -218,7 +219,7 @@ export default {
             dataitem_code: code[0],
           }
         }
-        axios.get('/api_room_monitor/get_UPS_history_data/', obj).then(r => {
+        service.get('/api_room_monitor/get_UPS_history_data/', obj).then(r => {
           r.data.forEach((items, indexs) => {
             items.data.forEach(it => {
               it[0] = new Date(it[0].replace(/-/g, '/')).getTime()
@@ -317,7 +318,7 @@ export default {
     loadAllDevice() {
       const num = Number(this.device_id)
       // console.log(num)
-      axios.get('/api_device/get_UPS_Battery_data/', { params: { device_id: num } }).then(({ data }) => {
+      service.get('/api_device/get_UPS_Battery_data/', { params: { device_id: num } }).then(({ data }) => {
         // console.log(data[0].dataitems)
         this.allDeviceType = data[0].dataitems
         // this.loadAllDeviceType()

@@ -25,7 +25,9 @@
   </div>
 </template>
 <script type="text/javascript">
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
+
 import DaddModal from '@/pages/room/deviceType/DaddModal.vue'
 export default {
   components: {
@@ -46,7 +48,7 @@ export default {
     },
     deleteDataType(oId) {
       const obj = { dataitem_ids: [oId + ''] }
-      axios.post('/api_devicetype/delete_dataitems/', obj)
+      service.post('/api_devicetype/delete_dataitems/', obj)
         .then(() => {
           this.updateData()
           this.update()
@@ -72,7 +74,7 @@ export default {
     // 刷新数据项
     updateData() {
       // let num = this.currentDevicetypeId + ''
-      axios.post('/api_devicetype/dataitems/', this.currentDevicetypeId).then(({ data }) => {
+      service.post('/api_devicetype/dataitems/', {"typeid":this.currentDevicetypeId}).then(({ data }) => {
         this.dataType = data.list
         this.$notify({
           title: '刷新成功',

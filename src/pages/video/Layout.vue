@@ -113,7 +113,8 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import axios from '@/http/axios'
+import service from '@/utils/request'
 import $ from 'jquery'
 import echarts from 'echarts'
 import Highcharts from 'highcharts'
@@ -189,7 +190,7 @@ export default {
     },
     // 获取所有的机房
     findAllrooms() {
-      axios.get('/api_room/list_all_room/').then(({ data }) => {
+      service.get('/api_room/list_all_room/').then(({ data }) => {
         // console.log('所有的机房的信息', data)
         this.currentRoomId = data[0].room_id
         // 通过id查找机房的设备信息
@@ -202,7 +203,7 @@ export default {
     // 通过id查找机房的设备信息
     // findAllMessages(id) {
     //   // alert(id)
-    //   axios.get('/api_room_monitor/get_types_in_room?room_id='+id).then(({data})=>{
+    //   service.get('/api_room_monitor/get_types_in_room?room_id='+id).then(({data})=>{
     //     console.log(data)
     //     data.map((item)=>{
     //       if(item.devicetype_name === '温湿度') {
@@ -227,7 +228,7 @@ export default {
     // 获取所有的报警信息
     getAllAlarms() {
       // console.log(1)
-      axios.get('/api_alarm/get_current_alarm/').then(({ data }) => {
+      service.get('/api_alarm/get_current_alarm/').then(({ data }) => {
         // console.log('data', data)
         if (data.alarm_total >= 1) {
           this.alarmCount = data.alarm_total - 1
@@ -242,7 +243,7 @@ export default {
     // 获取所有的未审批
     getAllExamine() {
       // alert(1)
-      axios.get('/api_approval/get_approval_list/').then(({ data }) => {
+      service.get('/api_approval/get_approval_list/').then(({ data }) => {
         // console.log('data==========', data)
         data.result.map((item) => {
           if (item.approval_status === '未审批') {
@@ -287,8 +288,8 @@ export default {
     findRoomAllMessage(id) {
       // this.currentRoomId = id
       // alert(id)
-      axios.get('api_room_monitor/getSimpleIndexData/?room_id=' + id).then(({ data }) => {
-        console.log('=======', data)
+      service.get('api_room_monitor/getSimpleIndexData/?room_id=' + id).then(({ data }) => {
+        // console.log('=======', data)
         this.simpleBaseData = data
         this.videos = data.video_src
         // console.log('所有的视频',this.videos)
@@ -363,7 +364,7 @@ export default {
             this.temperature1.push(item[1])
           })
           // console.log('温度',this.temperature)
-          console.log('温度1', this.temperature1)
+          // console.log('温度1', this.temperature1)
           this.humidity = this.humitureArray[1].data
           this.humidity.map((item) => {
             this.humidity1.push(item[1])

@@ -23,7 +23,8 @@
   </el-dialog>
 </template>
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   data() {
     return {
@@ -95,7 +96,7 @@ export default {
       // this.Options.parent_ids = arr;
       // this.Options.hasOptions = arr
       // this.groupId = row.group_id
-      axios.get('/api_permission/get_permission_of_group?group_id=' + row.group_id).then((data) => {
+      service.get('/api_permission/get_permission_of_group?group_id=' + row.group_id).then((data) => {
         this.allDevices = data.data.data
         console.log('++++++',this.allDevices)
         // 将已经选中的权限放进数组中
@@ -194,7 +195,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        axios.post('/api_permission/set_permission_of_group', obj).then(() => {
+        service.post('/api_permission/set_permission_of_group', obj).then(() => {
           this.$notify({ title: '成功', type: 'success', message: '修改权限成功!' })
           // this.$parent.findAllRoles()
         }).catch(() => {

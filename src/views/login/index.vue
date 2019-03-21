@@ -39,7 +39,7 @@
 
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">{{ $t('login.logIn') }}</el-button>
 
-      <!-- <div style="position:relative">
+      <div style="position:relative">
         <div class="tips">
           <span>{{ $t('login.username') }} : admin</span>
           <span>{{ $t('login.password') }} : {{ $t('login.any') }}</span>
@@ -50,64 +50,56 @@
         </div>
 
         <el-button class="thirdparty-button" type="primary" @click="showDialog=true">{{ $t('login.thirdparty') }}</el-button>
-      </div> -->
+      </div>
     </el-form>
 
-    <!-- <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
+    <el-dialog :title="$t('login.thirdparty')" :visible.sync="showDialog">
       {{ $t('login.thirdpartyTips') }}
       <br>
       <br>
       <br>
       <social-sign />
-    </el-dialog> -->
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import axios from '@/http/axios'
-import conf from '@/http/config'
-// import { isvalidUsername } from '@/utils/validate'
+import { isvalidUsername } from '@/utils/validate'
 import LangSelect from '@/components/LangSelect'
 import SocialSign from './socialsignin'
+
 export default {
   name: 'Login',
   components: { LangSelect, SocialSign },
   data() {
-    // const validateUsername = (rule, value, callback) => {
-    //   if (!isvalidUsername(value)) {
-    //     callback(new Error('Please enter the correct user name'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
-    // const validatePassword = (rule, value, callback) => {
-    //   if (value.length < 6) {
-    //     callback(new Error('The password can not be less than 6 digits'))
-    //   } else {
-    //     callback()
-    //   }
-    // }
+    const validateUsername = (rule, value, callback) => {
+      if (!isvalidUsername(value)) {
+        callback(new Error('Please enter the correct user name'))
+      } else {
+        callback()
+      }
+    }
+    const validatePassword = (rule, value, callback) => {
+      if (value.length < 6) {
+        callback(new Error('The password can not be less than 6 digits'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: 'admin',
         password: 'briup2018'
       },
       loginRules: {
-        username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
-        ]
+        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
       loading: false,
       showDialog: false,
-      redirect: undefined,
-      token: ''
+      redirect: undefined
     }
   },
   watch: {
@@ -132,53 +124,16 @@ export default {
         this.passwordType = 'password'
       }
     },
-    // 回首页
-    handleClick() {
-      // 设置验证
-      axios.defaults.headers.common['Authorization'] = conf.getCookie('Token')
-      // this.$router.push('/video')
-      this.$store.dispatch('LoginByUsername', this.loginForm)
-        .then(() => {
-          this.loading = false
-          this.$router.push({ path: this.redirect || '/' })
-        })
-        .catch(() => {
-          this.loading = false
-        })
-    },
-    // 创建cookie
-    setCookie(cname, cvalue, exdays) {
-      document.cookie = 'Token=' + this.token
-      // console.log(document.cookie)
-    },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          axios.post('/api_token_auth/', this.loginForm)
-            .then((res) => {
-              // console.log(res)
-              if (res.status === 200) {
-                // this.loading = false
-                this.token = res.data.token
-                console.log(this.token)
-                this.setCookie()
-                this.handleClick()
-              }
-            })
-            .catch((error) => {
-              console.log(error)
-              this.$notify.error({
-                title: '错误',
-                message: '用户名或密码错误'
-              })
-            })
-          // this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
-          //   this.loading = false
-          //   this.$router.push({ path: this.redirect || '/' })
-          // }).catch(() => {
-          //   this.loading = false
-          // })
+          this.$store.dispatch('LoginByUsername', this.loginForm).then(() => {
+            this.loading = false
+            this.$router.push({ path: this.redirect || '/' })
+          }).catch(() => {
+            this.loading = false
+          })
         } else {
           console.log('error submit!!')
           return false
@@ -210,9 +165,11 @@ export default {
 <style rel="stylesheet/scss" lang="scss">
   /* 修复input 背景不协调 和光标变色 */
   /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+
   $bg:#283443;
   $light_gray:#eee;
   $cursor: #fff;
+
   @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
     .login-container .el-input input{
       color: $cursor;
@@ -221,6 +178,7 @@ export default {
       }
     }
   }
+
   /* reset element-ui css */
   .login-container {
     .el-input {
@@ -255,6 +213,7 @@ export default {
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
 $light_gray:#eee;
+
 .login-container {
   min-height: 100%;
   width: 100%;

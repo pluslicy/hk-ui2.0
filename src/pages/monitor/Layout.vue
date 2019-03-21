@@ -80,13 +80,14 @@
 
 </style>
 <script>
+import service from '@/utils/request'
 import upsIT from '@/pages/monitor/type/upsIT.vue'
 import leak from '@/pages/monitor/type/leak.vue'
 import CoolMaster from '@/pages/monitor/type/CoolMaster.vue'
 import distribution from '@/pages/monitor/type/distribution.vue'
 import upsBattery from '@/pages/monitor/type/upsBattery.vue'
 import TemperatureAndHumidity from '@/pages/monitor/type/TemperatureAndHumidity.vue'
-import axios from '@/http/axios'
+// import service from '@/http/service'
 // import $ from 'jquery'
 export default {
   components: {
@@ -128,12 +129,12 @@ export default {
       this.updateRoom(2)
     }
     this.loadRoom()
-    this.loadDevice()
+    // this.loadDevice()
     this.change()
   },
   methods: {
     updateRoom(roomId) {
-      axios.get('/api_room_monitor/get_types_in_room/', { params: { room_id: roomId }}).then(({ data }) => {
+      service.get('/api_room_monitor/get_types_in_room/', { params: { room_id: roomId }}).then(({ data }) => {
         // console.log(data)
         this.deviceType = data
         this.roomId = roomId
@@ -142,10 +143,12 @@ export default {
         } else {
           this.devicetype_id = ''
         }
+        this.loadDevice()
       })
     },
     loadDevice() {
-      axios.get('/api_room_monitor/get_devices/', { params: { room_id: this.roomId, devicetype_id: this.devicetype_id }})
+      // console.log('11111111111111111',this.roomId)
+      service.get('/api_room_monitor/get_devices/', { params: { room_id: this.roomId, devicetype_id: this.devicetype_id }})
         .then(({ data }) => {
           // console.log(data)
           this.device = data
@@ -166,7 +169,7 @@ export default {
     },
     // 加载机房
     loadRoom() {
-      axios.get('/api_room/list_all_room/').then(({ data }) => {
+      service.get('/api_room/list_all_room/').then(({ data }) => {
         this.rooms = data
       })
     },

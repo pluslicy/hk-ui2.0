@@ -16,7 +16,7 @@
       </div>
       <div class="login_form">
         <!-- {{ form }} -->
-        <el-form ref="ruleForm" :rules="rules" :model="form" class="demo-ruleForm">
+        <el-form ref="ruleForm" :model="form" class="demo-ruleForm">
           <el-form-item label="" prop="username">
             <el-input v-model="form.username" placeholder="请输入用户名" />
           </el-form-item>
@@ -33,7 +33,8 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import conf from '@/http/config'
 // import $ from 'jquery'
 import md5 from 'md5.js'
@@ -46,16 +47,16 @@ export default {
         password: ''
       },
       // 验证规则
-      rules: {
-        username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
-        ]
-      },
+      // rules: {
+      //   username: [
+      //     { required: true, message: '请输入用户名', trigger: 'blur' },
+      //     { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' }
+      //   ],
+      //   password: [
+      //     { required: true, message: '请输入密码', trigger: 'blur' },
+      //     { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+      //   ]
+      // },
       psd: '',
       redirect: undefined,
       token:''
@@ -84,12 +85,12 @@ export default {
         'username': this.form.username,
         'password': this.form.password
       }
-      axios.post('/api_token_auth/', params).then((res) => {
+      service.post('/api_token_auth/', params).then((res) => {
         if (res.status == 200) {
           // console.log(res.data)
           this.token = res.data.token
           this.setCookie()
-          axios.defaults.headers.common['Authorization'] = conf.getCookie('Token')
+          service.defaults.headers.common['Authorization'] = conf.getCookie('Token')
           this.$store.dispatch('LoginByUsername', this.form).then(() => {
             this.loading = false
             this.$router.push({ path: '/video' })

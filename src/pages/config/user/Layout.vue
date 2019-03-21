@@ -47,7 +47,8 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import userDataTable from './DataTable.vue'
 import userAddDialog from './AddDialog.vue'
 import userAccreditDialog from './AccreditDialog.vue'
@@ -124,7 +125,7 @@ export default {
     },
     // 加载表格内容
     findAllUsers() {
-      axios.get('/api_user/user_list/').then(({ data: result }) => {
+      service.get('/api_user/user_list/').then(({ data: result }) => {
         // console.log('=======================', result)
         // this.users = result.results
         // console.log('this.user', result)

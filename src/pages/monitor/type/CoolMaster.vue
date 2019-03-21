@@ -64,7 +64,8 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import echarts from 'echarts'
 export default {
   data() {
@@ -196,7 +197,7 @@ export default {
     },
     // 获取机房中某种设备类型的所有设备的列表
     findAllDevice(room_id, deviceType_id) {
-      axios.get('/api_room_monitor/get_devices/', { params: { room_id: room_id, devicetype_id: deviceType_id }}).then((data) => {
+      service.get('/api_room_monitor/get_devices/', { params: { room_id: room_id, devicetype_id: deviceType_id }}).then((data) => {
         // console.log('所有的设备码=======', data.data)
         this.allCodes = data.data
         this.changeCodes()
@@ -219,7 +220,7 @@ export default {
     },
     // 通过设备类型获取所有的数据项信息
     findAllData(id) {
-      axios.get('/api_room_monitor/get_configitem_info/?devicetype_id=' + id).then((data) => {
+      service.get('/api_room_monitor/get_configitem_info/?devicetype_id=' + id).then((data) => {
         // console.log('+++++', data)
         this.dataitem_codes = data.data.map((item) => {
           return item.dataitem_code
@@ -237,7 +238,7 @@ export default {
     // 获取指定设备类型下所有的设备当前的数据
     findAllData1(id) {
       // console.log(id)
-      axios.get('/api_room_monitor/get_current_data/?device_ids=' + id).then((data) => {
+      service.get('/api_room_monitor/get_current_data/?device_ids=' + id).then((data) => {
         // console.log('+++++', data)
         // this.allData = data.data[0].data
         // // console.log(this.allData)
@@ -259,7 +260,7 @@ export default {
     },
     // 通过设备id查找设备详细信息，包括设备码，操作码
     findAcCoolDeviceDetails(id) {
-      axios.get('/api_device/list_device_detail/?device_id=' + id).then((data) => {
+      service.get('/api_device/list_device_detail/?device_id=' + id).then((data) => {
         // console.log('通过设备id查找设备详细信息，包括设备码，操作码',data.data[0].dataitems[0].table)
         this.allData = data.data[0].dataitems[0].table
         this.allData[0].dataitem_code = this.dataitem_codes[0]
@@ -375,7 +376,7 @@ export default {
         device_id: this.device_id
       }}
       // console.log(obj)
-      axios.get('/api_room_monitor/get_device_data/', obj).then((data) => {
+      service.get('/api_room_monitor/get_device_data/', obj).then((data) => {
         // console.log(data)
         this.temperature = data.data.datas[0].data
         this.humidity = data.data.datas[1].data
@@ -396,7 +397,7 @@ export default {
     //     device_ids:this.device_id,
     //     dataitem_code:id
     //   }}
-    //   axios.get('/api_room_monitor/get_history_data/',obj).then((data)=>{
+    //   service.get('/api_room_monitor/get_history_data/',obj).then((data)=>{
     //     console.log('data',data)
     //     this.counts = data.data.values[0].data
     //     this.time9 = data.data.times
@@ -439,7 +440,7 @@ export default {
           device_ids: this.device_id,
           dataitem_code: id
         }}
-        axios.get('/api_room_monitor/get_history_data/', obj).then((data) => {
+        service.get('/api_room_monitor/get_history_data/', obj).then((data) => {
           // console.log('data', data)
           this.counts = data.data.values[0].data
           // console.log('this.counts', this.counts)
@@ -474,7 +475,7 @@ export default {
         value: this.value5
       }
       // console.log(obj)
-      axios.post('/api_room_monitor/operate_device/', obj).then(() => {
+      service.post('/api_room_monitor/operate_device/', obj).then(() => {
         this.$notify({
           title: '成功',
           message: '保存成功',
@@ -496,7 +497,7 @@ export default {
         value: this.value6
       }
       // console.log(obj)
-      axios.post('/api_room_monitor/operate_device/', obj).then(() => {
+      service.post('/api_room_monitor/operate_device/', obj).then(() => {
         this.$notify({
           title: '成功',
           message: '保存成功',
@@ -518,7 +519,7 @@ export default {
         value: this.value7
       }
       // console.log(obj)
-      axios.post('/api_room_monitor/operate_device/', obj).then(() => {
+      service.post('/api_room_monitor/operate_device/', obj).then(() => {
         this.$notify({
           title: '成功',
           message: '保存成功',
@@ -541,7 +542,7 @@ export default {
         value: this.value8
       }
       // console.log(obj)
-      axios.post('/api_room_monitor/operate_device/', obj).then(() => {
+      service.post('/api_room_monitor/operate_device/', obj).then(() => {
         this.$notify({
           title: '成功',
           message: '保存成功',

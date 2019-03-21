@@ -52,7 +52,8 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import _ from 'lodash'
 import $ from 'jquery'
 import deviceDialog from './Dialog.vue'
@@ -106,7 +107,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          axios.post('/api_device/delete_device/', {
+          service.post('/api_device/delete_device/', {
             device_ids: [id]
           })
             .then(() => {
@@ -118,7 +119,7 @@ export default {
               this.findAllDevice()
             })
             .catch((error) => {
-              console.log(error)
+              // console.log(error)
               this.$notify({
                 title: '失败',
                 message: '删除失败',
@@ -180,7 +181,7 @@ export default {
     // 获取所有的设备
     findAllDevice() {
       this.loading = true
-      axios.get('/api_device/list_device/', {
+      service.get('/api_device/list_device/', {
         params: this.params
       })
         .then(({ data }) => {

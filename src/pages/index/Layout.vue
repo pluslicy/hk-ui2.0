@@ -64,7 +64,8 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+// import axios from '@/http/axios'
+import service from '@/utils/request'
 import $ from 'jquery'
 import echarts from 'echarts'
 export default {
@@ -119,7 +120,7 @@ export default {
     },
     // 获取报警统计的数据
     findAllAlarmData() {
-      axios.get('/api_room_monitor/get_alarm_count/')
+      service.get('/api_room_monitor/get_alarm_count/')
         .then(({ data }) => {
           // console.log(data)
           const result = data.map((item) => {
@@ -144,7 +145,7 @@ export default {
     },
     // 获取数量统计的数据
     findAllNumberData() {
-      axios.get('/api_room_monitor/get_number_count/')
+      service.get('/api_room_monitor/get_number_count/')
         .then(({ data }) => {
           // console.log(data)
           this.numberData = data
@@ -162,7 +163,7 @@ export default {
     },
     // 获取审批统计的数据
     findAllCheckData() {
-      axios.get('/api_room_monitor/get_approval_count/')
+      service.get('/api_room_monitor/get_approval_count/')
         .then(({ data }) => {
           const result = data.map((item) => {
             return {
@@ -188,7 +189,7 @@ export default {
     findAllHumitureDataById(id, index) {
       const vm = this
       // alert(room_id)
-      axios.get('/api_room_monitor/getSimpleIndexData/?room_id=' + id)
+      service.get('/api_room_monitor/getSimpleIndexData/?room_id=' + id)
         .then(({ data }) => {
           // alert(room_id)
           // console.log(data,'----')
@@ -208,7 +209,7 @@ export default {
     },
     // 获取每个机房基本数据
     findAllIndexData() {
-      axios.get('/api_room_monitor/get_index_base_data/')
+      service.get('/api_room_monitor/get_index_base_data/')
         .then(({ data }) => {
           // console.log(data)
           this.roomBaseData = data

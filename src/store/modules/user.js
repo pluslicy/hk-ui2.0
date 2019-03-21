@@ -67,15 +67,16 @@ const user = {
             reject('error')
           }
           const data = response.data
-
+          // console.log(data)
           if (data.roles && data.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', data.roles)
           } else {
             reject('getInfo: roles must be a non-null array !')
           }
-
+          const images = 'http://192.168.50.90:10000/' + data.avatar
+          console.log(images)
           commit('SET_NAME', data.name)
-          commit('SET_AVATAR', data.avatar)
+          commit('SET_AVATAR', images)
           commit('SET_INTRODUCTION', data.introduction)
           resolve(response)
         }).catch(error => {

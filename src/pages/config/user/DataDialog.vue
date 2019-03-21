@@ -1,7 +1,7 @@
 <template>
   <!-- 详情模态框 -->
   <div class="user_data_dialog">
-    <el-dialog :title="messageModel.title" :visible.sync="messageModel.visible" width="25%">
+    <el-dialog :title="messageModel.title" :visible.sync="messageModel.visible" width="25%" center="">
       <!-- <el-form :model="messageModel.form">
         <el-form-item :label-width="formLabelWidth" label="头像:">
           <img src="" alt="">
@@ -13,7 +13,8 @@
           <img src="" alt="">
         </el-form-item>
       </el-form> -->
-      <span>头像:<br></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img :src="users.user_avatarpath" alt=""><br><br><br><span>更换头像:</span>
+      <span>头像:<br></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img :src="users.user_avatarpath" alt=""><br><br><br>
+      <span>更换头像:</span>
       <el-form :model="messageModel.form">
         <el-form-item :label-width="formLabelWidth">
           <!-- <el-upload
@@ -33,7 +34,9 @@
             :on-error="handleAvatarError"
             :before-upload="beforeAvatarUpload"
             class="avatar-uploader"
-            action="http://192.168.50.90:10000/api_user/upload_user_avatar/">
+            :action="uploadImg"
+            :headers='headers'
+            >
             <img v-if="imageUrl" :src="imageUrl" class="avatar2">
             <i v-else class="el-icon-plus avatar-uploader-icon2"/>
           </el-upload>
@@ -43,14 +46,16 @@
       <span>地址:</span>&nbsp;&nbsp;&nbsp;{{ users.user_address }}<br><br><br>
       <span>备注:</span>&nbsp;&nbsp;&nbsp;{{ users.user_note }}<br>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="messageModel.visible = false">取 消</el-button>
-        <el-button type="primary" @click="messageModel.visible = false">确 定</el-button>
+        <el-button @click="close()">取 消</el-button>
+        <el-button type="primary" @click="close()">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
 // import axios from '@/http/axios'
+import service from '@/utils/request'
+import { getToken } from '@/utils/auth'
 export default {
   data() {
     return {
@@ -61,17 +66,23 @@ export default {
       },
       formLabelWidth: '120px',
       users: {},
-      imageUrl: ''
+      imageUrl: '',
+      uploadImg: service.defaults.baseURL + '/api_user/upload_user_avatar/',
+      // headers:{'Token ': getToken()}
     }
   },
-  // computed:{
-  //   headers(){
-  //     return {
-  //       'Authorization':conf.getCookie('Token')
-  //     }
-  //   }
-  // },
+  computed:{
+    headers(){
+      return {
+        'Authorization':'Token ' + getToken()
+      }
+    }
+  },
   methods: {
+    close() {
+      this.messageModel.visible = false
+      this.$parent.findAllUsers()
+    },
     handleClose(done) {
       this.$confirm('确认关闭？')
         .then(_ => {
@@ -82,7 +93,7 @@ export default {
     toOpenDialog(row) {
       // this.findAllUsers()
       this.messageModel.visible = true
-      console.log('==========', row)
+      this.messageModel.title = '用户信息'
       this.users = row
     },
     // 上传图片
@@ -118,6 +129,11 @@ export default {
 }
 </script>
 <style scoped>
+  span{
+    /* font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif; */
+    font-size: 16px;
+    /* font-weight: bold */
+  }
   img{
     width: 80px;
     height: 80px;

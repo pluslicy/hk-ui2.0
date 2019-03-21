@@ -25,7 +25,8 @@
 </template>
 <script type="text/javascript">
 import OaddModal from '@/pages/room/deviceType/OaddModal.vue'
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   components: {
     OaddModal
@@ -45,7 +46,7 @@ export default {
     },
     deleteOperationType(oId) {
       const obj = { operitem_ids: [oId + ''] }
-      axios.post('/api_devicetype/delete_operitems/', obj)
+      service.post('/api_devicetype/delete_operitems/', obj)
         .then(() => {
           this.update()
           this.updateData()
@@ -70,7 +71,7 @@ export default {
     },
     updateData() {
       // let num = this.currentDevicetypeId + ''
-      axios.post('/api_devicetype/operitems/', this.currentDevicetypeId).then(({ data }) => {
+      service.post('/api_devicetype/operitems/', this.currentDevicetypeId).then(({ data }) => {
         this.operationType = data.list
         this.$notify({
           title: '刷新成功',

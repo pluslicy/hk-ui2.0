@@ -58,7 +58,8 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import echarts from 'echarts'
 import $ from 'jquery'
 export default {
@@ -322,7 +323,7 @@ export default {
     },
     // 获取所有机房信息
     findAllRoom() {
-      axios.get('/api_room/list_all_room/?room_id=' + this.$parent.roomId)
+      service.get('/api_room/list_all_room/?room_id=' + this.$parent.roomId)
         .then(({ data }) => {
           this.room = data[0]
           // console.log(data)
@@ -331,7 +332,7 @@ export default {
     // 获取设备当前数据
     findCurrentDeviceData(ids) {
       // this.loading = true
-      axios.get('/api_room_monitor/get_current_data/', {
+      service.get('/api_room_monitor/get_current_data/', {
         params: { device_ids: ids }
       })
         .then(({ data }) => {
@@ -348,7 +349,7 @@ export default {
     // 获取所有漏水历史数据
     findAllLeakData() {
       // this.loading = true
-      axios.get('/api_room_monitor/get_device_data/', {
+      service.get('/api_room_monitor/get_device_data/', {
         params: this.query
       })
         .then(({ data }) => {
@@ -371,7 +372,7 @@ export default {
     },
     // 获取所有的设备名称
     findAllDeviceName() {
-      axios.get('/api_device/list_device_name/', {
+      service.get('/api_device/list_device_name/', {
         params: {
           devicetype_id: this.$parent.devicetype_id
         }
@@ -386,12 +387,12 @@ export default {
           }
         })
         .catch((error) => {
-          console.log(error, '设备名称')
+          // console.log(error, '设备名称')
         })
     },
     // 通过机房ID和设备类型ID获取所有设备
     findAllDeviceByIds() {
-      axios.get('/api_room_monitor/get_devices/', {
+      service.get('/api_room_monitor/get_devices/', {
         params: {
           room_id: this.$parent.roomId,
           devicetype_id: this.$parent.devicetype_id
@@ -415,7 +416,7 @@ export default {
           }, 100)
         })
         .catch((error) => {
-          console.log(error, '获取所有设备')
+          // console.log(error, '获取所有设备')
         })
         .finally(() => {
           this.loading = false

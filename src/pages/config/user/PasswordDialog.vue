@@ -18,7 +18,9 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
+
 export default {
   data() {
     return {
@@ -37,7 +39,7 @@ export default {
     },
     savePassword() {
       // console.log(this.passwordDialog.form)
-      // axios.post('/api_user/update_user/', this.passwordDialog.form).then(() => {
+      // service.post('/api_user/update_user/', this.passwordDialog.form).then(() => {
       //   this.$notify({
       //     title: '成功',
       //     message: '修改密码成功',
@@ -56,7 +58,7 @@ export default {
           id: this.passwordDialog.form.id,
           password: this.passwordDialog.form.password
         }
-        axios.post('/api_user/update_user/', obj).then(() => {
+        service.post('/api_user/update_user/', obj).then(() => {
           this.$notify({
             title: '成功',
             message: '修改密码成功',

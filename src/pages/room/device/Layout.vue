@@ -56,7 +56,8 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import deviceDataTable from './DataTable.vue'
 import deviceDialog from './Dialog.vue'
 export default {
@@ -132,7 +133,7 @@ export default {
       })
         .then(() => {
           const ids = this.$refs.deviceDataTable.multipleSelection.map(item => item.device_id)
-          axios.post('/api_device/delete_device/', {
+          service.post('/api_device/delete_device/', {
             device_ids: ids
           })
             .then(() => {
@@ -154,7 +155,7 @@ export default {
     },
     // 获取所有机房
     findAllroom() {
-      axios.get('/api_room/list_all_room/')
+      service.get('/api_room/list_all_room/')
         .then(({ data }) => {
           // console.log(data)
           this.rooms = data
@@ -169,7 +170,7 @@ export default {
     },
     // 获取所有设备类型
     findAllDeviceType() {
-      axios.get('/api_devicetype/list_all_devicetypes/')
+      service.get('/api_devicetype/list_all_devicetypes/')
         .then(({ data }) => {
           // console.log(data)
           this.devicetypes = data
@@ -184,7 +185,7 @@ export default {
     },
     // 获取设备列表名称
     findAllDeviceName() {
-      axios.get('/api_device/list_device_name/')
+      service.get('/api_device/list_device_name/')
         .then(({ data }) => {
           // console.log(data)
           this.deviceNames = data
@@ -200,7 +201,7 @@ export default {
     // 获取所有的设备
     findAllDevice() {
       // this.loading = true
-      axios.get('/api_device/list_device/', {
+      service.get('/api_device/list_device/', {
         params: this.$refs.deviceDataTable.params
       })
         .then(({ data }) => {

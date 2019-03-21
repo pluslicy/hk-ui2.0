@@ -27,7 +27,8 @@
   </div>
 </template>
 <script type="text/javascript">
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   data() {
     return {
@@ -88,7 +89,7 @@ export default {
           configitem_desc: this.configitemForm.configitem_desc,
           priority: this.configitemForm.priority
         }
-        axios.post('/api_devicetype/update_configitems/', items)
+        service.post('/api_devicetype/update_configitems/', items)
           .then(() => {
             this.$parent.updateData()
             this.$parent.update()
@@ -114,7 +115,7 @@ export default {
           devicetype: this.currentDevicetypeId1
         }
         const obj = { configitems: [item] }
-        axios.post('/api_devicetype/create_configitems/', obj)
+        service.post('/api_devicetype/create_configitems/', obj)
           .then(() => {
             this.$parent.updateData()
             this.$parent.update()

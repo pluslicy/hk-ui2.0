@@ -24,7 +24,9 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+import service from '@/utils/request'
+// import service from '@/http/service'
+
 export default {
   data() {
     return {
@@ -60,7 +62,7 @@ export default {
       this.ids = ids
       this.ids1 = this.ids
       // console.log('所有选中的用户的id',this.ids1)
-      axios.get('/api_group/get_groups_of_user?user_id=' + this.ids1).then(({ data: result }) => {
+      service.get('/api_group/get_groups_of_user?user_id=' + this.ids1).then(({ data: result }) => {
         // alert(1)
         // console.log('==========', result)
         this.accredits = result.data
@@ -95,7 +97,7 @@ export default {
         'group_ids': this.checkboxGroup
       }
       // console.log(obj1)
-      axios.post('api_group/set_user_groups/', obj1).then(() => {
+      service.post('api_group/set_user_groups/', obj1).then(() => {
         this.$notify({
           title: '成功',
           message: '授权成功',

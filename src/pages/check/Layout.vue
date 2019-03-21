@@ -78,7 +78,8 @@
 import addRequstModal from '@/pages/check/addRequstModal.vue'
 import checkModal from '@/pages/check/checkModal.vue'
 import $ from 'jquery'
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   components: {
     addRequstModal,
@@ -138,7 +139,7 @@ export default {
     },
     // 加载审批类型
     loadCheck_types() {
-      axios.get('/api_approval/get_approval_type/')
+      service.get('/api_approval/get_approval_type/')
         .then(({ data }) => {
           this.check_types = data.result
         }).catch(() => {
@@ -150,7 +151,7 @@ export default {
     },
     // 加载审批状态
     loadCheck_states() {
-      axios.get('/api_approval/get_approval_status/')
+      service.get('/api_approval/get_approval_status/')
         .then(({ data }) => {
           this.check_states = data.result
         }).catch(() => {
@@ -163,7 +164,7 @@ export default {
     // 加载申请列表
     loadCheck_list(obj) {
       this.loading = true
-      axios.get('/api_approval/get_approval_list/', { params: obj })
+      service.get('/api_approval/get_approval_list/', { params: obj })
         .then(({ data }) => {
           data.result.forEach(function(obj, index) {
             // 没有审核的才可以尽心删除 才能出现删除的按钮
@@ -193,11 +194,11 @@ export default {
       this.$refs.checkModal.user_check = [data]
     },
     deleteRequst(oId) {
-      console.log(oId)
+      // console.log(oId)
       const obj = {
         approval_id: [oId]
       }
-      axios.post('/api_approval/delete_approval/', obj)
+      service.post('/api_approval/delete_approval/', obj)
         .then(() => {
           this.loadCheck_types()
           this.loadCheck_states()

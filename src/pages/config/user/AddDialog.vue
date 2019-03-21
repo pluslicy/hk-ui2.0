@@ -46,7 +46,9 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
+
 export default {
   data() {
     // var validatePass = (rule, value, callback) => {
@@ -137,7 +139,7 @@ export default {
     saveAddUser() {
       if (this.addUserModel.form.password === this.addUserModel.form.password2) {
         // console.log(this.addUserModel.form)
-        // axios.post('api_user/create_user/', this.addUserModel.form).then(() => {
+        // service.post('api_user/create_user/', this.addUserModel.form).then(() => {
         //   this.$notify({
         //     title: '成功',
         //     message: '新增成功',
@@ -153,15 +155,15 @@ export default {
         const a = /^[0-9a-zA-Z_]{1,}$/i
         if (a.test(this.addUserModel.form.username)) {
           // alert(1)
-          axios.post('api_user/judge_username/', { username: this.addUserModel.form.username }).then(({ data }) => {
-            console.log('=======data', data)
+          service.post('api_user/judge_username/', { username: this.addUserModel.form.username }).then(({ data }) => {
+            // console.log('=======data', data)
             if (data.is_usable === false) {
               const b = /^([\u4e00-\u9fa5]){2,4}$/
               if (b.test(this.addUserModel.form.last_name)) {
                 // const c = /^(([0\+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/
                 // if (c.test(this.addUserModel.form.user_tel)) {
                 //   console.log(this.addUserModel.form)
-                //   axios.post('api_user/create_user/', this.addUserModel.form).then(() => {
+                //   service.post('api_user/create_user/', this.addUserModel.form).then(() => {
                 //     this.$notify({
                 //       title: '成功',
                 //       message: '新增成功',
@@ -182,7 +184,7 @@ export default {
                 //   })
                 // }
                 // console.log(this.addUserModel.form)
-                axios.post('api_user/create_user/', this.addUserModel.form).then(() => {
+                service.post('api_user/create_user/', this.addUserModel.form).then(() => {
                   this.$notify({
                     title: '成功',
                     message: '新增成功',

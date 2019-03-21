@@ -54,7 +54,8 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import echarts from 'echarts'
 export default {
   data() {
@@ -155,7 +156,7 @@ export default {
     },
     // 通过设备类型获取所有的数据项信息
     findAllData() {
-      axios.get('/api_room_monitor/get_configitem_info/?devicetype_id=' + this.devicetype_id).then((data) => {
+      service.get('/api_room_monitor/get_configitem_info/?devicetype_id=' + this.devicetype_id).then((data) => {
         // console.log('+++++', data)
         this.dataitem_codes = data.data.map((item) => {
           return item.dataitem_code
@@ -180,18 +181,18 @@ export default {
     },
     // 获取机房中某种设备类型的所有设备的列表
     getDevice(roomId, deviceTypeId) {
-      axios.get('/api_room_monitor/get_devices/', { params: { room_id: roomId, devicetype_id: deviceTypeId }}).then((data) => {
+      service.get('/api_room_monitor/get_devices/', { params: { room_id: roomId, devicetype_id: deviceTypeId }}).then((data) => {
         // console.log(data)
         this.deviceImg = data.data.map((item) => {
           return item.device_imgpath
         })
-        console.log(this.deviceImg)
+        // console.log(this.deviceImg)
         if (this.deviceId === 18) {
           this.deviceImg1 = this.deviceImg[0]
-          console.log(this.deviceImg1)
+          // console.log(this.deviceImg1)
         } else if (this.deviceId === 19) {
           this.deviceImg1 = this.deviceImg[1]
-          console.log(this.deviceImg1)
+          // console.log(this.deviceImg1)
         }
       }).catch(() => {
 
@@ -199,7 +200,7 @@ export default {
     },
     // 获取指定设备类型下所有的设备当前的数据
     getCurrentData() {
-      axios.get('/api_room_monitor/get_current_data/?device_ids=' + this.deviceId).then((data) => {
+      service.get('/api_room_monitor/get_current_data/?device_ids=' + this.deviceId).then((data) => {
         this.currentData = data.data[0].data
         // console.log(this.currentData)
         this.findAllData()
@@ -239,7 +240,7 @@ export default {
           device_ids: this.deviceId,
           dataitem_code: this. dataitem_code1
         }}
-        axios.get('/api_room_monitor/get_history_data/', obj).then((data) => {
+        service.get('/api_room_monitor/get_history_data/', obj).then((data) => {
           // console.log('data', data)
           this.counts = data.data.values[0].data
           this.time9 = data.data.times
@@ -263,7 +264,7 @@ export default {
         device_id: this.deviceId
       }}
       // console.log(obj)
-      axios.get('/api_room_monitor/get_device_data/', obj).then((data) => {
+      service.get('/api_room_monitor/get_device_data/', obj).then((data) => {
         // console.log(data)
         this.CT1 = data.data.datas[0].data
         this.CT2 = data.data.datas[1].data

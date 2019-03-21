@@ -57,7 +57,8 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import $ from 'jquery'
 import logDataTable from './DataTable'
 export default {
@@ -131,7 +132,7 @@ export default {
         .then(() => {
           delete this.params.page
           const str = $.param(this.params)
-          this.url = axios.defaults.baseURL + '/api_log/export_log_list/?' + str
+          this.url = service.defaults.baseURL + '/api_log/export_log_list/?' + str
           console.log(this.url)
           window.location.href = this.url
           this.$notify({
@@ -149,7 +150,7 @@ export default {
     },
     // 获取所有日志类型
     findAllLogType() {
-      axios.get('/api_log/get_log_type/')
+      service.get('/api_log/get_log_type/')
         .then(({ data }) => {
           // console.log(data)
           this.logTypes = data.logtype

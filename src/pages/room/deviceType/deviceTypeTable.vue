@@ -27,7 +27,8 @@
   </div>
 </template>
 <script type="text/javascript">
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import conf from '@/http/config.js'
 import $ from 'jquery'
 import Dmodal from '@/pages/room/deviceType/Dmodal.vue'
@@ -78,7 +79,7 @@ export default {
     loadDeviceTypes(obj) {
       this.loading = true
       if (obj) {
-        axios.get('/api_devicetype/list_detail_devicetypes/', obj).then(({ data }) => {
+        service.get('/api_devicetype/list_detail_devicetypes/', obj).then(({ data }) => {
           this.deviceTypes = data.results
         }).catch(() => {
           this.$notify.error({
@@ -89,7 +90,7 @@ export default {
           this.loading = false
         })
       } else {
-        axios.get('/api_devicetype/list_detail_devicetypes/')
+        service.get('/api_devicetype/list_detail_devicetypes/')
           .then(({ data }) => {
             this.deviceTypes = data.results
           }).catch(() => {

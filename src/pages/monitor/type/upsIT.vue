@@ -82,7 +82,8 @@
  }
 </style>
 <script type="text/javascript">
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import Highcharts from 'highcharts'
 export default {
   data() {
@@ -1412,7 +1413,7 @@ export default {
             dataitem_code: this.dataitem_code
           }
         }
-        axios.get('/api_room_monitor/get_history_data/', obj).then(({ data }) => {
+        service.get('/api_room_monitor/get_history_data/', obj).then(({ data }) => {
           this.upsItOneHistoryValueOfOne = data
           setTimeout(() => {
             const tempArr = ['模块1插入', '模块2插入', '模块3插入', '模块4插入', '模块5插入', '模块6插入']
@@ -1447,14 +1448,14 @@ export default {
       }
     },
     loadAllDeviceType() {
-      axios.get('/api_room_monitor/get_configitem_info/', { params: { devicetype_id: 16 } }).then(({ data }) => {
+      service.get('/api_room_monitor/get_configitem_info/', { params: { devicetype_id: 16 } }).then(({ data }) => {
         // console.log(data)
         this.upsItAllDeviceOfOne = data
       })
     },
     loadAllDevice() {
       const num = Number(this.device_id)
-      axios.get('/api_device/list_device_detail/', { params: { device_id: num } }).then(({ data }) => {
+      service.get('/api_device/list_device_detail/', { params: { device_id: num } }).then(({ data }) => {
         // 将空值设置为‘--’
         if (data[0]) {
           data[0].dataitems.forEach((obj) => {

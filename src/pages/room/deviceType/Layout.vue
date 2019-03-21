@@ -5,6 +5,8 @@
 </template>
 <script>
 // import axios from '@/http/axios'
+import service from '@/utils/request'
+
 import deviceTypeTable from '@/pages/room/deviceType/deviceTypeTable.vue'
 export default {
   components: {

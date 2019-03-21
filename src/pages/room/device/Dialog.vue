@@ -31,7 +31,7 @@
         <el-form-item :label-width="formLabelWidth" label="设备描述" prop="device_desc">
           <el-input :rows="2" v-model="deviceDialog.form.device_desc" type="textarea" placeholder="" />
         </el-form-item>
-        {{ deviceDialog.form }}
+        <!-- {{ deviceDialog.form }} -->
         <el-form-item v-if="deviceImgShow" :label-width="formLabelWidth" label="上传图片" prop="imageUrl">
           <!-- 上传图片 -->
           <el-upload
@@ -89,7 +89,8 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 export default {
   props: {
     // rooms: Array,
@@ -156,7 +157,7 @@ export default {
       // 是否显示机房图片
       deviceImgShow: false,
       // 上传图片地址
-      actionImg: axios.defaults.baseURL + '/api_device/upload_device_image/',
+      actionImg: service.defaults.baseURL + '/api_device/upload_device_image/',
       // 上传图片时传递的值
       imgData: {
         device_id: ''
@@ -176,7 +177,7 @@ export default {
         if (valid) {
           if (this.deviceDialog.form.device_id) {
             // 修改
-            axios.post('/api_device/update_device/', this.deviceDialog.form)
+            service.post('/api_device/update_device/', this.deviceDialog.form)
               .then(() => {
                 // console.log(this.deviceDialog.form)
                 this.$notify({
@@ -185,7 +186,7 @@ export default {
                   type: 'success'
                 })
                 this.$parent.findAllDevice()
-                // this.closeDialog()
+                this.closeDialog()
                 // this.findAllDevice()
                 // this.$parent.find_all_deviceName()
                 this.deviceImgShow = true
@@ -199,7 +200,7 @@ export default {
               })
           } else {
             // 新增
-            axios.post('/api_device/create_device/', this.deviceDialog.form)
+            service.post('/api_device/create_device/', this.deviceDialog.form)
               .then(() => {
                 this.$notify({
                   title: '成功',
@@ -263,7 +264,7 @@ export default {
     // 获取所有的设备
     // findAllDevice() {
     //   this.loading = true
-    //   axios.get('/api_device/list_device/', {
+    //   service.get('/api_device/list_device/', {
     //     params: this.params
     //   })
     //     .then(({ data }) => {
@@ -286,7 +287,7 @@ export default {
     // },
     // 获取所有设备类型
     findAllDeviceType() {
-      axios.get('/api_devicetype/list_all_devicetypes/')
+      service.get('/api_devicetype/list_all_devicetypes/')
         .then(({ data }) => {
           this.devicetypes = data
           // console.log(this.devicetypes)
@@ -301,7 +302,7 @@ export default {
     },
     // 获取所有机房
     findAllroom() {
-      axios.get('/api_room/list_all_room/')
+      service.get('/api_room/list_all_room/')
         .then(({ data }) => {
           // console.log(data)
           this.rooms = data

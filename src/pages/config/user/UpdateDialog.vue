@@ -1,7 +1,7 @@
 <template>
   <!-- 修改权限模态框 -->
   <div class="user_data_dialog2">
-    <el-dialog :title="updateModel.title" :visible.sync="updateModel.visible" width="35%">
+    <el-dialog :title="updateModel.title" :visible.sync="updateModel.visible" width="35%" center="">
       <el-form ref="ruleForm" :model="updateModel.form" :rules="rules" label-position="left">
         <el-form-item :label-width="formLabelWidth" label="账号:" prop="username">
           <el-input v-model="updateModel.form.username" autocomplete="off" readonly />
@@ -51,7 +51,9 @@
 </template>
 
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
+
 export default {
   data() {
     return {
@@ -94,7 +96,7 @@ export default {
     // 弹出修改模态框
     toOpenDialog(row) {
       this.updateModel.title = '修改密码'
-      console.log(row)
+      // console.log(row)
       if (row.is_superuser === '是') {
         row.is_superuser = true
       } else {
@@ -105,7 +107,7 @@ export default {
       } else {
         row.is_active = false
       }
-      console.log(row)
+      // console.log(row)
       this.users1 = this.users
       this.updateModel.title = '修改用户'
       this.updateModel.form = row
@@ -128,7 +130,7 @@ export default {
     // 保存
     saveUser() {
       // console.log(this.updateModel.form)
-      // axios.post('/api_user/update_user/', this.updateModel.form).then(() => {
+      // service.post('/api_user/update_user/', this.updateModel.form).then(() => {
       //   this.$notify({
       //     title: '成功',
       //     message: '这是一条成功的提示消息',
@@ -145,7 +147,7 @@ export default {
         // const b = /^(([0\+]\d{2,3}-)?(0\d{2,3})-)(\d{7,8})(-(\d{3,}))?$/
         // if(b.test(this.updateModel.user_tel)) {
         //   console.log(this.updateModel.form)
-        //   axios.post('/api_user/update_user/', this.updateModel.form).then(() => {
+        //   service.post('/api_user/update_user/', this.updateModel.form).then(() => {
         //     this.$notify({
         //       title: '成功',
         //       message: '这是一条成功的提示消息',
@@ -165,8 +167,8 @@ export default {
         //     message: '地址输入错误，请输入例如13812341234，021-12345678，1234567',
         //   });
         // }
-        console.log(this.updateModel.form)
-        axios.post('/api_user/update_user/', this.updateModel.form).then(() => {
+        // console.log(this.updateModel.form)
+        service.post('/api_user/update_user/', this.updateModel.form).then(() => {
           this.$notify({
             title: '成功',
             message: '修改成功',

@@ -142,7 +142,8 @@
   </div>
 </template>
 <script>
-import axios from '@/http/axios'
+// import service from '@/http/service'
+import service from '@/utils/request'
 import $ from 'jquery'
 export default {
   data() {
@@ -186,7 +187,7 @@ export default {
       // 是否显示机房图片
       roomImgShow: false,
       // 上传图片地址
-      actionImg: axios.defaults.baseURL + '/api_room/upload_room_image/',
+      actionImg: service.defaults.baseURL + '/api_room/upload_room_image/',
       // 上传图片时传递的值
       imgData: {
         room_id: ''
@@ -221,7 +222,7 @@ export default {
         if (valid) {
           if (this.managerDialog.form.room_id) {
             // 保存修改
-            axios.post('/api_room/update_room/', this.managerDialog.form)
+            service.post('/api_room/update_room/', this.managerDialog.form)
               .then(() => {
                 this.$notify({
                   title: '成功',
@@ -242,7 +243,7 @@ export default {
               })
           } else {
             // 保存新增
-            axios.post('/api_room/create_room/', this.managerDialog.form)
+            service.post('/api_room/create_room/', this.managerDialog.form)
               .then(() => {
                 this.$notify({
                   title: '成功',
@@ -289,7 +290,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          axios.post('/api_room/delete_room/', {
+          service.post('/api_room/delete_room/', {
             room_ids: [id]
           })
             .then(() => {
@@ -320,7 +321,7 @@ export default {
         .then(() => {
           const ids = this.multipleSelection.map(item => item.room_id)
           // console.log(ids)
-          axios.post('/api_room/delete_room/', {
+          service.post('/api_room/delete_room/', {
             room_ids: ids
           })
             .then(() => {
@@ -333,7 +334,7 @@ export default {
               this.findAllRoomName()
             })
             .catch((error) => {
-              console.log(error)
+              // console.log(error)
               this.$notify({
                 title: '失败',
                 message: '删除失败',
@@ -396,7 +397,7 @@ export default {
     // 获取所有机房信息
     findAllRoom() {
       this.loading = true
-      axios.get('/api_room/list_room/', {
+      service.get('/api_room/list_room/', {
         params: this.params
       })
         .then(({ data }) => {
@@ -405,7 +406,7 @@ export default {
           this.total = data.count
         })
         .catch((error) => {
-          console.log(error)
+          // console.log(error)
           this.$notify({
             title: '失败',
             message: '网络异常',
@@ -418,13 +419,13 @@ export default {
     },
     // 获取所有机房名称
     findAllRoomName() {
-      axios.get('/api_room/list_all_room/')
+      service.get('/api_room/list_all_room/')
         .then(({ data }) => {
           // console.log(data)
           this.roomNames = data
         })
         .catch((error) => {
-          console.log(error)
+          // console.log(error)
           this.$notify({
             title: '失败',
             message: '网络异常',
