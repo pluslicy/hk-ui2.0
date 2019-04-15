@@ -1,11 +1,12 @@
 import axios from 'axios'
-import { Message } from 'element-ui'
+// import { Message } from 'element-ui'
 import store from '@/store'
 import { getToken } from '@/utils/auth'
 
 // create an axios instance
 const service = axios.create({
-  baseURL: 'http://192.168.50.90:10000', // api 的 base_url
+  baseURL: 'http://192.168.50.50:10000', // api 的 base_url
+  // baseURL: 'http://192.168.50.90:10000', // api 的 base_url
   timeout: 5000 // request timeout
 })
 
@@ -64,11 +65,11 @@ service.interceptors.response.use(
   // },
   error => {
     console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    // Message({
+    //   message: error.message,
+    //   type: 'error',
+    //   duration: 5 * 1000
+    // })
     return Promise.reject(error)
   }
 )

@@ -2,7 +2,7 @@
   <div class="monitor">
     <!-- 机房部分 -->
     <div class="monitor_nav">
-      <el-menu class="el-menu-vertical-demo" background-color="#F0F2F5">
+      <el-menu class="el-menu-vertical-demo" background-color="#F0F2F5" active-text-color="#409EFF" default-active="2">
         <el-menu-item v-for="item in rooms" :index="item.room_id+''" :key="item.room_id" default-active="2" @click="updateRoom(item.room_id)">
           <i class="el-icon-menu" />
           <span slot="title" :title="item.room_name">{{ item.room_name }}</span>
@@ -23,6 +23,10 @@
       </div>
       <!-- 主页面部分 -->
       <div class="monitor_content_content">
+        <div v-if="empty" style="color:#409EFF;font-size:1.3em;">
+          <br>
+          请添加设备...
+        </div>
         <!-- ups -->
         <upsIT v-if="devicetype_id === 16" ref="upsIT" />
         <!-- ups电池巡检仪 -->
@@ -96,7 +100,8 @@ export default {
     TemperatureAndHumidity,
     leak,
     distribution,
-    CoolMaster
+    CoolMaster,
+    empty:false
   },
   data() {
     return {
@@ -140,8 +145,11 @@ export default {
         this.roomId = roomId
         if (this.deviceType[0]) {
           this.devicetype_id = this.deviceType[0].devicetype_id
+          this.empty = false
         } else {
           this.devicetype_id = ''
+          this.device_id = ''
+          this.empty = true
         }
         this.loadDevice()
       })
