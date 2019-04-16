@@ -266,6 +266,7 @@ export default {
       this.th.forEach((item) => {
         const slicePath = item.device_imgpath.split('/images/devices/')[1]
         if (slicePath !== 'default.png') {
+          console.log(item)
           const image = new Image()
           image.src = item.device_imgpath
           image.onload = function() {
@@ -274,6 +275,7 @@ export default {
             context.drawImage(image, item.pos.pos_x / 100 * vm.canvasWidth, item.pos.pos_y / 100 * 216, 20, 20)
           }
           context.fillText(item.device_name, item.pos.pos_x / 100 * vm.canvasWidth - 10, item.pos.pos_y / 100 * 216 - 10, 100)
+          // context.fillText(item.data[0].value, item.pos.pos_x / 100 * vm.canvasWidth - 10, item.pos.pos_y / 100 * 216 - 10, 100)
         } else {
           context.beginPath()
           // context.arc(item.x,item.y,10,0,2*Math.PI)
@@ -281,6 +283,7 @@ export default {
           context.fill()
           // context.fillText(item.text,item.x-15,item.y-15,100)
           context.fillText(item.device_name, item.pos.pos_x / 100 * vm.canvasWidth - 15, item.pos.pos_y / 100 * 216 - 15, 100)
+          // context.fillText(item.data[0].value, item.pos.pos_x / 100 * vm.canvasWidth - 10, item.pos.pos_y / 100 * 216 - 10, 100)
         }
       })
     },
