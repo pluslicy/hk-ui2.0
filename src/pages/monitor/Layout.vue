@@ -27,7 +27,6 @@
           <br>
           请添加设备...
         </div>
-        <!-- ups -->
         <upsIT v-if="devicetype_id === 16" ref="upsIT" />
         <!-- ups电池巡检仪 -->
         <upsBattery v-if="devicetype_id === 15" ref="upsBattery" />
@@ -39,20 +38,34 @@
         <distribution v-if="devicetype_id === 3" ref="distribution" />
         <!-- 空调 -->
         <CoolMaster v-if="devicetype_id === 17" ref="CoolMaster" />
+        <!-- 水箱液位仪 -->
+        <waterBox v-if="devicetype_id === 8" ref="waterBox"></waterBox>
+        <!-- 机柜照明 -->
+        <lightRoom v-if="devicetype_id === 13" ref="lightRoom"></lightRoom>
+        <!-- 空气检测 -->
+        <air v-if="devicetype_id === 10" ref="air"></air>
+        <!-- 声光报警页面 -->
+        <voiceAlarm v-if="devicetype_id === 14" ref="voiceAlarm"></voiceAlarm>
+        <!-- 备电页面 -->
+        <electricity v-if="devicetype_id === 2" ref="electricity"></electricity>
       </div>
     </div>
   </div>
 </template>
 <script>
 import service from '@/utils/request'
+
 import upsIT from '@/pages/monitor/type/upsIT.vue'
 import leak from '@/pages/monitor/type/leak.vue'
 import CoolMaster from '@/pages/monitor/type/CoolMaster.vue'
 import distribution from '@/pages/monitor/type/distribution.vue'
 import upsBattery from '@/pages/monitor/type/upsBattery.vue'
+import waterBox from '@/pages/monitor/type/waterBox.vue'
 import TemperatureAndHumidity from '@/pages/monitor/type/TemperatureAndHumidity.vue'
-// import service from '@/http/service'
-// import $ from 'jquery'
+import lightRoom from '@/pages/monitor/type/lightRoom.vue'
+import air from '@/pages/monitor/type/air.vue'
+import voiceAlarm from '@/pages/monitor/type/voiceAlarm.vue'
+import electricity from '@/pages/monitor/type/electricity.vue'
 export default {
   components: {
     upsIT,
@@ -61,7 +74,11 @@ export default {
     leak,
     distribution,
     CoolMaster,
-    empty:false
+    waterBox,
+    lightRoom,
+    air,
+    voiceAlarm,
+    electricity
   },
   data() {
     return {
