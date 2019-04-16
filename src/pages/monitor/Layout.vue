@@ -43,46 +43,6 @@
     </div>
   </div>
 </template>
-<style scoped>
-.monitor {
-  margin: 1em;
-  background: #ffffff;
-  border-radius: 3px;
-  padding: 1em;
-  min-height: calc(100vh - 84px);
-  overflow: hidden;
-}
-.el-menu {
-  border-right: 0
-}
-.monitor_nav {
-  min-height: calc(100vh - 84px);
-  width: 180px;
-  float: left;
-  background-color: #F0F2F5;
-}
-.monitor_content {
-  min-height: calc(100vh - 84px);
-  width: 100%;
-  background-color: #F0F2F5;
-  margin-left: 190px;
-  padding: 1em;
-  box-sizing: border-box;
-  border: 1px solid white;
-}
-.monitor_content_top {
-	width: 100%;
-	height: 60px;
-}
-.monitor_content_content {
-  width: 100%;
-  padding: 1em;
-  height: calc(100vh - 180px);
-  overflow: auto;
-  background-color: #ffffff;
-}
-
-</style>
 <script>
 import service from '@/utils/request'
 import upsIT from '@/pages/monitor/type/upsIT.vue'
@@ -208,7 +168,45 @@ export default {
         this.$refs.distribution.deviceId = this.device_id
       }
     }
+  }
 }
-}
-
 </script>
+<style scoped>
+.monitor {
+  margin: 1em;
+  background: #ffffff;
+  border-radius: 3px;
+  padding: 1em;
+  min-height: calc(100vh - 84px);
+  overflow: hidden;
+}
+.el-menu {
+  border-right: 0
+}
+.monitor_nav {
+  min-height: calc(100vh - 84px);
+  width: 180px;
+  float: left;
+  background-color: #F0F2F5;
+}
+.monitor_content {
+  min-height: calc(100vh - 84px);
+  width: 100%;
+  background-color: #F0F2F5;
+  margin-left: 190px;
+  padding: 1em;
+  box-sizing: border-box;
+  border: 1px solid white;
+}
+.monitor_content_top {
+	width: 100%;
+	height: 60px;
+}
+.monitor_content_content {
+  width: 100%;
+  padding: 1em;
+  height: calc(100vh - 180px);
+  overflow: auto;
+  background-color: #ffffff;
+}
+</style>
