@@ -50,6 +50,7 @@
         <span @click="changeTimeByOption(2)" class="dataOptions optionWeek">本周</span>
         <span @click="changeTimeByOption(3)" class="dataOptions optionMonth">本月</span>
         <span @click="changeTimeByOption(4)" class="dataOptions optionQuarter">本季度</span>
+        <!-- {{pickTime}} -->
       </div>
       <div class="leak_history_data">
         <div id="leak" :style="he" />

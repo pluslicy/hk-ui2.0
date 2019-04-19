@@ -1,7 +1,7 @@
 <template>
   <div class="monitor">
     <!-- 机房部分 -->
-    <div class="monitor_nav">
+    <div class="monitor_nav" :style="navHeight">
       <el-menu class="el-menu-vertical-demo" background-color="#F0F2F5" active-text-color="#409EFF" default-active="2">
         <el-menu-item v-for="item in rooms" :index="item.room_id+''" :key="item.room_id" default-active="2" @click="updateRoom(item.room_id)">
           <i class="el-icon-menu" />
@@ -12,17 +12,17 @@
     <div class="monitor_content">
       <!-- 下拉菜单 -->
       <div class="monitor_content_top">
-        <!-- {{devicetype_id}} -->
-        <el-select v-model="devicetype_id">
+        {{devicetype_id}}
+        <el-select v-model="devicetype_id" @change="devicetypeChange">
           <el-option v-for="item in deviceType" :key="item.devicetype_id" :label="item.devicetype_name" :value="item.devicetype_id" />
         </el-select>
-        <!-- {{device_id}} -->
+        {{device_id}}
         <el-select v-model="device_id">
           <el-option v-for="item in device" :key="item.device_id" :label="item.device_name" :value="item.device_id"/>
         </el-select>
       </div>
       <!-- 主页面部分 -->
-      <div class="monitor_content_content">
+      <div class="monitor_content_content" :style="contentHeight">
         <div v-if="empty" style="color:#409EFF;">
           <br>
           请添加设备...
@@ -95,6 +95,9 @@ export default {
   },
   data() {
     return {
+      // 显示高度
+      navHeight:'',
+      contentHeight:'',
       // 所有机房的信息
       rooms: [],
       // 设备类型
@@ -122,6 +125,9 @@ export default {
     }
   },
   created() {
+    // 显示高度
+    this.navHeight = 'height:'+ + ($(window).height() - 150) + 'px;'
+    this.contentHeight = 'height:'+ + ($(window).height() - 245) + 'px;'
     if (!this.roomId) {
       this.updateRoom(2)
     }
@@ -130,6 +136,10 @@ export default {
     this.change()
   },
   methods: {
+    devicetypeChange(){
+      // alert(this.devicetype_id)
+      this.loadDevice()
+    },
     updateRoom(roomId) {
       service.get('/api_room_monitor/get_types_in_room/', { params: { room_id: roomId }}).then(({ data }) => {
         // console.log(data)
@@ -207,21 +217,19 @@ export default {
   background: #ffffff;
   border-radius: 3px;
   padding: 1em;
-  min-height: calc(100vh - 84px);
   overflow: hidden;
 }
 .el-menu {
-  border-right: 0
+  border-right: 0;
+  /* height: 50%; */
 }
 .monitor_nav {
-  min-height: calc(100vh - 84px);
   width: 180px;
   float: left;
   background-color: #F0F2F5;
 }
 .monitor_content {
-  min-height: calc(100vh - 84px);
-  width: 89%;
+  /* width: 100%; */
   background-color: #F0F2F5;
   margin-left: 190px;
   padding: 1em;
@@ -235,7 +243,6 @@ export default {
 .monitor_content_content {
   width: 100%;
   padding: 1em;
-  height: calc(100vh - 180px);
   overflow: auto;
   background-color: #ffffff;
 }
