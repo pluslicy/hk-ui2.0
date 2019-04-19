@@ -115,6 +115,7 @@ export default {
   },
   watch: {
     'devicetype_id': function(newVal, oldVal) {
+      alert(newVal)
       this.loadDevice()
     },
     'roomId': function(newVal, oldVal) {
@@ -206,7 +207,19 @@ export default {
         // 获取图片
         this.$refs.distribution.getDevice(this.roomId, this.devicetype_id)
         this.$refs.distribution.deviceId = this.device_id
-      }
+      } else if (this.devicetype_id === 8) {
+        this.$refs.waterBox.findBoxAllDeviceOfOne()
+        this.$refs.waterBox.deviceId = this.device_id
+      } else if(this.devicetype_id === 10){
+        this.$refs.air.findAirAllDeviceOfOne()
+        this.$refs.air.deviceId = this.device_id
+      } else if(this.devicetype_id === 13){
+        this.$refs.lightRoom.findRoomAllDeviceOfOne()
+        this.$refs.lightRoom.deviceId = this.device_id
+      } else if(this.devicetype_id === 14){
+        this.$refs.voiceAlarm.findVoiceAllDeviceOfOne()
+        this.$refs.voiceAlarm.deviceId = this.device_id
+      } 
     }
   }
 }
